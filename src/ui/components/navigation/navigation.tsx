@@ -20,6 +20,7 @@ export default function Navigation() {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
   const [isFocused, setIsFocused] = useState(false); // Etat pour le focus
+  const [isFocuseds, setIsFocuseds] = useState(false); // Etat pour le focus
   const router = useRouter(); // Remplacer useNavigate par useRouter
   const { authUser } = useAuth(); // Utilisation du hook useAuth
   console.log(authUser);
@@ -29,6 +30,11 @@ export default function Navigation() {
       setIsFocused(true);
     } else {
       setIsFocused(false);
+    }
+    if (router.pathname === "/profil") {
+      setIsFocuseds(true);
+    } else {
+      setIsFocuseds(false);
     }
   }, [router.pathname]); // Se déclenche lorsque le chemin change
 
@@ -42,14 +48,13 @@ export default function Navigation() {
   };
   console.log(cart);
 
-const handleCart = () => {
-  if (cart.length === 0) {
-    toast("Votre panier est vide");
-    return; // Ne rien faire si le panier est vide
-  }
-  router.push("/cart"); // Redirection vers la page du panier
-
-}
+  const handleCart = () => {
+    if (cart.length === 0) {
+      toast("Votre panier est vide");
+      return; // Ne rien faire si le panier est vide
+    }
+    router.push("/cart"); // Redirection vers la page du panier
+  };
   // Fonction pour passer à une autre page
   const navigateToPage = (path: string) => {
     router.push(path); // Utilisation de router.push pour la navigation
@@ -121,10 +126,10 @@ const handleCart = () => {
               iconTheme="secondary"
               icon={{ icon: HiOutlineShoppingCart }}
               aria-label="Panier"
-              className={`${isFocused ? "bg-primary text-white" : ""}`} // Assurez-vous que la classe est correctement conditionnée
+              className={`${isFocused ? "text-primary" : ""}`} // Assurez-vous que la classe est correctement conditionnée
             />
             {cart.length > 0 && (
-              <span className="absolute top-0.5 right-0.5 w-5 h-5 bg-red-300 text-red-300 rounded-full text-xs flex justify-center items-center font-bold">
+              <span className="absolute top-0.5 right-0.5 w-5 h-5 bg-primary text-white rounded-full text-xs flex justify-center items-center ">
                 {nbreProduitParnier}
               </span>
             )}
@@ -137,6 +142,7 @@ const handleCart = () => {
             icon={{ icon: FaUser }}
             action={() => navigateToPage("/connexion")}
             aria-label="Profil"
+            className={`${isFocuseds ? "text-primary" : ""}`} // Assurez-vous que la classe est correctement conditionnée
           />
 
           {/* Mobile Menu Button */}

@@ -11,7 +11,7 @@ interface ContainProps {
 
 export default function Contain({ produits }: ContainProps) {
   const [currentPage, setCurrentPage] = useState(1);
-  const [productsPerPage] = useState(8);
+  const [productsPerPage] = useState(20);
   // Pagination
   const indexOfLastProduct = currentPage * productsPerPage;
   const indexOfFirstProduct = indexOfLastProduct - productsPerPage;
@@ -21,6 +21,7 @@ export default function Contain({ produits }: ContainProps) {
   const handlePageChange = (page: number) => {
     setCurrentPage(page);
   };
+
 
   return (
     <Container className="my-8">

@@ -7,7 +7,7 @@ import Image from "next/image";
 import React from "react";
 import Container from "@/ui/components/container/container";
 import LoginForm from "./loginForm";
-import { FormsType, LoginFormFieldsType } from "@/types/forms";
+import { FormsType, LoginFormFieldsType } from "forms";
 interface Props {
   form: FormsType<LoginFormFieldsType>; // Le type du formulaire est défini ici
 }

@@ -1,4 +1,4 @@
-import { FormsType, LoginFormFieldsType } from '@/types/forms';
+import { FormsType, LoginFormFieldsType } from 'forms';
 import Button from '@/ui/designSystem/button/button';
 import { Input } from '@/ui/designSystem/forms/input';
 import React from 'react';

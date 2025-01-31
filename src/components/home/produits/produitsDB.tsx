@@ -18,12 +18,12 @@
   // Autres produits...
 ]; */
 
-import { ProduitType } from "@/types/produitType";
+//import { ProduitType } from "@/types/produitType";
 
 
 
 
-  export const dbProduits:ProduitType[]  = [
+  export const dbProduits  = [
   // Produits récents
   {
     id: 1,

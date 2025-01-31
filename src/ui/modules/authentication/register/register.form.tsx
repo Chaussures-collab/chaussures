@@ -1,7 +1,7 @@
 /** @format */
 
 import React from "react";
-import { FormsType,  RegisterFormFieldsType } from "@/types/forms";
+import { FormsType,  RegisterFormFieldsType } from "forms";
 import Button from "@/ui/designSystem/button/button";
 import { Input } from "@/ui/designSystem/forms/input";
 

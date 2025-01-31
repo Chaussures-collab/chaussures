@@ -7,7 +7,7 @@ import Image from "next/image";
 import React from "react";
 import Container from "@/ui/components/container/container";
 import ForgetPasswordForm from "./forgetPasswordForm";
-import { ForgetFormFieldsType, FormsType } from "@/types/forms";
+import { ForgetFormFieldsType, FormsType } from "forms";
 interface Props {
   form: FormsType<ForgetFormFieldsType>; // Le type du formulaire est défini ici
 }

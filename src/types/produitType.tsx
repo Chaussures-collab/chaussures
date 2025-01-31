@@ -1,7 +1,6 @@
 /** @format */
 
-
-export interface ProduitTypes{
+export interface ProduitType {
   id: number;
   src: string;
   alt: string;
@@ -11,20 +10,22 @@ export interface ProduitTypes{
   dateAjout: string;
   description: string;
   description1: string;
-  quantity?: number;//quantiteStock
-  promotion?: number;//prixPromo
-  images: { id:number; src: string; alt: string }[];
+  quantity?: number; //quantiteStock
+  promotion?: number; //prixPromo
+  images: { id: number; src: string; alt: string }[];
   colors: { id: number; name: string; code: string }[];
   sizes: string[];
   selectedColor?: string;
   selectedSize?: string | number;
   size?: string; // Cette propriété doit être présente
-};
-export interface ProduitType{
+  quantiteStock?: number; //quantiteStock
+  prixPromo?: number | null; //prixPromo
+}
+export interface ProduitTypes {
   prix: number;
   nom: string;
   description: string;
   description1: string;
-  quantiteStock?: number;//quantiteStock
-  prixPromo?: number | null;//prixPromo
-};
+  quantiteStock?: number; //quantiteStock
+  prixPromo?: number | null; //prixPromo
+}

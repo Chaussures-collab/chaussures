@@ -70,7 +70,15 @@ export default function ProduitElement() {
     console.log("Données brutes soumises :", data);
 
     const produitData: ProduitType = {
+      id: data.id,
+      src: data.src,
+      alt: data.alt,
+      dateAjout: data.dateAjout,
+      categorie: data.categorie,
       nom: data.nom,
+      images: data.nom,
+      colors: data.nom,
+      sizes: data.nom,
       description: data.description,
       description1: data.description1,
       quantiteStock: Number(data.quantiteStock), // Convertir en nombre

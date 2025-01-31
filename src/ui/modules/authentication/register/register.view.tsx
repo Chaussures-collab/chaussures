@@ -7,7 +7,7 @@ import Box from "@/ui/designSystem/box/box";
 import Typography from "@/ui/designSystem/typography/typography";
 import Link from "next/link";
 import RegisterForm from "./register.form";
-import { FormsType, RegisterFormFieldsType } from "@/types/forms";
+import { FormsType, RegisterFormFieldsType } from "forms";
 
 interface Props {
   form: FormsType<RegisterFormFieldsType>; // Le type du formulaire est défini ici

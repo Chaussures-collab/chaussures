@@ -1,4 +1,4 @@
-import { ForgetFormFieldsType, FormsType } from '@/types/forms';
+import { ForgetFormFieldsType, FormsType } from 'forms';
 import Button from '@/ui/designSystem/button/button';
 import { Input } from '@/ui/designSystem/forms/input';
 import React from 'react'
