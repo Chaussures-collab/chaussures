@@ -6,14 +6,18 @@ import Layout from "@/ui/components/layout/layout";
 import RegisterContainer from "@/ui/modules/authentication/register/register.container";
 import Breadcrumbs from "@/ui/components/breadcrumbs/breadcrumbs";
 import { GUEST } from "@/lib/session-status";
+import QualiteContainer from "@/components/shop/qualite/qualite.container";
+import Paiement from "@/components/shop/paiement/paiement";
 
 export default function Inscription() {
   return (
     <>
       <Seo title="Inscription " description="Shopimarket" />
-      <Layout sessionStatus={GUEST} isDisplayCreadCrumbs={false}> 
-        <Breadcrumbs/>
+      <Layout sessionStatus={GUEST} isDisplayCreadCrumbs={false}>
+        <Breadcrumbs />
         <RegisterContainer />
+        <QualiteContainer />
+        <Paiement />
       </Layout>
     </>
   );

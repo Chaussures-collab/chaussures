@@ -19,7 +19,7 @@ export default function Breadcrumbs({ className, nom }: Props) {
   const lastSegment = segments[segments.length - 1];
   segments[0] = "accueil";
   const view = segments.map((segment, index) => (
-  <div key={index} className="mt-5 ">
+  <div key={index} className="mt-5 items-center">
     <Link href={index > 0 ? `/${segments.slice(1, index + 1).join("/")}` : "/"}>
       <Typography
         variant="caption4"

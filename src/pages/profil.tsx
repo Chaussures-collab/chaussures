@@ -1,6 +1,7 @@
 /** @format */
 
 import ProfilContainer from "@/components/profil/profil.container";
+import Paiement from "@/components/shop/paiement/paiement";
 import QualiteContainer from "@/components/shop/qualite/qualite.container";
 import ShobLink from "@/components/shop/shobLink/shobLink";
 import Layout from "@/ui/components/layout/layout";
@@ -15,6 +16,7 @@ export default function Profil() {
         <ShobLink />
         <ProfilContainer />
         <QualiteContainer />
+        <Paiement />
       </Layout>
     </>
   );

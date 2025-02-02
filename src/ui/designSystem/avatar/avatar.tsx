@@ -19,7 +19,7 @@ export default function Avatar({ size = "medium", src, alt, className }: Props) 
       sizeStyles = "w-[60px] h-[42px]";
       break;
     case "large":
-      sizeStyles = "w-18 h-18";
+      sizeStyles = "w-[110px] h-[92px]";
       break;
   }
   return (

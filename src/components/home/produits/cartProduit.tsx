@@ -89,11 +89,11 @@ export default function CartProduit({
 
       {/* Détails du produit */}
       <div className="flex flex-col px-2 md:p-4">
-        <Typography variant="h5" component="h3" className="md:mb-2">
+        <Typography variant="h5" component="h3" className="md:mb-2 truncate">
           {nom}
         </Typography>
         <Typography variant="caption1" className="text-gray-500 md:mb-4">
-          <div className="flex space-x-2 text-yellow-500">
+          <div className="flex space-x-2 text-yellow-500 truncate">
             <Typography
               variant="caption4"
               className="text-gray-4 flex items-center gap-1"
@@ -113,11 +113,11 @@ export default function CartProduit({
         {/* Prix et promotion */}
         <div className="flex items-center justify-between md:mb-4 space-x-4">
           <Typography variant="body" className="text-black font-bold">
-            €{prix}
+            €{" "}{promotion ?promotion : prix}
           </Typography>
           {hasPromotion && (
             <Typography variant="caption1" className="line-through text-gray-3">
-              €{promotion}
+              €{" "}{prix}
             </Typography>
           )}
         </div>

@@ -46,6 +46,12 @@ export default function Footer() {
               S{"'"}abonner
             </button>
           </div>
+          <div>
+            <Typography variant="caption1" theme="gray">
+              Inscrivez-vous à notre newsletter pour recevoir les dernières
+              offres et actualités.
+            </Typography>
+          </div>
         </div>
       </Container>
 

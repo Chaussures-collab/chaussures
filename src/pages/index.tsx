@@ -5,6 +5,7 @@ import Categorie from "@/components/home/categorie/categorie";
 import MarqueContainer from "@/components/home/marque/marque.container";
 import Produits from "@/components/home/produits/produits";
 import Decouvrir from "@/components/home/shop";
+import Paiement from "@/components/shop/paiement/paiement";
 import QualiteContainer from "@/components/shop/qualite/qualite.container";
 import Layout from "@/ui/components/layout/layout";
 import Seo from "@/ui/components/seo/seo";
@@ -21,6 +22,7 @@ export default function index() {
         <Produits/>
         <FunForFurnitureGrid/>
         <QualiteContainer/>
+        <Paiement/>
       </Layout>
     </>
   );

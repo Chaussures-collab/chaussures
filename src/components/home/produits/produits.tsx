@@ -25,7 +25,7 @@ export default function Produits() {
   const router = useRouter(); // Remplacer useNavigate par useRouter
   const pageShop =() => {router.push('shop')};
   // Fonction pour afficher un nombre limité de produits
-  const getLimitedProducts = (products: Produit[], limit: number = 10): Produit[] => {
+  const getLimitedProducts = (products: Produit[], limit: number = 50): Produit[] => {
     return products.slice(0, limit); // Retourne seulement les premiers "limit" produits
   };
 

@@ -11,21 +11,20 @@ interface Props {
 
 export default function Qualite({ icon, description1, description2 }: Props) {
   return (
-    <div className="flex flex-col md:flex-row items-center space-y-4 sm:space-y-0 sm:space-x-4">
+    <div className="justify-center text-center m-auto items-center space-y-4 sm:space-y-0 sm:space-x-4">
       {/* Image container */}
-      <div className="flex justify-center items-center">
+      <div className="flex justify-center text-center items-center">
         {icon}
       </div>
 
       {/* Descriptions */}
-      <div className="text-center sm:text-left space-y-2">
+      <div className="text-center justify-center  space-y-2">
         <Typography variant="caption3" theme="black" className="font-semibold">
           {description1}
         </Typography>
         <Typography
           variant="caption1"
           theme="gray"
-          className="hidden md:block"
         >
           {description2}
         </Typography>

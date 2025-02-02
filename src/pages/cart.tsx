@@ -1,6 +1,7 @@
 /** @format */
 
 import CartTable from "@/components/cart/cartTable";
+import Paiement from "@/components/shop/paiement/paiement";
 import QualiteContainer from "@/components/shop/qualite/qualite.container";
 import ShobLink from "@/components/shop/shobLink/shobLink";
 import Layout from "@/ui/components/layout/layout";
@@ -16,6 +17,7 @@ export default function cart() {
         <ShobLink />
         <CartTable />
         <QualiteContainer />
+        <Paiement />
       </Layout>
     </>
   );

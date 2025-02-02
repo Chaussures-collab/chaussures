@@ -109,7 +109,7 @@ export default function ProduitDetail({ produit }: ProduitDetailProps) {
           {produit.colors.map((color, index) => (
             <button
               key={index}
-              className={`w-8 h-8 rounded-full ${
+              className={`w-8 h-8 rounded-full border border-gray-3 ${
                 selectedColor === color.name ? "ring-2 ring-primary" : ""
               }`}
               style={{ backgroundColor: color.code }} // Applique la couleur spécifique
@@ -127,7 +127,7 @@ export default function ProduitDetail({ produit }: ProduitDetailProps) {
         <Typography variant="body" className="text-gray-4">
           Sélectionnez la taille
         </Typography>
-        <div className="flex gap-4">
+        <div className="flex flex-wrap gap-4">
           {produit.sizes.map((size, index) => (
             <button
               key={index}

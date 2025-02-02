@@ -2,6 +2,7 @@
 
 import { dbProduits } from "@/components/home/produits/produitsDB";
 import ProduitDetailContainer from "@/components/produitDetail/produitDetail.container";
+import Paiement from "@/components/shop/paiement/paiement";
 import QualiteContainer from "@/components/shop/qualite/qualite.container";
 import { ProduitType } from "@/types/produitType";
 import Layout from "@/ui/components/layout/layout";
@@ -23,6 +24,7 @@ export default function DetailProduit({ produit }: Props) {
       <Layout isDisplayCreadCrumbs={false}>
         <ProduitDetailContainer produit={produit} />
         <QualiteContainer />
+        <Paiement />
       </Layout>
     </>
   );
@@ -31,15 +33,14 @@ export default function DetailProduit({ produit }: Props) {
 // Fonction pour générer les chemins dynamiques
 export const getStaticPaths: GetStaticPaths = async () => {
   const paths = dbProduits.map((produit) => ({
-    params: { id: produit.id.toString() }, // Assurez-vous que produit.id existe et est un nombre
+    params: { id: produit.id.toString() } // Assurez-vous que produit.id existe et est un nombre
   }));
 
   return {
     paths,
-    fallback: "blocking", // Génère dynamiquement les pages non encore pré-rendues
+    fallback: "blocking" // Génère dynamiquement les pages non encore pré-rendues
   };
 };
-
 
 // Fonction pour récupérer les données d'un produit spécifique
 export const getStaticProps: GetStaticProps = async ({ params }) => {
@@ -54,10 +55,8 @@ export const getStaticProps: GetStaticProps = async ({ params }) => {
 
   return {
     props: {
-      produit,
+      produit
     },
-    revalidate: 10,
+    revalidate: 10
   };
 };
-
-
