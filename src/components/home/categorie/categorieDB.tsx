@@ -1,17 +1,17 @@
 export const dbCategories = [
   {
-    src: "/assets/images/Slide1.png", // Assurez-vous que le fichier a la bonne extension
-    alt: "Slide 1",
-    nom: "Chairs",
-  },
-  {
     src: "/assets/images/Slide2.jpg", // Modifiez selon l'extension réelle de vos images
-    alt: "Slide 2",
-    nom: "Chassures",
+    alt: "Slide 1",
+    nom: "Chaussures",
   },
   {
-    src: "/assets/images/Slide3.png",
+    src: "/assets/images/Survetement_Track35.png", // Modifiez selon l'extension réelle de vos images
+    alt: "Slide 2",
+    nom: "Survetements",
+  },
+  {
+    src: "/assets/images/Veste_d'hiver45.png",
     alt: "Slide 3",
-    nom: "Habits",
+    nom: "Veste",
   }
 ];
