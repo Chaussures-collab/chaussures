@@ -46,7 +46,13 @@ export default function Decouvrir() {
   }, []);
 
   return (
-    <div className={`text-center hidden m:flex ${isLoaded ? 'opacity-100 transform transition-all duration-1000' : 'opacity-0 transform translate-y-10'}`}>
+    <div
+      className={`text-center flex ${
+        isLoaded
+          ? "opacity-100 transform transition-all duration-1000"
+          : "opacity-0 transform translate-y-10"
+      }`}
+    >
       {/* Section Desktop */}
       <Container className="flex flex-wrap sm:flex-nowrap overflow-visible">
         <div className="flex-1 space-y-2 sm:space-y-6 relative p-2 lg:p-10">
@@ -144,14 +150,22 @@ export default function Decouvrir() {
 
         {/* Image */}
         <div className="relative w-full sm:w-1/2 sm:mt-6 sm:mt-0 overflow-hidden">
-          <div className="relative w-full h-96 sm:h-full">
-            <Image
+          <div className="relative w-full h-76 sm:h-full">
+            {/* <Image
               src="/assets/images/accueils.jpg"
               alt="Decouvrir"
               layout="fill"
               objectFit="contain"
               objectPosition="center"
               className="rounded-lg shadow-md transition-transform transform hover:scale-105"
+            /> */}
+            <Image
+              src="/assets/images/accueils.jpg"
+              alt="Decouvrir"
+              width={600} // Valeur à adapter
+              height={500} // Valeur à adapter
+              objectFit="cover"
+              className="hover:scale-105 transition-transform duration-500"
             />
           </div>
         </div>

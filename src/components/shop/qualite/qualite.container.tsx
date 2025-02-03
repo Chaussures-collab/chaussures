@@ -1,6 +1,6 @@
 import Container from '@/ui/components/container/container'
 import React from 'react'
-import Qualite from './qualite'
+import Qualite from '../../../../qualite'
 import { TbTruckDelivery } from "react-icons/tb";
 import { GiTrophyCup } from 'react-icons/gi';
 import { GrStatusGood } from 'react-icons/gr';

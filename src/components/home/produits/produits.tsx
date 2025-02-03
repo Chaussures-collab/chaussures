@@ -37,7 +37,7 @@ export default function Produits() {
       </Typography>
 
       {/* Grille des produits */}
-      <div className="grid grid-cols-2 m:grid-cols-3 lg:grid-cols-4 gap-3 md:gap-6">
+      <div className="grid grid-cols-2 m:grid-cols-4 lg:grid-cols-5 gap-3 md:gap-6">
         {getLimitedProducts(dbProduits).map((produit) => (
           <CartProduit
             key={produit.id}

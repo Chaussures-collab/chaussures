@@ -17,9 +17,10 @@ export default function Card({ src, alt, nom }: Props) {
         <Image
           src={src}
           alt={alt}
-          layout="fill"
+          width={300} // Valeur à adapter
+          height={200} // Valeur à adapter
           objectFit="cover"
-          className="transition-transform duration-500 transform rounded hover:scale-110"
+          className="hover:scale-105 transition-transform duration-500 rounded"
         />
       </div>
 
