@@ -2,7 +2,7 @@
 const nextConfig = {
   reactStrictMode: true,
   images: {
-    domains: ["localhost", "ton-domaine.vercel.app"], // Ajoute ton domaine Vercel ici
+    domains: ["localhost", "chaussures.vercel.app"], // Ajoute ton domaine Vercel ici
   },
 };
 
