@@ -1,16 +1,9 @@
-/** @format */
-
-import type { NextConfig } from "next";
-
-const nextConfig: NextConfig = {
-  /* config options here */
-  reactStrictMode: true
-};
-// next.config.js
-module.exports = {
+/** @type {import('next').NextConfig} */
+const nextConfig = {
+  reactStrictMode: true,
   images: {
-    domains: ["localhost"] // permet de charger des images locales
-  }
+    domains: ["localhost", "ton-domaine.vercel.app"], // Ajoute ton domaine Vercel ici
+  },
 };
 
-export default nextConfig;
+module.exports = nextConfig;
