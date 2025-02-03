@@ -25,7 +25,7 @@ export default function Card({ src, alt, nom }: Props) {
       </div>
 
       {/* Conteneur pour le texte */}
-      <div className="mt-4">
+      <div className="absolute mt-4">
         <Typography variant="h4" component="h4" weight="regular">
           {nom}
         </Typography>

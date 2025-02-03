@@ -1,7 +1,7 @@
 /** @format */
 
 import React from "react";
-import { FormsType,  RegisterFormFieldsType } from "forms";
+import { FormsType,  RegisterFormFieldsType } from "@/types/forms";
 import Button from "@/ui/designSystem/button/button";
 import { Input } from "@/ui/designSystem/forms/input";
 
@@ -19,6 +19,30 @@ export default function RegisterForm({ form }: Props) {
 
   return (
     <form onSubmit={handleSubmit(onSubmit)} className= "pt-8 pb-5 space-y-4">
+      <div className="grid grid-cols-2 gap-4">
+        <Input
+        isLoading={isLoading}
+        placeholder="Nom"
+        type="text"
+        register={register}
+        errors={errors}
+        errorMsg="Champs obligatoire"
+        id="nom"
+        required={true}
+        isAutoCompleted={false}
+      />
+      <Input
+        isLoading={isLoading}
+        placeholder="Prenom"
+        type="text"
+        register={register}
+        errors={errors}
+        errorMsg="Champs obligatoire"
+        id="prenom"
+        required={true}
+        isAutoCompleted={false}
+      />
+      </div>
       <Input
         isLoading={isLoading}
         placeholder="email@gmail.com"
@@ -32,12 +56,23 @@ export default function RegisterForm({ form }: Props) {
       />
       <Input
         isLoading={isLoading}
-        placeholder="Entrer password"
+        placeholder="Entrez password"
         type="password"
         register={register}
         errors={errors}
         errorMsg="Champs obligatoire"
         id="password"
+        required={true}
+        isAutoCompleted={false}
+      />
+      <Input
+        isLoading={isLoading}
+        placeholder="Confirmez password"
+        type="password"
+        register={register}
+        errors={errors}
+        errorMsg="Champs obligatoire" 
+        id="confirmPassword"
         required={true}
         isAutoCompleted={false}
       />

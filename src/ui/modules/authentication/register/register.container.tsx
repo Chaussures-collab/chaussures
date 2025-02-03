@@ -3,7 +3,7 @@
 import React, { useState } from "react";
 import RegisterView from "./register.view";
 import { SubmitHandler, useForm } from "react-hook-form";
-import { RegisterFormFieldsType } from "forms";
+import { RegisterFormFieldsType } from "@/types/forms";
 import { firebaseCreateUser, firebaseEmailVerification } from "@/pages/api/authentification";
 import { toast } from "react-toastify";
 import { firestoreCreateDoc } from "@/pages/api/firestore";
@@ -41,6 +41,8 @@ export default function RegisterContainer() {
   const handleCreateUserAuth = async ({
     email,
     password,
+    nom,
+    prenom,
     how_did_hear
   }: RegisterFormFieldsType) => {
     console.log("Email:", email);
@@ -55,6 +57,8 @@ export default function RegisterContainer() {
     const userDocData = {
       email: email,
       how_did_hear: how_did_hear,
+      nom: nom,
+      prenom: prenom,
       last_login: new Date(),
       uid: data.uid,
       created_at: new Date()
@@ -66,7 +70,7 @@ export default function RegisterContainer() {
 
   const onSubmit: SubmitHandler<RegisterFormFieldsType> = async (formdata) => {
     setisLoading(true);
-    const { password } = formdata;
+    const { password, confirmPassword } = formdata;
     console.log("Password:", password);
     if (password.length < 6) {
       setError("password", {
@@ -75,6 +79,15 @@ export default function RegisterContainer() {
       });
       console.log("Password doit contenu au moins 6 caractère");
       toast.error("Password doit contenu au moins 6 caractère");
+      setisLoading(false);
+      return;
+    }
+    if (password !== confirmPassword) {
+      setError("confirmPassword", {
+        type: "manual",
+        message: "Vos deux passwords sont pas identiques"
+      });
+      toast.error("Vos deux passwords sont pas identiques");
       setisLoading(false);
       return;
     }

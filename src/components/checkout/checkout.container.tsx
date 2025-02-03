@@ -4,7 +4,7 @@ import Container from "@/ui/components/container/container";
 //import { Input } from "@/ui/designSystem/forms/input";
 import Typography from "@/ui/designSystem/typography/typography";
 import { useForm, SubmitHandler } from "react-hook-form";
-import { useState } from "react";
+//import { useState } from "react";
 import { PayPalButtons } from "@paypal/react-paypal-js";
 import { useCart } from "@/context/cartContext";
 import Image from "next/image";
@@ -34,8 +34,8 @@ const CheckoutContainer = () => {
   };
 
   //const { calculateTotalPromoPrice } = useCart(); // Gestion via le contexte
-  const [success, setSuccess] = useState(false);
-  const [error, setError] = useState<Record<string, unknown> | null>(null);
+  //const [success, setSuccess] = useState(false);
+  //const [error, setError] = useState<Record<string, unknown> | null>(null);
 
   const { cart, updateCartItem, removeCartItem } = useCart(); // Gestion via le contexte
 
@@ -59,12 +59,20 @@ const CheckoutContainer = () => {
 
   console.log(cart);
 
+  const total = calculateTotal();
+  const totalString = total.toString();
+  //console.log(totalString);
   return (
     <Container className="py-12">
       <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
           <div>
-            <Typography variant="h4" className="bg-primary text-white text-fold shadow w-full p-3 rounded-lg">1. Contenu de votre panier</Typography>
+            <Typography
+              variant="h4"
+              className="bg-primary text-white text-fold shadow w-full p-3 rounded-lg"
+            >
+              1. Contenu de votre panier
+            </Typography>
             <div className="bg-primary-1 space-y-4 shadow w-full p-6 rounded-lg mt-2">
               {cart.map((item) => (
                 <div
@@ -147,7 +155,12 @@ const CheckoutContainer = () => {
 
           <div className="space-y-6">
             <div>
-              <Typography variant="h4" className="bg-primary text-white text-fold shadow w-full p-3 rounded-lg">2. Mode de paiement</Typography>
+              <Typography
+                variant="h4"
+                className="bg-primary text-white text-fold shadow w-full p-3 rounded-lg"
+              >
+                2. Mode de paiement
+              </Typography>
               <div className="flex justify-between">
                 <Typography variant="h4" component="h4">
                   Produits
@@ -209,37 +222,52 @@ const CheckoutContainer = () => {
                     purchase_units: [
                       {
                         amount: {
-                          currency_code: "USD",
-                          value: "20.00"
+                          currency_code: "EUR",
+                          value: totalString
                         }
                       }
                     ]
                   });
                 }}
                 onApprove={async (data, actions) => {
-                  if (!actions || !actions.order) {
+                  if (!actions?.order) {
+                    // Vérifie si actions et actions.order existent
                     console.error("Actions PayPal non définies.");
                     return;
                   }
 
-                  return actions.order.capture().then((details) => {
-                    // Utiliser la nouvelle API pour récupérer le nom du client
-                    const payerName =
-                      details.payment_source?.paypal?.name?.given_name ||
-                      "Client";
+                  try {
+                    const details = await actions.order.capture();
+                    console.log("Détails du paiement : ", details);
 
-                    setSuccess(true);
-                    alert(`Paiement réussi, merci ${payerName} !`);
-                  });
+                    if (!details.payer) {
+                      console.error(
+                        "Les informations du payeur ne sont pas disponibles."
+                      );
+                      return;
+                    }
+
+                    const nomComplet = `${
+                      details.payer.name?.given_name || "Inconnu"
+                    } ${details.payer.name?.surname || ""}`.trim();
+                    const email =
+                      details.payer.email_address || "Email non disponible";
+
+                    console.log("Nom:", nomComplet);
+                    console.log("Email:", email);
+
+                    alert(`Paiement réussi ! Merci ${nomComplet} 😊`);
+                  } catch (error) {
+                    console.error(
+                      "Erreur lors de la capture du paiement :",
+                      error
+                    );
+                  }
                 }}
                 onError={(err) => {
-                  setError(err);
                   console.error("Erreur PayPal:", err);
                 }}
               />
-
-              {success && <p>✅ Paiement réussi !</p>}
-              {error && <p>❌ Une erreur s{"'"}est produite.</p>}
             </div>
           </div>
         </div>

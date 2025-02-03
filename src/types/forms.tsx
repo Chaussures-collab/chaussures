@@ -19,6 +19,9 @@ export interface LoginFormFieldsType {
 export interface RegisterFormFieldsType {
   email: string;
   password: string;
+  confirmPassword: string;
+  nom: string;
+  prenom: string;
   how_did_hear: string;
 }
 

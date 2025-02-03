@@ -2,7 +2,7 @@
 
 import React, { useState } from "react";
 import LoginView from "./login.view";
-import { FormsType, LoginFormFieldsType } from "forms";
+import { FormsType, LoginFormFieldsType } from "@/types/forms";
 import { SubmitHandler, useForm } from "react-hook-form";
 import { toast } from "react-toastify";
 import { firebaseLoginUser } from "@/pages/api/authentification";

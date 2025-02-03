@@ -15,7 +15,8 @@ export default function App({ Component, pageProps }: AppProps) {
         <PayPalScriptProvider
           options={{
             clientId:
-              "AVSnmI-2-1KSNcq5J79BbO_eukxGkU1r77GQ7gLS_IhLMYgmPlUwMXwq69eYbBmL1O9e1oEK8cD01LhD"
+              "AemNB4srMcvG-8emHlc_EakJX0Nar8j4cvLhHaAHNCD8Ug5_r8143HbV1_ukGdx5LPt2IoigS5YATfA4",
+            currency: "EUR" // Ajout de la devise ici
           }}
         >
           <SearchProvider>

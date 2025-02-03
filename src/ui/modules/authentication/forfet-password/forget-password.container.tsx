@@ -2,7 +2,7 @@
 
 import React, { useState } from "react";
 import ForgetPasswordView from "./forget-password.view";
-import { ForgetFormFieldsType, FormsType } from "forms";
+import { ForgetFormFieldsType, FormsType } from "@/types/forms";
 import { SubmitHandler, useForm } from "react-hook-form";
 import { firebaseResetPasswordUser } from "@/pages/api/authentification";
 import { toast } from "react-toastify";
