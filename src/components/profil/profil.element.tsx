@@ -1,6 +1,6 @@
 /** @format */
 
-//import { useAuth } from "@/context/AuthUserContext";
+import { useAuth } from "@/context/AuthUserContext";
 import Container from "@/ui/components/container/container";
 import Box from "@/ui/designSystem/box/box";
 import Button from "@/ui/designSystem/button/button";
@@ -10,7 +10,9 @@ interface Props {
   action: () => void;
 }
 export default function PofilEement({ action }: Props) {
-  //const { authUser } = useAuth(); // Utilisation du hook useAuth
+  const { authUser } = useAuth(); // Utilisation du hook useAuth
+  console.log("authUser"); 
+  console.log(authUser); 
   return (
     <>
       <Container className="flex justify-between items-center">
