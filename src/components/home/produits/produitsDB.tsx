@@ -49,7 +49,7 @@
       {id: 3, name: "Blanc", code: "#FFFFFF" },
       {id: 4, name: "Marron", code: "#CDC6B4C7" },
     ],
-    sizes: ["36", "37", "38", "39"]
+    sizes: ["33","34","35","36", "37", "38", "39"]
   },
   {
     id: 2,
@@ -75,7 +75,7 @@
       { id:1,name: "Rouge", code: "#FF0000" },
       {id: 2, name: "Bleu", code: "#0000FF" },
     ],
-    sizes: ["37","38", "39", "40", "41", "42", "43", "44", "45", "46", "47"]
+    sizes: ["33","34","35","36", "37", "38", "39", "40", "41", "42", "43", "44", "45", "46", "47"]
 
   },
   {
@@ -100,7 +100,7 @@
       { id:1,name: "Rouge", code: "#FF0000" },
       {id: 2, name: "Bleu", code: "#0000FF" },
     ],
-    sizes: ["37","38", "39", "40", "41", "42", "43", "44", "45", "46", "47"]
+    sizes: ["33","34","35","36", "37", "38", "39", "40", "41", "42", "43", "44", "45", "46", "47"]
 
   },
   {
@@ -123,7 +123,7 @@
       { id:1,name: "Rouge", code: "#FF0000" },
       {id: 2, name: "Bleu", code: "#0000FF" },
     ],
-    sizes: ["37","38", "39", "40", "41", "42", "43", "44", "45", "46", "47"]
+    sizes: ["33","34","35","36", "37", "38", "39", "40", "41", "42", "43", "44", "45", "46", "47"]
 
   },
   {
@@ -148,7 +148,7 @@
       { id:1,name: "Rouge", code: "#FF0000" },
       {id: 2, name: "Bleu", code: "#0000FF" },
     ],
-    sizes: ["37","38", "39", "40", "41", "42", "43", "44", "45", "46", "47"]
+    sizes: ["33","34","35","36", "37", "38", "39", "40", "41", "42", "43", "44", "45", "46", "47"]
 
   },
   {
@@ -171,7 +171,7 @@
       { id:1,name: "Rouge", code: "#FF0000" },
       {id: 2, name: "Bleu", code: "#0000FF" },
     ],
-    sizes: ["38", "39", "40", "41", "42", "43", "44", "45", "46", "47"]
+    sizes: ["33","34","35","36", "37", "38", "39", "40", "41", "42", "43", "44", "45", "46", "47"]
   },
   {
     id: 7,
@@ -194,7 +194,7 @@
       { id:1,name: "Rouge", code: "#FF0000" },
       {id: 2, name: "Bleu", code: "#0000FF" },
     ],
-    sizes: ["38", "39", "40", "41", "42", "43", "44", "45", "46", "47"]
+    sizes: ["33","34","35","36", "37", "38", "39", "40", "41", "42", "43", "44", "45", "46", "47"]
   },
   {
     id: 8,
@@ -288,7 +288,7 @@
       { id:1,name: "Rouge", code: "#FF0000" },
       {id: 2, name: "Bleu", code: "#0000FF" },
     ],
-    sizes: ["37","38", "39", "40", "41", "42", "43", "44", "45", "46", "47"]
+    sizes: ["33","34","35","36", "37", "38", "39", "40", "41", "42", "43", "44", "45", "46", "47"]
   },
   {
     id: 12,
@@ -311,13 +311,13 @@
       { id:1,name: "Rouge", code: "#FF0000" },
       {id: 2, name: "Bleu", code: "#0000FF" },
     ],
-    sizes: ["37","38", "39", "40", "41", "42", "43", "44", "45", "46", "47"]
+    sizes: ["33","34","35","36", "37", "38", "39", "40", "41", "42", "43", "44", "45", "46", "47"]
   },
   {
     id: 13,
     src: "/assets/images/NIKE_Pegasus31.png",
     alt: "Slide 1",
-    prix: 65,
+    prix: 55,
     nom: "NIKE Pegasus",
     categorie: "Chaussures",
     dateAjout: "2025-01-10T12:00:00Z", // Produit ajouté il y a 7 jours
@@ -360,12 +360,11 @@
       { id:1,name: "Rouge", code: "#FF0000" },
       {id: 2, name: "Bleu", code: "#0000FF" },
     ],
-    sizes: ["37","38", "39", "40", "41", "42", "43", "44", "45", "46", "47"]
-
+    sizes: ["33","34","35","36", "37", "38", "39", "40", "41", "42", "43", "44", "45", "46", "47"]
   },
   {
     id: 15,
-    src: "/assets/images/NIKE_TN67.png",
+    src: "/assets/images/NIKE_TN671.png",
     alt: "Slide 1",
     prix: 60,
     nom: "NIKE TN",
@@ -377,14 +376,14 @@
     //promotion: 7500,
     images: [
       { id:1,src: "/assets/images/NIKE_TN66.png", alt: "Image 1 description" },
-      { id:2,src: "/assets/images/NIKE_TN67.png", alt: "Image 2 description" },
+      { id:2,src: "/assets/images/NIKE_TN671.png", alt: "Image 2 description" },
       { id:3,src: "/assets/images/NIKE_TN65.png", alt: "Image 3 description" },
     ],
     colors: [
       { id:1,name: "Rouge", code: "#FF0000" },
       {id: 2, name: "Bleu", code: "#0000FF" },
     ],
-    sizes: ["37","38", "39", "40", "41", "42", "43", "44", "45", "46", "47"]
+    sizes: ["33","34","35","36", "37", "38", "39", "40", "41", "42", "43", "44", "45", "46", "47"]
 
   },
   
@@ -394,7 +393,7 @@
     alt: "Slide 1",
     prix: 55,
     nom: "UGG",
-    categorie: "Alternative",
+    categorie: "Chaussures",
     dateAjout: "2025-01-10T12:00:00Z", // Produit ajouté il y a 7 jours
     description: "Produit récent",
     description1:
@@ -410,21 +409,21 @@
       { id:1,name: "Rouge", code: "#FF0000" },
       {id: 2, name: "Bleu", code: "#0000FF" },
     ],
-    sizes: ["37","38", "39", "40", "41", "42", "43", "44", "45", "46", "47"]
+    sizes: ["33","34","35","36", "37", "38", "39", "40", "41", "42", "43", "44", "45", "46", "47"]
 
   },
   {
     id: 17,
     src: "/assets/images/Doudoune sans manches Tibb_Moncler72.png",
     alt: "Slide 1",
-    prix: 55,
+    prix: 480,
     nom: "Doudoune sans manches Tibb_Moncler71",
     categorie: "Doudoune",
     dateAjout: "2025-01-10T12:00:00Z", // Produit ajouté il y a 7 jours
     description: "Produit récent",
     description1:
       "Lorem ipsum dolor sit, amet consectetur adipisicing elit. Eligendi totam fugit, esse ex nostrum facere minus. Reprehenderit laborum eius illo.",
-    //promotion: 7500,
+    promotion: 320,
     images: [
       { id:1,src: "/assets/images/Doudoune sans manches Tibb_Moncler71.png", alt: "Image 1 description" },
       { id:2,src: "/assets/images/Doudoune sans manches Tibb_Moncler72.png", alt: "Image 2 description" }
@@ -433,21 +432,21 @@
       { id:1,name: "Noire", code: "#000000" },
       {id: 2, name: "Blanc", code: "#ffffff" },
     ],
-    sizes: ["L","S", "XL", "XXL"]
+    sizes: ["M","L","S", "XL","XS", "XXL"]
 
   },
   {
     id: 18,
     src: "/assets/images/Doudoune_courte_Tarn_Moncler&.png",
     alt: "Slide 1",
-    prix: 55,
+    prix: 750,
     nom: "Doudoune courte Tarn Moncler",
     categorie: "Doudoune",
     dateAjout: "2025-01-10T12:00:00Z", // Produit ajouté il y a 7 jours
     description: "Produit récent",
     description1:
       "Lorem ipsum dolor sit, amet consectetur adipisicing elit. Eligendi totam fugit, esse ex nostrum facere minus. Reprehenderit laborum eius illo.",
-    //promotion: 7500,
+    promotion: 550,
     images: [
       { id:1,src: "/assets/images/Doudoune_courte_Tarn_Moncler&.png", alt: "Image 1 description" },
       { id:2,src: "/assets/images/Doudoune_courte_Tarn_Moncler.png", alt: "Image 2 description" },
@@ -457,7 +456,7 @@
       { id:1,name: "Noire", code: "#000000" },
       {id: 2, name: "Blanc", code: "#ffffff" },
     ],
-    sizes: ["L","S", "XL", "XXL"]
+    sizes:["M","L","S", "XL","XS", "XXL"]
 
   },
   {
@@ -484,14 +483,14 @@
       { id:3,name: "Rouge", code: "#8C9188FF" },
       {id: 4, name: "Bleu", code: "#0000FF" },
     ],
-    sizes: ["L","S", "XL", "XXL"]
+    sizes:["M","L","S", "XL","XS", "XXL"]
 
   },
   {
     id: 20,
     src: "/assets/images/Survetement_Hilfiger51.png",
     alt: "Slide 1",
-    prix: 55,
+    prix: 60,
     nom: "Survetement Hilfiger",
     categorie: "Survetement",
     dateAjout: "2025-01-10T12:00:00Z", // Produit ajouté il y a 7 jours
@@ -507,7 +506,7 @@
       { id:1,name: "Noire", code: "#000000" },
       {id: 2, name: "Blanc", code: "#ffffff" },
     ],
-    sizes: ["L","S", "XL", "XXL"]
+    sizes: ["M","L","S", "XL","XS", "XXL"]
 
   },
   {
@@ -532,7 +531,7 @@
       {id: 2, name: "vert", code: "#2CA096FF" },
       { id:3,name: "Blanc", code: "#E7E5E5FF" },
     ],
-    sizes: ["L","S", "XL", "XXL"]
+    sizes: ["M","L","S", "XL","XS", "XXL"]
 
   },
   {
@@ -559,8 +558,7 @@
       { id:3,name: "bleu-clair", code: "#2F378BFF" },
       {id: 4, name: "Bleu-ciel", code: "#292969FF" },
     ],
-    sizes: ["L","S", "XL", "XXL"]
-  },
+    sizes:["M","L","S", "XL","XS", "XXL"]},
   {
     id: 23,
     src: "/assets/images/Survetement_nike21.png",
@@ -581,7 +579,7 @@
       { id:1,name: "Rouge", code: "#FF0000" },
       {id: 2, name: "Bleu", code: "#0000FF" },
     ],
-    sizes: ["L","S", "XL", "XXL"]
+    sizes: ["M","L","S", "XL","XS", "XXL"]
   },
   {
     id: 24,
@@ -607,7 +605,7 @@
       {id: 3, name: "Noir", code: "#433E49FF" },
       {id: 4, name: "Noir", code: "#6B6C75FF" },
     ],
-    sizes: ["L","S", "XL", "XXL"]
+    sizes: ["M","L","S", "XL","XS", "XXL"]
   },
   {
     id: 25,
@@ -633,7 +631,7 @@
       {id: 3, name: "Noir", code: "#77658DFF" },
       {id: 4, name: "Noir", code: "#DFE0EBFF" },
     ],
-    sizes: ["L","S", "XL", "XXL"]
+    sizes: ["M","L","S", "XL","XS", "XXL"]
   },
   {
     id: 26,
@@ -659,7 +657,7 @@
       {id: 3, name: "Noir", code: "#77658DFF" },
       {id: 4, name: "Noir", code: "#0D0D0FFF" },
     ],
-    sizes: ["L","S", "XL", "XXL"]
+    sizes: ["M","L","S", "XL","XS", "XXL"]
   },
   {
     id: 27,
@@ -685,6 +683,6 @@
       {id: 3, name: "Noir", code: "#77658DFF" },
       {id: 4, name: "Noir", code: "#0D0D0FFF" },
     ],
-    sizes: ["L","S", "XL", "XXL"]
+    sizes:["M","L","S", "XL","XS", "XXL"]
   },
 ]; 
