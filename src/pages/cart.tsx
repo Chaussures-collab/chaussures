@@ -11,7 +11,10 @@ import React from "react";
 export default function cart() {
   return (
     <>
-      <Seo title="Markets" description="Panier de la boutique" />
+      <Seo
+        title="Votre Panier - ShopiMarket | Vérifiez vos articles avant l'achat"
+        description="Consultez votre panier sur ShopiMarket et finalisez votre commande. Vérifiez vos articles et profitez d'une expérience d'achat fluide et sécurisée."
+      />
 
       <Layout isDisplayCreadCrumbs={false}>
         <ShobLink />

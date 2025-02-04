@@ -11,7 +11,10 @@ import React from "react";
 export default function Shop() {
   return (
     <>
-      <Seo title="Boutique" description="Présentaion de nos produits" />
+      <Seo
+        title="Boutique - ShopiMarket | Découvrez nos produits tendance"
+        description="Parcourez notre boutique en ligne ShopiMarket et trouvez des vêtements, accessoires et bien plus. Offres exclusives et livraison rapide !"
+      />
 
       <Layout isDisplayCreadCrumbs={false}>
         <ShobLink />

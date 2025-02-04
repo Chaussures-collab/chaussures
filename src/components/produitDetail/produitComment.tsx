@@ -6,10 +6,13 @@ import React, { useState } from "react";
 interface TabContent {
   title: string;
   content: React.ReactNode;
-  
+}
+interface Props{
+  src: string;
+  alt: string;
 }
 
-export default function ProduitComment() {
+export default function ProduitComment({src, alt}:Props) {
   const [activeTab, setActiveTab] = useState(0);
 
   const tabs: TabContent[] = [
@@ -18,20 +21,12 @@ export default function ProduitComment() {
       content: (
         <>
           <p className="text-justify">
-            Reflétant l{"'"}esprit brut et indomptable du rock {"'"}n{"'"} roll, le
-            haut-parleur stéréo portable Kilburn adopte l{"'"}apparence et le son
-            emblématiques de Marshall, débranche les câbles et emmène le
-            spectacle sur la route.
+            Découvrez une large sélection de produits de qualité, soigneusement choisis pour répondre à tous vos besoins. Chez ShopiMarket, nous vous proposons des articles variés allant des dernières tendances en électronique, mode et accessoires, jusqu{"'"}à des solutions pratiques pour la maison, le bien-être et bien plus encore. Chaque produit est conçu pour offrir une expérience utilisateur optimale, alliant performance, fiabilité et prix compétitifs. Que vous soyez à la recherche de nouveautés, de produits phares ou d{"'"}offres exclusives, notre catalogue regroupe des articles sélectionnés pour vous garantir satisfaction et qualité.
+
+
           </p>
           <p>
-            Pesant moins de 7 livres, le Kilburn est une pièce légère
-            d{"'"}ingénierie vintage. Étant l{"'"}un des haut-parleurs les plus
-            puissants de sa catégorie, le Kilburn est un héros compact et
-            robuste avec un son équilibré qui offre des médiums clairs et des
-            aigus étendus pour un son à la fois articulé et prononcé. Les
-            boutons analogiques vous permettent d{"'"}affiner les réglages selon vos
-            préférences personnelles, tandis que la sangle en cuir influencée
-            par la guitare permet un transport facile et élégant.
+            Nous mettons également un accent particulier sur la diversité et l{"'"}innovation, en vous permettant d{"'"}explorer des produits uniques qui simplifient et améliorent votre quotidien. Grâce à notre service client dédié et une livraison rapide, ShopiMarket est votre destination de choix pour faire vos achats en ligne en toute confiance.
           </p>
         </>
       )
@@ -75,20 +70,20 @@ export default function ProduitComment() {
       </div>
 
       <div className="flex flex-wrap justify-center gap-6 mt-2 sm:mt-8 product-images">
-        <div className="relative min-w-[283px] min-h-[143px] max-w-[600px] max-h-[600px]">
+        <div className="relative min-w-[283px] min-h-[143px] max-w-[600px] max-h-[600px] overflow-hidden">
           <Image
-            src="/assets/images/Slide1.png"
-            alt="Produit 1"
+            src={src}
+            alt={alt}
             layout="responsive"
             width={381}
             height={450}
             objectFit="cover"
             className="rounded-lg shadow-lg"
           />
-        </div>
+        </div>{/* 
         <div className="relative min-w-[283px] min-h-[143px] max-w-[600px] max-h-[600px]">
           <Image
-            src="/assets/images/Slide1.png"
+            src={src}
             alt="Produit 2"
             layout="responsive"
             width={381}
@@ -96,7 +91,7 @@ export default function ProduitComment() {
             objectFit="cover"
             className="rounded-lg shadow-lg"
           />
-        </div>
+        </div> */}
       </div>
     </div>
   );

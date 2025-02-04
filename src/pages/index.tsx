@@ -14,15 +14,18 @@ import React from "react";
 export default function index() {
   return (
     <>
-      <Seo title="Markets" description="E-commerce" />
+      <Seo
+        title="ShopiMarket - Votre boutique en ligne pour vêtements et accessoires"
+        description="Découvrez une large gamme de vêtements et d’accessoires tendance sur ShopiMarket. Livraison rapide et promotions exclusives !"
+      />
       <Layout isDisplayCreadCrumbs={false}>
         <Decouvrir />
-        <MarqueContainer/>
-        <Categorie/>
-        <Produits/>
-        <FunForFurnitureGrid/>
-        <QualiteContainer/>
-        <Paiement/>
+        <MarqueContainer />
+        <Categorie />
+        <Produits />
+        <FunForFurnitureGrid />
+        <QualiteContainer />
+        <Paiement />
       </Layout>
     </>
   );

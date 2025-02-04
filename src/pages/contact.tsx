@@ -11,7 +11,10 @@ import React from "react";
 export default function Contact() {
   return (
     <>
-      <Seo title="Markets" description="Contactez-nous" />
+      <Seo
+        title="Contact - ShopiMarket | Service Client et Assistance"
+        description="Besoin d'aide ? Contactez ShopiMarket pour toute question sur vos commandes, paiements et livraisons. Notre service client est à votre écoute."
+      />
 
       <Layout isDisplayCreadCrumbs={false}>
         <ShobLink />

@@ -90,7 +90,7 @@ export default function CartProduit({
 
         {/* Détails du produit */}
         <div className="flex flex-col px-2 md:p-4">
-          <Typography variant="h5" component="h3" className="md:mb-2 truncate">
+          <Typography variant="h5" component="h2" className="md:mb-2 truncate">
             {nom}
           </Typography>
           <Typography variant="caption1" className="text-gray-500 md:mb-4">

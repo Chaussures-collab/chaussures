@@ -5,7 +5,7 @@ export const dbCategories = [
     nom: "Chaussures",
   },
   {
-    src: "/assets/images/Survetement_Track35.png", // Modifiez selon l'extension réelle de vos images
+    src: "/assets/images/veste.jpg", // Modifiez selon l'extension réelle de vos images
     alt: "Slide 2",
     nom: "Survetements",
   },

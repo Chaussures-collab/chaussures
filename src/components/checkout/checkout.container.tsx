@@ -9,6 +9,7 @@ import { PayPalButtons } from "@paypal/react-paypal-js";
 import { useCart } from "@/context/cartContext";
 import Image from "next/image";
 import { RiDeleteBinLine } from "react-icons/ri";
+import { toast } from "react-toastify";
 
 interface FormData {
   nom: string;
@@ -255,12 +256,15 @@ const CheckoutContainer = () => {
 
                     console.log("Nom:", nomComplet);
                     console.log("Email:", email);
-
+                    toast.success("Paiement effectué avec succès")
                     alert(`Paiement réussi ! Merci ${nomComplet} 😊`);
                   } catch (error) {
                     console.error(
                       "Erreur lors de la capture du paiement :",
                       error
+                    );
+                    toast.error(
+                      "Une erreur est survenue lors du paiement avec PayPal. Veuillez contacter l'agence Shopimarket pour vous montrer la procédure à suivre afin que vous puissiez achever votre commande."
                     );
                   }
                 }}

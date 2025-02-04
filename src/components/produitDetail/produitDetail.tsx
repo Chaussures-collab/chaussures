@@ -11,6 +11,8 @@ import {
 } from "react-icons/ri";
 import { ProduitType } from "@/types/produitType";
 import { useCart } from "@/context/cartContext";
+import { toast } from "react-toastify";
+import { useRouter } from "next/router";
 
 /* interface ColorOption {
   name: string; // Nom de la couleur (ex. "Rouge")
@@ -23,12 +25,28 @@ interface ProduitDetailProps {
 }
 
 export default function ProduitDetail({ produit }: ProduitDetailProps) {
+  const route = useRouter();
   // Appel de `useCart` au bon endroit (dans le composant fonctionnel)
   const [selectedColor, setSelectedColor] = useState<string | null>(null);
   const [selectedSize, setSelectedSize] = useState<string | number | null>(
     null
   );
 
+  const handlePage = () => {
+    if (!selectedColor || !selectedSize) {
+      toast.error(
+        "Veuillez choisir une couleur et une taille pour ajouter au panier."
+      );
+      return;
+    }
+    if (selectedColor && selectedSize) {
+      addToCart({ ...produit, quantity, selectedColor, selectedSize });
+      console.log(
+        `Produit ajouté : ID ${produit.id}, Quantité : ${quantity}, Couleur : ${selectedColor}, Taille : ${selectedSize}`
+      );
+    }
+    route.push("/checkout");
+  };
   const [quantity, setQuantity] = useState(1);
 
   const { addToCart } = useCart();
@@ -43,6 +61,12 @@ export default function ProduitDetail({ produit }: ProduitDetailProps) {
   }; */
 
   const handleAddToCart = () => {
+    if (!selectedColor || !selectedSize) {
+      toast.error(
+        "Veuillez choisir une couleur et une taille pour ajouter au panier."
+      );
+      return;
+    }
     if (selectedColor && selectedSize) {
       addToCart({ ...produit, quantity, selectedColor, selectedSize });
       console.log(
@@ -183,15 +207,16 @@ export default function ProduitDetail({ produit }: ProduitDetailProps) {
               size="small"
               action={handleAddToCart}
               className="w-[156px] rounded"
-              disabled={!selectedColor || !selectedSize}
+              //disabled={!selectedColor || !selectedSize}
               aria-label={`Ajouter ${quantity} ${produit.nom} au panier`}
             >
               Ajouter au panier
             </Button>
             <Button
               size="small"
+              action={handlePage}
               className="rounded"
-              disabled={!selectedColor || !selectedSize}
+              //disabled={!selectedColor || !selectedSize}
               aria-label={`Ajouter ${quantity} ${produit.nom} au panier`}
             >
               Commander

@@ -12,7 +12,11 @@ import Paiement from "@/components/shop/paiement/paiement";
 export default function Inscription() {
   return (
     <>
-      <Seo title="Inscription " description="Shopimarket" />
+      <Seo
+        title="Inscription à ShopiMarket | Accédez à votre espace client"
+        description="Créez-vous un compte ShopiMarket pour suivre vos commandes en temps réel, gérer vos informations personnelles et bénéficier de promotions exclusives."
+      />
+
       <Layout sessionStatus={GUEST} isDisplayCreadCrumbs={false}>
         <Breadcrumbs />
         <RegisterContainer />

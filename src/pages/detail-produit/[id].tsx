@@ -20,7 +20,10 @@ export default function DetailProduit({ produit }: Props) {
 
   return (
     <>
-      <Seo title="Markets" description="Detail du produit" />
+      <Seo
+        title="{produit.nom} - ShopiMarket | {produit.categorie}"
+        description="Découvrez {produit.nom} sur ShopiMarket. {produit.description}. Livraison rapide et offres exclusives !"
+      />{" "}
       <Layout isDisplayCreadCrumbs={false}>
         <ProduitDetailContainer produit={produit} />
         <QualiteContainer />

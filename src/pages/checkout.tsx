@@ -12,7 +12,10 @@ import React from "react";
 export default function Checkout() {
   return (
     <>
-      <Seo title="Markets" description="Caisse en ligne" />
+      <Seo
+        title="Paiement sécurisé - ShopiMarket | Finalisez votre achat"
+        description="Procédez au paiement en toute sécurité sur ShopiMarket. Options de paiement variées et cryptage sécurisé pour une transaction sans souci."
+      />
 
       <Layout sessionStatus={REGISTERED} isDisplayCreadCrumbs={false}>
         <ShobLink />

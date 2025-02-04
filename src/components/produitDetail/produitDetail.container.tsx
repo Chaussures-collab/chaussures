@@ -60,7 +60,8 @@ export default function ProduitDetailContainer({ produit }: Props) {
             produit={produit}
           />
         </div>
-        <ProduitComment />
+        <ProduitComment src={produit.src}
+                alt={produit.alt} />
         <hr className="my-2 border-gray-4" />
         <ProduitCategorie categorie={produit.categorie} />
       </Container>

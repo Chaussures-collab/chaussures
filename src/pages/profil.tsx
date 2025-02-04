@@ -11,7 +11,10 @@ import React from "react";
 export default function Profil() {
   return (
     <>
-      <Seo title="Markets" description="E-commerce" />
+      <Seo
+        title="Mon Profil - ShopiMarket | Gérez votre compte"
+        description="Accédez à votre profil ShopiMarket pour gérer vos informations personnelles, suivre vos commandes et modifier vos préférences."
+      />
       <Layout isDisplayCreadCrumbs={false}>
         <ShobLink />
         <ProfilContainer />

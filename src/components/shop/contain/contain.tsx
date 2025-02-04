@@ -2,7 +2,8 @@ import CartProduit from "@/components/home/produits/cartProduit";
 import { dbProduits } from "@/components/home/produits/produitsDB";
 import Container from "@/ui/components/container/container";
 import Button from "@/ui/designSystem/button/button";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { toast } from "react-toastify";
 
 /** @format */
 interface ContainProps {
@@ -11,7 +12,7 @@ interface ContainProps {
 
 export default function Contain({ produits }: ContainProps) {
   const [currentPage, setCurrentPage] = useState(1);
-  const [productsPerPage] = useState(20);
+  const [productsPerPage] = useState(30);
   // Pagination
   const indexOfLastProduct = currentPage * productsPerPage;
   const indexOfFirstProduct = indexOfLastProduct - productsPerPage;
@@ -21,11 +22,14 @@ export default function Contain({ produits }: ContainProps) {
   const handlePageChange = (page: number) => {
     setCurrentPage(page);
   };
+  useEffect(() => {
+    toast('Veuillez visiter nos multiples produits, y compris les vêtements.')
+  })
 
 
   return (
     <Container className="my-8">
-      <div className="grid grid-cols-2 m:grid-cols-3 lg:grid-cols-4 gap-2 md:gap-6 justify-center gap-6 my-10">
+      <div className="grid grid-cols-2 m:grid-cols-4 lg:grid-cols-5 gap-3 justify-center gap-6 my-10">
         {currentProducts.map((produit, index) => (
           <CartProduit
             key={index}
@@ -34,7 +38,7 @@ export default function Contain({ produits }: ContainProps) {
             alt={produit.alt}
             nom={produit.nom}
             prix={produit.prix}
-            promotion={produit.promotion ?? 0}
+            promotion={produit.promotion ?? ""}
             description={produit.description}
           />
         ))}
