@@ -11,8 +11,9 @@ interface Props {
 }
 export default function PofilEement({ action }: Props) {
   const { authUser } = useAuth(); // Utilisation du hook useAuth
-  console.log("authUser"); 
-  console.log(authUser); 
+  console.log("authUser");
+  console.log(authUser);
+  console.log(authUser?.userDocument);
   return (
     <>
       <Container className="flex justify-between items-center">
@@ -24,16 +25,14 @@ export default function PofilEement({ action }: Props) {
           <div>
             <Box padding_x="8" padding_y="8" className="p-4 space-y-2">
               <Typography variant="h4">Profil</Typography>
+              <p>Nom : {authUser?.nom ?? "........"}</p>
               <p>
-                Nom :{`${authUser.nom}`}
-                {/* <input
-                  value="........."
-                  className="border-2 border-primary text-center rounded-md"
-                /> */}
+                Penom : {`${authUser?.prenom ?? "........"}`}
               </p>
-              <p>Penom : {`${authUser.prenom}`}</p>
               <p>Numero de téléphone : .....</p>
-              <p>Email : {authUser.email} </p>
+              <p>
+                Email : {`${authUser?.email ??"........"}`}{" "}
+              </p>
               <Button action={action} className="bg-danger">
                 Deconnexion{" "}
               </Button>

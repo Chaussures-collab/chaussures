@@ -24,4 +24,6 @@ export interface UserDocument{
     email: string|null;
     how_did_her: string|null;
     creation_date: Timestamp;
+    nom: string|null;
+    prenom: string|null;
 }
