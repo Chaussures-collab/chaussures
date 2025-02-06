@@ -13,7 +13,8 @@ export default function useFirebaseAuth() {
   const formatAuthUser = useCallback((user: UserInterface) => ({
     uid: user.uid,
     email: user.email,
-    displayName: user.displayName,
+    nom: user.nom,
+    prenom: user.prenom,
     emailVerified: user.emailVerified,
     phoneNumber: user.phoneNumber,
     photoURL: user.photoURL,

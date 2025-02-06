@@ -33,7 +33,7 @@ export default function RegisterContainer() {
     }
     console.log("User created successfully:", document);
     setisLoading(false);
-    toast.success("User created successfully");
+    toast.success("Votre compte a été créée avec succès");
     reset();
     firebaseEmailVerification();
   };

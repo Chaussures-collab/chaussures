@@ -22,7 +22,7 @@ interface NavbarProps {
 }
 
 // Constantes globales
-const categories = ["Tous", "Produit", "Chaussure", "Maison", "Alimentation"];
+const categories = ["Tous", "Chaussures", "Doudoune", "Survetement", "Veste"];
 //const productsPerPage = 16; // Projection par défaut
 //const totalProduits = 120; // Nombre total de produits
 
@@ -56,7 +56,7 @@ function Modal({ isOpen, onClose, children }: ModalProps) {
 export default function Navbar({
   selectedCategory,
   setSelectedCategory,
-  productsPerPage,
+  productsPerPage
 }: NavbarProps) {
   const [isModalOpen, setIsModalOpen] = useState(false);
 
@@ -68,17 +68,19 @@ export default function Navbar({
   };
 
   const renderCategoryButton = (category: string) => (
-    <Button
-      key={category}
-      action={() => handleCategoryClick(category)}
-      className={`px-4 py-2 m-1 rounded-md ${
-        selectedCategory === category
-          ? "bg-blue-500 text-white"
-          : "bg-gray-200 hover:bg-gray-300"
-      }`}
-    >
-      {category}
-    </Button>
+    <div className="w-full">
+      <Button
+        key={category}
+        action={() => handleCategoryClick(category)}
+        className={`px-4 py-2 m-1 rounded-md w-full ${
+          selectedCategory === category
+            ? "bg-blue-500 text-white"
+            : "bg-gray-200 hover:bg-gray-300"
+        }`}
+      >
+        {category}
+      </Button>
+    </div>
   );
 
   return (
@@ -90,7 +92,7 @@ export default function Navbar({
           className="flex space-x-4 items-center mx-4"
         >
           <Typography component="span">Filtre</Typography>
-          <Button  action={toggleModal} aria-label="Afficher le filtre">
+          <Button action={toggleModal} aria-label="Afficher le filtre">
             {isModalOpen ? (
               <RiColorFilterFill size={24} />
             ) : (
@@ -107,7 +109,7 @@ export default function Navbar({
           <input
             type="text"
             disabled
-            value='8'
+            value="8"
             className="w-auto px-2 bg-white text-gray-3 max-w-10"
           />{" "}
           partie par{" "}
@@ -125,7 +127,7 @@ export default function Navbar({
       </Container>
 
       {/* Catégorie sélectionnée */}
-      <Container >
+      <Container>
         {selectedCategory && (
           <div className="mt-4 text-center">
             <Typography variant="body">

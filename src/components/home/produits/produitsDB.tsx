@@ -315,7 +315,7 @@
     alt: "Slide 1",
     prix: 60,
     nom: "AIR MAX",
-    categorie: "Chaussure",
+    categorie: "Chaussures",
     dateAjout: "2025-01-10T12:00:00Z", // Produit ajouté il y a 7 jours
     description: "Produit récent",
     description1:
@@ -338,7 +338,7 @@
     alt: "Slide 1",
     prix: 60,
     nom: "AIR MAX",
-    categorie: "Chaussure",
+    categorie: "Chaussures",
     dateAjout: "2025-01-10T12:00:00Z", // Produit ajouté il y a 7 jours
     description: "Produit récent",
     description1:
@@ -361,7 +361,7 @@
     alt: "Slide 1",
     prix: 60,
     nom: "AIR MAX",
-    categorie: "Chaussure",
+    categorie: "Chaussures",
     dateAjout: "2025-01-10T12:00:00Z", // Produit ajouté il y a 7 jours
     description: "Produit récent",
     description1:
@@ -384,7 +384,7 @@
     alt: "Slide 1",
     prix: 60,
     nom: "AIR MAX",
-    categorie: "Chaussure",
+    categorie: "Chaussures",
     dateAjout: "2025-01-10T12:00:00Z", // Produit ajouté il y a 7 jours
     description: "Produit récent",
     description1:
@@ -407,7 +407,7 @@
     alt: "Slide 1",
     prix: 55,
     nom: "AIR MAX",
-    categorie: "Chaussure",
+    categorie: "Chaussures",
     dateAjout: "2025-01-10T12:00:00Z", // Produit ajouté il y a 7 jours
     description: "Produit récent",
     description1:
@@ -432,7 +432,7 @@
     alt: "Slide 1",
     prix: 55,
     nom: "AIR MAX",
-    categorie: "Chaussure",
+    categorie: "Chaussures",
     dateAjout: "2025-01-10T12:00:00Z", // Produit ajouté il y a 7 jours
     description: "Produit récent",
     description1:
@@ -457,7 +457,7 @@
     alt: "Slide 1",
     prix: 55,
     nom: "AIR MAX",
-    categorie: "Chaussure",
+    categorie: "Chaussures",
     dateAjout: "2025-01-10T12:00:00Z", // Produit ajouté il y a 7 jours
     description: "Produit récent",
     description1:
@@ -482,7 +482,7 @@
     alt: "Slide 1",
     prix: 55,
     nom: "AIR MAX",
-    categorie: "Chaussure",
+    categorie: "Chaussures",
     dateAjout: "2025-01-10T12:00:00Z", // Produit ajouté il y a 7 jours
     description: "Produit récent",
     description1:
@@ -971,7 +971,7 @@
     alt: "Slide 1",
     prix: 80,
     nom: "Nike Mercurial Superfly",
-    categorie: "Alternative",
+    categorie: "Chaussures",
     dateAjout: "2025-01-10T12:00:00Z", // Produit ajouté il y a 7 jours
     description: "Produit récent",
     description1:
@@ -994,7 +994,7 @@
     alt: "Slide 1",
     prix: 80,
     nom: "Nike Mercurial Superfly",
-    categorie: "Alternative",
+    categorie: "Chaussures",
     dateAjout: "2025-01-10T12:00:00Z", // Produit ajouté il y a 7 jours
     description: "Produit récent",
     description1:
@@ -1017,7 +1017,7 @@
     alt: "Slide 1",
     prix: 80,
     nom: "Nike Mercurial Superfly",
-    categorie: "Alternative",
+    categorie: "Chaussures",
     dateAjout: "2025-01-10T12:00:00Z", // Produit ajouté il y a 7 jours
     description: "Produit récent",
     description1:

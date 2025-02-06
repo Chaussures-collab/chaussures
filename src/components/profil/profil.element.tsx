@@ -25,15 +25,15 @@ export default function PofilEement({ action }: Props) {
             <Box padding_x="8" padding_y="8" className="p-4 space-y-2">
               <Typography variant="h4">Profil</Typography>
               <p>
-                Nom :{" "}
-                <input
-                  value="Franck"
+                Nom :{`${authUser.nom}`}
+                {/* <input
+                  value="........."
                   className="border-2 border-primary text-center rounded-md"
-                />
+                /> */}
               </p>
-              <p>Penom : John Doe</p>
-              <p>Numero de téléphone : 00000000000</p>
-              <p>Email : johndoe@example.com</p>
+              <p>Penom : {`${authUser.prenom}`}</p>
+              <p>Numero de téléphone : .....</p>
+              <p>Email : {authUser.email} </p>
               <Button action={action} className="bg-danger">
                 Deconnexion{" "}
               </Button>
