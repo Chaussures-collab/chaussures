@@ -938,9 +938,10 @@
     colors: [
       { id:1,name: "Rouge", code: "#FF0000" },
       {id: 2, name: "Bleu", code: "#0000FF" },
+      {id: 2, name: "Noir", code: "#08080AFF" },
     ],
     sizes: ["33","34","35","36", "37", "38", "39", "40", "41", "42", "43", "44", "45", "46", "47"]
-  },
+  },/* 
   {
     id: 39,
     src: "/assets/images/NIKE_Mercurial_Superfly54.png",
@@ -964,7 +965,7 @@
       {id: 2, name: "Bleu", code: "#0000FF" },
     ],
     sizes: ["33","34","35","36", "37", "38", "39", "40", "41", "42", "43", "44", "45", "46", "47"]
-  },
+  }, */
   {
     id: 40,
     src: "/assets/images/NIKE_Mercurial_Superfly54.png",
@@ -988,9 +989,10 @@
     ],
     sizes: ["33","34","35","36", "37", "38", "39", "40", "41", "42", "43", "44", "45", "46", "47"]
   },
+  /* id:41 */
   {
     id: 42,
-    src: "/assets/images/Nike_Mercurial_Superfly53.png",
+    src: "/assets/images/NIKE_Mercurial_Superfly53.png",
     alt: "Slide 1",
     prix: 80,
     nom: "Nike Mercurial Superfly",
@@ -1001,9 +1003,9 @@
       "Lorem ipsum dolor sit, amet consectetur adipisicing elit. Eligendi totam fugit, esse ex nostrum facere minus. Reprehenderit laborum eius illo.",
     //promotion: 7500,
     images: [
-      { id:1,src: "/assets/images/Nike_Mercurial_Superfly54.png", alt: "Image 1 description" },
+      { id:1,src: "/assets/images/NIKE_Mercurial_Superfly54.png", alt: "Image 1 description" },
       { id:2,src: "/assets/images/Nike_Mercurial_Superfly51.png", alt: "Image 2 description" },
-      { id:3,src: "/assets/images/Nike_Mercurial_Superfly53.png", alt: "Image 3 description" },
+      { id:3,src: "/assets/images/NIKE_Mercurial_Superfly53.png", alt: "Image 3 description" },
     ],
     colors: [
       { id:1,name: "Rouge", code: "#FF0000" },
@@ -1327,7 +1329,7 @@
     ],
     sizes: ["M","L","S", "XL","XS", "XXL"]
 
-  },
+  },/* 
   {
     id: 56,
     src: "/assets/images/Doudoune sans manches Tibb_Moncler72.png",
@@ -1350,7 +1352,7 @@
     ],
     sizes: ["M","L","S", "XL","XS", "XXL"]
 
-  },
+  }, */
   {
     id: 57,
     src: "/assets/images/Doudoune_courte_Tarn_Moncler&.png",
