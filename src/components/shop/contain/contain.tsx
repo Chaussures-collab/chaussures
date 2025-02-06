@@ -1,3 +1,5 @@
+/** @format */
+
 import CartProduit from "@/components/home/produits/cartProduit";
 import { dbProduits } from "@/components/home/produits/produitsDB";
 import Container from "@/ui/components/container/container";
@@ -12,20 +14,22 @@ interface ContainProps {
 
 export default function Contain({ produits }: ContainProps) {
   const [currentPage, setCurrentPage] = useState(1);
-  const [productsPerPage] = useState(30);
+  const [productsPerPage] = useState(50);
   // Pagination
   const indexOfLastProduct = currentPage * productsPerPage;
   const indexOfFirstProduct = indexOfLastProduct - productsPerPage;
-  const currentProducts = produits.slice(indexOfFirstProduct, indexOfLastProduct);
+  const currentProducts = produits.slice(
+    indexOfFirstProduct,
+    indexOfLastProduct
+  );
   const totalPages = Math.ceil(produits.length / productsPerPage);
 
   const handlePageChange = (page: number) => {
     setCurrentPage(page);
   };
   useEffect(() => {
-    toast('Veuillez visiter nos multiples produits, y compris les vêtements.')
-  })
-
+    toast("Veuillez visiter nos multiples produits, y compris les vêtements.");
+  });
 
   return (
     <Container className="my-8">
@@ -45,10 +49,13 @@ export default function Contain({ produits }: ContainProps) {
       </div>
 
       {/* Pagination */}
-      <div className="flex justify-center gap-4 ">
+      <div className="flex justify-center gap-2  ">
         <Button
+          size="small"
           variant="suivant"
-          action={() => handlePageChange(currentPage > 1 ? currentPage - 1 : currentPage)}
+          action={() =>
+            handlePageChange(currentPage > 1 ? currentPage - 1 : currentPage)
+          }
           disabled={currentPage === 1}
         >
           Précédent
@@ -57,6 +64,7 @@ export default function Contain({ produits }: ContainProps) {
         {[...Array(totalPages)].map((_, index) => (
           <Button
             key={index}
+            size="small"
             variant="suivant"
             action={() => handlePageChange(index + 1)}
             disabled={currentPage === index + 1}
@@ -67,7 +75,12 @@ export default function Contain({ produits }: ContainProps) {
 
         <Button
           variant="suivant"
-          action={() => handlePageChange(currentPage < totalPages ? currentPage + 1 : currentPage)}
+          size="small"
+          action={() =>
+            handlePageChange(
+              currentPage < totalPages ? currentPage + 1 : currentPage
+            )
+          }
           disabled={currentPage === totalPages}
         >
           Suivant
