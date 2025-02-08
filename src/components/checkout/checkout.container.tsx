@@ -1,71 +1,89 @@
 /** @format */
 
-import Container from "@/ui/components/container/container";
-//import { Input } from "@/ui/designSystem/forms/input";
-import Typography from "@/ui/designSystem/typography/typography";
-import { useForm, SubmitHandler } from "react-hook-form";
-//import { useState } from "react";
-import { PayPalButtons } from "@paypal/react-paypal-js";
-import { useCart } from "@/context/cartContext";
+import { useState } from "react";
 import Image from "next/image";
 import { RiDeleteBinLine } from "react-icons/ri";
+import emailjs from "emailjs-com";
 import { toast } from "react-toastify";
 
-interface FormData {
-  nom: string;
-  prenom: string;
-  nomEntreprise: string;
-  continent: string;
-  adresseRue: string;
-  ville: string;
-  province: string;
-  codePostal: string;
-  numeroTelephone: string;
-  adresseMail: string;
-  banque: string; // Nouveau champ pour la banque
-  numeroCompteBancaire: string; // Nouveau champ pour le numéro de compte bancaire
-  identifiantCommande: string; // Nouveau champ pour l'identifiant de commande
-}
+import Container from "@/ui/components/container/container";
+import Typography from "@/ui/designSystem/typography/typography";
+import Button from "@/ui/designSystem/button/button";
+
+import { useCart } from "@/context/cartContext";
+import { useAuth } from "@/context/AuthUserContext";
 
 const CheckoutContainer = () => {
-  const { handleSubmit } = useForm<FormData>();
+  const { authUser } = useAuth();
+  const { cart, updateCartItem, removeCartItem, calculateTotalPromoPrice } =
+    useCart();
 
-  const onSubmit: SubmitHandler<FormData> = (data) => {
-    console.log("Données soumises :", data);
-  };
+  const [isLoading, setIsLoading] = useState(false);
 
-  //const { calculateTotalPromoPrice } = useCart(); // Gestion via le contexte
-  //const [success, setSuccess] = useState(false);
-  //const [error, setError] = useState<Record<string, unknown> | null>(null);
+  // Envoi de l'e-mail
+  const handleMessageMail = async () => {
+    if (!authUser) {
+      toast.error("Veuillez vous connecter avant de passer la commande.");
+      return;
+    }
 
-  const { cart, updateCartItem, removeCartItem } = useCart(); // Gestion via le contexte
+    console.log("Envoi du mail...");
 
-  const calculateTotal = () => {
-    return cart.reduce(
-      (acc, item) =>
-        acc + (Number(item.prix) || 0) * (Number(item.quantity) || 0),
-      0
-    );
-  };
+    setIsLoading(true);
 
-  const handleQuantityChange = (id: string | number, value: number) => {
-    if (value > 0) {
-      updateCartItem(String(id), value); // Conversion explicite en string
+    const templateParams = {
+      from_name: authUser.nom ?? "Client",
+      reply_to: authUser.email ?? "email_inconnu",
+      prixTotal: calculateTotalPromoPrice(),
+      to_email: "enlignechaussures@gmail.com",
+    };
+
+    try {
+      const response = await emailjs.send(
+        "service_onvs4ax",
+        "template_pjzftap",
+        templateParams,
+        "PVVkJyq_LdxNGmNBV"
+      );
+      console.log("E-mail envoyé avec succès", response.status, response.text);
+      alert("Veuillez consulter votre e-mail pour finaliser votre commande.");
+      cart.forEach((item) => removeCartItem(item.id.toString()));
+    } catch (error) {
+      console.error("Erreur lors de l'envoi de l'e-mail", error);
+      toast.error("Une erreur est survenue lors de l'envoi du message.");
+    } finally {
+      setIsLoading(false);
     }
   };
 
-  const handleDelete = (id: string | number) => {
-    removeCartItem(String(id)); // Conversion explicite en string
+  const onSubmit = () => {
+    console.log("Données soumises");
+    handleMessageMail();
   };
 
-  console.log(cart);
+  // Calcul du total du panier
+  const calculateTotal = () =>
+    cart.reduce(
+      (acc, item) => acc + (Number(item.prix) || 0) * (Number(item.quantity) || 0),
+      0
+    );
 
-  const total = calculateTotal();
-  const totalString = total.toString();
-  //console.log(totalString);
+  // Mise à jour de la quantité d'un article
+  const handleQuantityChange = (id: string | number, value: number) => {
+    if (value > 0) {
+      updateCartItem(String(id), value);
+    }
+  };
+
+  // Suppression d'un article du panier
+  const handleDelete = (id: string | number) => {
+    removeCartItem(String(id));
+  };
+
   return (
     <Container className="py-12">
-      <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
+      <div className="space-y-6">
+        {/* Section Panier */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
           <div>
             <Typography
@@ -74,6 +92,7 @@ const CheckoutContainer = () => {
             >
               1. Contenu de votre panier
             </Typography>
+
             <div className="bg-primary-1 space-y-4 shadow w-full p-6 rounded-lg mt-2">
               {cart.map((item) => (
                 <div
@@ -94,10 +113,7 @@ const CheckoutContainer = () => {
                   {/* Informations du produit */}
                   <div className="flex-1 ml-4">
                     <div className="flex items-center justify-between">
-                      <Typography
-                        variant="h4"
-                        className="truncate text-primary"
-                      >
+                      <Typography variant="h4" className="truncate text-primary">
                         {item.alt}
                       </Typography>
                       <button
@@ -111,16 +127,10 @@ const CheckoutContainer = () => {
 
                     <div className="flex items-center gap-4 mt-2">
                       <Typography variant="body">
-                        Taille :{" "}
-                        <span className="text-gray-600">
-                          {item.selectedSize}
-                        </span>
+                        Taille : <span className="text-gray-600">{item.selectedSize}</span>
                       </Typography>
                       <Typography variant="body">
-                        Couleur :{" "}
-                        <span className="text-gray-600">
-                          {item.selectedColor}
-                        </span>
+                        Couleur : <span className="text-gray-600">{item.selectedColor}</span>
                       </Typography>
                     </div>
 
@@ -133,149 +143,67 @@ const CheckoutContainer = () => {
                         min="1"
                         className="w-16 text-center border border-gray-300 rounded"
                         value={item.quantity}
-                        onChange={(e) =>
-                          handleQuantityChange(item.id, Number(e.target.value))
-                        }
+                        onChange={(e) => handleQuantityChange(item.id, Number(e.target.value))}
                       />
                     </div>
                   </div>
                 </div>
               ))}
             </div>
-            <div>
-              <div className="flex justify-between">
-                <Typography variant="h4" component="h4">
-                  Total
-                </Typography>
-                <Typography variant="h4" component="h4" theme="primary">
-                  {calculateTotal()}
-                </Typography>
-              </div>
+
+            {/* Total du panier */}
+            <div className="flex justify-between mt-4">
+              <Typography variant="h4">Total</Typography>
+              <Typography variant="h4" theme="primary">
+                € {calculateTotal().toFixed(2)}
+              </Typography>
             </div>
           </div>
 
+          {/* Section Paiement */}
           <div className="space-y-6">
-            <div>
-              <Typography
-                variant="h4"
-                className="bg-primary text-white text-fold shadow w-full p-3 rounded-lg"
-              >
-                2. Mode de paiement
+            <Typography variant="h4" className="bg-primary text-white text-fold shadow w-full p-3 rounded-lg">
+              2. Mode de paiement
+            </Typography>
+
+            <div className="flex justify-between">
+              <Typography variant="h4">Produits</Typography>
+              <Typography variant="h4">Totaux</Typography>
+            </div>
+
+            <div className="flex justify-between mt-2">
+              <Typography variant="body">Total</Typography>
+              <Typography variant="body" theme="primary">
+                € {calculateTotal().toFixed(2)}
               </Typography>
-              <div className="flex justify-between">
-                <Typography variant="h4" component="h4">
-                  Produits
-                </Typography>
-                <Typography variant="h4" component="h4">
-                  Totals
-                </Typography>
-              </div>
-              <div className="flex justify-between mt-2">
-                <Typography variant="body" component="span">
-                  Total
-                </Typography>
-                <Typography variant="body" component="span" theme="primary">
-                  {calculateTotal()}
-                </Typography>
-              </div>
             </div>
 
             <hr className="border-gray-3" />
 
-            <Typography
-              variant="body-base"
-              component="p"
-              className="text-justify text-gray-3"
-            >
+            {/* Instructions de paiement */}
+            <Typography variant="body-base" component="p" className="text-justify text-gray-3">
               Effectuez votre paiement directement sur notre compte bancaire.
-              Veuillez utiliser votre identifiant de commande comme référence de
-              paiement. Votre commande ne sera expédiée qu{"'"}une fois les
-              fonds crédités sur notre compte.
+              Veuillez utiliser votre identifiant de commande comme référence de paiement.
+              Votre commande ne sera expédiée qu{"'"}une fois les fonds crédités sur notre compte.
             </Typography>
 
-            <Typography
-              variant="body-base"
-              component="p"
-              className="text-justify text-gray-3"
-            >
-              Vos données personnelles seront utilisées pour soutenir votre
-              expérience sur ce site web, gérer l{"'"}accès à votre compte et
-              pour d{"'"}autres fins décrites dans notre
-              <span className="font-weight-bold">
-                politique de confidentialité
-              </span>
-              .
+            <Typography variant="body-base" component="p" className="text-justify text-gray-3">
+              Vos données personnelles seront utilisées pour gérer votre expérience sur ce site,
+              gérer l{"'"}accès à votre compte et pour d{"'"}autres fins décrites dans notre
+              <span className="font-weight-bold"> politique de confidentialité</span>.
             </Typography>
 
-            {/* Bouton de commande 
-            <button
-              type="submit"
+            {/* Bouton de commande */}
+            <Button
+              action={onSubmit}
+              isLoading={isLoading}
               className="w-full px-4 py-2 text-white bg-primary rounded hover:bg-primary-dark"
             >
               PASSER COMMANDE
-            </button>*/}
-            <div>
-              <h2>Payer avec PayPal</h2>
-              <PayPalButtons
-                createOrder={(data, actions) => {
-                  return actions.order.create({
-                    intent: "CAPTURE",
-                    purchase_units: [
-                      {
-                        amount: {
-                          currency_code: "EUR",
-                          value: totalString
-                        }
-                      }
-                    ]
-                  });
-                }}
-                onApprove={async (data, actions) => {
-                  if (!actions?.order) {
-                    // Vérifie si actions et actions.order existent
-                    console.error("Actions PayPal non définies.");
-                    return;
-                  }
-
-                  try {
-                    const details = await actions.order.capture();
-                    console.log("Détails du paiement : ", details);
-
-                    if (!details.payer) {
-                      console.error(
-                        "Les informations du payeur ne sont pas disponibles."
-                      );
-                      return;
-                    }
-
-                    const nomComplet = `${
-                      details.payer.name?.given_name || "Inconnu"
-                    } ${details.payer.name?.surname || ""}`.trim();
-                    const email =
-                      details.payer.email_address || "Email non disponible";
-
-                    console.log("Nom:", nomComplet);
-                    console.log("Email:", email);
-                    toast.success("Paiement effectué avec succès")
-                    alert(`Paiement réussi ! Merci ${nomComplet} 😊`);
-                  } catch (error) {
-                    console.error(
-                      "Erreur lors de la capture du paiement :",
-                      error
-                    );
-                    toast.error(
-                      "Une erreur est survenue lors du paiement avec PayPal. Veuillez contacter l'agence Shopimarket pour vous montrer la procédure à suivre afin que vous puissiez achever votre commande."
-                    );
-                  }
-                }}
-                onError={(err) => {
-                  console.error("Erreur PayPal:", err);
-                }}
-              />
-            </div>
+            </Button>
           </div>
         </div>
-      </form>
+      </div>
     </Container>
   );
 };
