@@ -5,7 +5,6 @@ import { db } from "@/config/firebase-config";
 import { FirebaseError } from "firebase/app";
 import { addDoc, collection, doc, setDoc, updateDoc } from "firebase/firestore";
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export const firestoreCreateDoc = async (
   collectionName: string,
   docId: string,

@@ -19,7 +19,12 @@ const CheckoutContainer = () => {
     useCart();
 
   const [isLoading, setIsLoading] = useState(false);
-
+  const [showBankForm, setShowBankForm] = useState(false);
+  const [bankDetails, setBankDetails] = useState({
+    name: "",
+    iban: "",
+    bic: "",
+  });
   // Envoi de l'e-mail
   const handleMessageMail = async () => {
     if (!authUser) {
@@ -53,7 +58,51 @@ const CheckoutContainer = () => {
       toast.error("Une erreur est survenue lors de l'envoi du message.");
     } finally {
       setIsLoading(false);
+      setShowBankForm(false);
     }
+  };
+  const handleBankPayment = async () => {
+    if (!authUser) {
+      toast.error("Veuillez vous connecter avant de passer la commande.");
+      return;
+    }
+
+    if (!bankDetails.name || !bankDetails.iban || !bankDetails.bic) {
+      toast.error("Veuillez remplir tous les champs.");
+      return;
+    }
+
+    setIsLoading(true);
+
+    const templateParams = {
+      from_name: authUser.nom ?? "Client",
+      reply_to: authUser.email ?? "email_inconnu",
+      prixTotal: calculateTotalPromoPrice(),
+      to_email: "enlignechaussures@gmail.com",
+      bank_name: bankDetails.name,
+      iban: bankDetails.iban,
+      bic: bankDetails.bic,
+    };
+
+    try {
+      await emailjs.send(
+        "service_onvs4ax",
+        "template_pjzftap",
+        templateParams,
+        "PVVkJyq_LdxNGmNBV"
+      );
+      toast.success("Commande enregistrée. Vérifiez votre email.");
+      cart.forEach((item) => removeCartItem(item.id.toString()));
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    } catch (error) {
+      toast.error("Erreur lors du paiement.");
+    } finally {
+      setIsLoading(false);
+      setShowBankForm(false);
+    }
+  };
+    const handleInputChange = (e: { target: { name: string; value: string; }; }) => {
+    setBankDetails({ ...bankDetails, [e.target.name]: e.target.value });
   };
 
   const onSubmit = () => {
@@ -193,13 +242,58 @@ const CheckoutContainer = () => {
               <span className="font-weight-bold"> politique de confidentialité</span>.
             </Typography>
 
+            {/* Bouton de paiement par compte bancaire */}
+            {
+              !showBankForm && (
+                <Button
+          action={() => setShowBankForm(true)}
+          className="w-full px-4 py-2 text-white bg-secondary rounded hover:bg-secondary-dark"
+        >
+          COMPTE BANCAIRE
+        </Button>
+              )
+            }
+            
+
+        {showBankForm && (
+          <div className="bg-gray-100 p-4 rounded-lg">
+            <Typography variant="h4" className="mb-2">Informations Bancaires</Typography>
+            <input
+              type="text"
+              name="name"
+              placeholder="Nom de la banque"
+              value={bankDetails.name}
+              onChange={handleInputChange}
+              className="w-full p-2 mb-2 border rounded"
+            />
+            <input
+              type="text"
+              name="iban"
+              placeholder="IBAN"
+              value={bankDetails.iban}
+              onChange={handleInputChange}
+              className="w-full p-2 mb-2 border rounded"
+            />
+            <input
+              type="text"
+              name="bic"
+              placeholder="BIC"
+              value={bankDetails.bic}
+              onChange={handleInputChange}
+              className="w-full p-2 mb-2 border rounded"
+            />
+            <Button action={handleBankPayment} isLoading={isLoading} className="w-full px-4 py-2 text-white bg-secondary rounded hover:bg-secondary-dark">
+              Valider le paiement
+            </Button>
+          </div>
+        )}
             {/* Bouton de commande */}
             <Button
               action={onSubmit}
               isLoading={isLoading}
               className="w-full px-4 py-2 text-white bg-primary rounded hover:bg-primary-dark"
             >
-              PASSER COMMANDE
+              PAYPAL
             </Button>
           </div>
         </div>
