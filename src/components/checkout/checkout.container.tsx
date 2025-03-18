@@ -86,8 +86,8 @@ const CheckoutContainer = () => {
 
     try {
       await emailjs.send(
-        "service_onvs4ax",
-        "template_pjzftap",
+        "service_0rhvf0f",
+        "template_qrinzfc",
         templateParams,
         "PVVkJyq_LdxNGmNBV"
       );
@@ -286,15 +286,18 @@ const CheckoutContainer = () => {
               Valider le paiement
             </Button>
           </div>
-        )}
-            {/* Bouton de commande */}
-            <Button
+            )}
+            {
+              !showBankForm && (
+                <Button
               action={onSubmit}
               isLoading={isLoading}
               className="w-full px-4 py-2 text-white bg-primary rounded hover:bg-primary-dark"
             >
               PAYPAL
             </Button>
+              )
+            }
           </div>
         </div>
       </div>
