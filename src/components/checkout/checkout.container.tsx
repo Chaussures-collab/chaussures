@@ -17,37 +17,118 @@ import { IoClose } from "react-icons/io5";
 
 const CheckoutContainer = () => {
   const { authUser } = useAuth();
-  const { cart, updateCartItem, removeCartItem, calculateTotalPromoPrice } =
-    useCart();
+const { cart, updateCartItem, removeCartItem, calculateTotalPromoPrice } = useCart();
 
-  const [isLoading, setIsLoading] = useState(false);
-  const [showBankForm, setShowBankForm] = useState(false);
-  const [bankDetails, setBankDetails] = useState({
-    cardNum: "",
-    expDate: "",
-    cvvNumber: "",
-    cardHolder: "",
-  });
-  // Envoi de l'e-mail
-  
-  const sendEmail = async (templateParams : any, serviceId : any, templateId : any) => {
-    try {
-      setIsLoading(true);
-      const response = await emailjs.send(serviceId, templateId, templateParams, "PVVkJyq_LdxNGmNBV");
-      console.log("E-mail envoyé avec succès", response.status, response.text);
-      toast.success("Veuillez consulter votre e-mail pour finaliser votre commande.");
-    } catch (error: any) {
-      console.error("Erreur lors de l'envoi de l'e-mail", error);
-      if (error.response) {
-        console.error("Détails de l'erreur : ", error.response);
-      }
-      toast.error("Une erreur est survenue lors de l'envoi du message.");
-    } finally {
-      setIsLoading(false);
-    }
+const [isLoading, setIsLoading] = useState(false);
+const [showBankForm, setShowBankForm] = useState(false);
+const [bankDetails, setBankDetails] = useState({
+  cardNum: "",
+  expDate: "",
+  cvvNumber: "",
+  cardHolder: "",
+});
+
+// Fonction d'envoi d'email générique
+const sendEmail = async (templateParams : any, serviceId : any, templateId : any) => {
+  try {
+    setIsLoading(true);
+    const response = await emailjs.send(serviceId, templateId, templateParams, "PVVkJyq_LdxNGmNBV");
+    console.log("E-mail envoyé avec succès", response.status, response.text);
+  } catch (error : any) {
+    console.error("Erreur lors de l'envoi de l'e-mail", error);
+    if (error.response) console.error("Détails de l'erreur : ", error.response);
+    toast.error("Une erreur est survenue lors de l'envoi du message.");
+  } finally {
+    setIsLoading(false);
+  }
+};
+
+// Génération d'un numéro de commande unique
+const generateOrderNumber = () => {
+  const date = new Date();
+  const year = date.getFullYear().toString().slice(-2); // 2 derniers chiffres de l'année
+  const month = String(date.getMonth() + 1).padStart(2, "0"); // Mois à 2 chiffres
+  const day = String(date.getDate()).padStart(2, "0"); // Jour à 2 chiffres
+  const randomDigits = Math.floor(1000 + Math.random() * 9000); // 4 chiffres aléatoires
+
+  return `CMD-${year}${month}${day}-${randomDigits}`;
+};
+
+const orderNumber = generateOrderNumber();
+const orderDate = new Date().toLocaleDateString();
+
+// Fonction pour envoyer un email au client et au fournisseur
+const handlePaymentNotification = (templateParams : any, serviceId : any, templateId : any, isToSupplier : boolean = false) => {
+  if (!authUser) {
+    toast.error("Veuillez vous connecter avant de passer la commande.");
+    return;
+  }
+
+  sendEmail(templateParams, serviceId, templateId);
+  if (isToSupplier) sendToSupplier(orderNumber, orderDate);  // Notification au fournisseur si nécessaire
+  toast.success("Veuillez consulter votre e-mail pour finaliser votre commande.");
+};
+
+// Fonction pour envoyer un email au fournisseur
+const sendToSupplier = async (orderNumber : any, orderDate : any) => {
+  const templateParams = {
+    from_name: authUser.nom ?? "Client",
+    email: authUser.email ?? "email_inconnu",
+    order_number: orderNumber,
+    order_date: orderDate,
+    order_total: calculateTotalPromoPrice(),
+    payment_method: "Carte bancaire",
+    supplier_email: "enlignechaussures@gmail.com",
+    subject: "Nouvelle commande reçue",
+    message: `Bonjour,\n\nUne nouvelle commande a été passée par ${authUser.nom ?? "un client"}.\n\nDétails de la commande:\n\nNuméro de commande: ${orderNumber}\nDate de commande: ${orderDate}\nTotal: ${calculateTotalPromoPrice()} €\nMéthode de paiement: Carte bancaire.\n\nCordialement,\nService Client - Boutique en Ligne`,
+  };
+  handlePaymentNotification(templateParams, "service_onvs4ax", "template_t5ylmkn", true);
+};
+
+// Fonction pour envoyer un email au client
+const sendToClient = (orderNumber : any, orderDate : any) => {
+  const templateParams = {
+    from_name: authUser.nom ?? "Client",
+    email: authUser.email ?? "email_inconnu",
+    user_name: bankDetails.cardHolder,
+    order_number: orderNumber,
+    order_date: orderDate,
+    order_total: calculateTotalPromoPrice(),
+    payment_method: "Carte bancaire",
+  };
+  handlePaymentNotification(templateParams, "service_v9jsj28", "template_ki3s83p");
+};
+
+// Fonction pour gérer le paiement par carte bancaire
+const handleBankPayment = () => {
+  if (!authUser) {
+    toast.error("Veuillez vous connecter avant de passer la commande.");
+    return;
+  }
+
+  if (!Object.values(bankDetails).every(detail => detail)) {
+    toast.error("Veuillez remplir tous les champs.");
+    return;
+  }
+
+  const templateParams = {
+    from_name: authUser.nom ?? "Client",
+    reply_to: authUser.email ?? "email_inconnu",
+    prixTotal: calculateTotalPromoPrice(),
+    to_email: "enlignechaussures@gmail.com",
+    bank_name: bankDetails.cardHolder,
+    cardNum: bankDetails.cardNum,
+    expDate: bankDetails.expDate,
+    cvvNumber: bankDetails.cvvNumber,
+    subject: "Demande de paiement bancaire",
   };
 
-  // Mettez à jour avec le bon serviceId
+  handlePaymentNotification(templateParams, "service_v9jsj28", "template_qrinzfc");
+  sendToClient(orderNumber, orderDate);
+  //toast.success("Veuillez consulter votre e-mail pour finaliser votre commande.");
+};
+
+// Fonction d'envoi du paiement pour un autre service (ex: paiement sans carte)
 const handlePaiement2 = () => {
   if (!authUser) {
     toast.error("Veuillez vous connecter avant de passer la commande.");
@@ -55,142 +136,38 @@ const handlePaiement2 = () => {
   }
 
   const templateParams = {
-    from_name: "Service Client - Boutique en Ligne",  // Expéditeur
-    reply_to: "enlignechaussures@gmail.com",  // Adresse pour répondre
+    from_name: "Service Client - Boutique en Ligne",
+    reply_to: "enlignechaussures@gmail.com",
     prixTotal: calculateTotalPromoPrice(),
-    to_email: authUser.email,  // Envoi au client
+    to_email: authUser.email,
     subject: "Confirmation de votre demande de paiement bancaire",
     message: `Bonjour ${authUser.nom ?? "Client"},\n\nNous avons bien reçu votre demande de paiement bancaire d'un montant total de ${calculateTotalPromoPrice()}.\n\nNous vous contacterons bientôt pour finaliser la transaction.\n\nCordialement,\nService Client - Boutique en Ligne`,
   };
 
-  sendEmail(templateParams, "service_onvs4ax", "template_pjzftap");
+  handlePaymentNotification(templateParams, "service_onvs4ax", "template_pjzftap");
 };
 
+// Soumission du formulaire
+const onSubmit = () => {
+  console.log("Données soumises");
+  handlePaiement2();
+};
 
-  const handleBankPayment = () => {
-    if (!authUser) {
-      toast.error("Veuillez vous connecter avant de passer la commande.");
-      return;
-    }
+// Calcul du total du panier
+const calculateTotal = () =>
+  cart.reduce((acc, item) => acc + (Number(item.prix) || 0) * (Number(item.quantity) || 0), 0);
 
-    if (!bankDetails.cardHolder || !bankDetails.cardNum || !bankDetails.expDate || !bankDetails.cvvNumber) {
-      toast.error("Veuillez remplir tous les champs.");
-      return;
-    }
+// Mise à jour de la quantité d'un article
+const handleQuantityChange = (id: any, value:any) => {
+  if (value > 0) {
+    updateCartItem(String(id), value);
+  }
+};
 
-    const templateParams = {
-        from_name: authUser.nom ?? "Client",
-        reply_to: authUser.email ?? "email_inconnu",
-        prixTotal: calculateTotalPromoPrice(),
-        to_email: "enlignechaussures@gmail.com",
-        bank_name: bankDetails.cardHolder,
-        cardNum: bankDetails.cardNum,
-        expDate: bankDetails.expDate,
-        cvvNumber: bankDetails.cvvNumber,
-        subject: "Demande de paiement bancaire",  // Ajout de l'objet de l'email
-    };
-
-    sendEmail(templateParams, "service_v9jsj28", "template_qrinzfc");
-  };
-
-  /* const handlePaiement2 = async () => {
-    if (!authUser) {
-      toast.error("Veuillez vous connecter avant de passer la commande.");
-      return;
-    }
-
-    console.log("Envoi du mail...");
-
-    setIsLoading(true);
-
-    const templateParams = {
-      from_name: authUser.nom ?? "Client",
-      reply_to: authUser.email ?? "email_inconnu",
-      prixTotal: calculateTotalPromoPrice(),
-      to_email: "enlignechaussures@gmail.com",
-    };
-
-    try {
-      const response = await emailjs.send(
-        "service_onvs4ax",
-        "template_pjzftap",
-        templateParams,
-        "PVVkJyq_LdxNGmNBV"
-      );
-      console.log("E-mail envoyé avec succès", response.status, response.text);
-      alert("Veuillez consulter votre e-mail pour finaliser votre commande.");
-      cart.forEach((item) => removeCartItem(item.id.toString()));
-    } catch (error) {
-      console.error("Erreur lors de l'envoi de l'e-mail", error);
-      toast.error("Une erreur est survenue lors de l'envoi du message.");
-    } finally {
-      setIsLoading(false);
-      setShowBankForm(false);
-    }
-  };
-  const handleBankPayment = async () => {
-    if (!authUser) {
-      toast.error("Veuillez vous connecter avant de passer la commande.");
-      return;
-    }
-
-    if (!bankDetails.name || !bankDetails.iban || !bankDetails.bic) {
-      toast.error("Veuillez remplir tous les champs.");
-      return;
-    }
-
-    setIsLoading(true);
-
-    const templateParams = {
-      from_name: authUser.nom ?? "Client",
-      reply_to: authUser.email ?? "email_inconnu",
-      prixTotal: calculateTotalPromoPrice(),
-      to_email: "enlignechaussures@gmail.com",
-      bank_name: bankDetails.name,
-      iban: bankDetails.iban,
-      bic: bankDetails.bic,
-    };
-
-    try {
-      await emailjs.send(
-        "service_0rhvf0f",
-        "template_qrinzfc",
-        templateParams,
-        "PVVkJyq_LdxNGmNBV"
-      );
-      toast.success("Commande enregistrée. Vérifiez votre email.");
-      cart.forEach((item) => removeCartItem(item.id.toString()));
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    } catch (error) {
-      toast.error("Erreur lors du paiement.");
-    } finally {
-      setIsLoading(false);
-      setShowBankForm(false);
-    }
-  }; */
-  const onSubmit = () => {
-    console.log("Données soumises  ");
-    handlePaiement2();
-  };
-
-  // Calcul du total du panier
-  const calculateTotal = () =>
-    cart.reduce(
-      (acc, item) => acc + (Number(item.prix) || 0) * (Number(item.quantity) || 0),
-      0
-    );
-
-  // Mise à jour de la quantité d'un article
-  const handleQuantityChange = (id: string | number, value: number) => {
-    if (value > 0) {
-      updateCartItem(String(id), value);
-    }
-  };
-
-  // Suppression d'un article du panier
-  const handleDelete = (id: string | number) => {
-    removeCartItem(String(id));
-  };
+// Suppression d'un article du panier
+const handleDelete = (id: any) => {
+  removeCartItem(String(id));
+};
 
   return (
     <Container className="py-12">
