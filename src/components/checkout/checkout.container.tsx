@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 /** @format */
 
 import { useState } from "react";
@@ -29,13 +30,13 @@ const CheckoutContainer = () => {
   });
   // Envoi de l'e-mail
   
-  const sendEmail = async (templateParams, serviceId, templateId) => {
+  const sendEmail = async (templateParams : any, serviceId : any, templateId : any) => {
     try {
       setIsLoading(true);
       const response = await emailjs.send(serviceId, templateId, templateParams, "PVVkJyq_LdxNGmNBV");
       console.log("E-mail envoyé avec succès", response.status, response.text);
       toast.success("Veuillez consulter votre e-mail pour finaliser votre commande.");
-    } catch (error) {
+    } catch (error: any) {
       console.error("Erreur lors de l'envoi de l'e-mail", error);
       if (error.response) {
         console.error("Détails de l'erreur : ", error.response);
@@ -76,9 +77,6 @@ const handlePaiement2 = () => {
       toast.error("Veuillez remplir tous les champs.");
       return;
     }
-    console.log('====================================');
-    console.log(bankDetails);
-    console.log('====================================');
 
     const templateParams = {
         from_name: authUser.nom ?? "Client",
@@ -342,7 +340,7 @@ const handlePaiement2 = () => {
                   setBankDetails((prev) => ({ ...prev, cardNum: value }));
                 }}
                 className="p-2 w-full border border-gray-300 rounded"
-                maxLength="19"
+                maxLength={19}
                 autoComplete="off"
               />
             </div>
@@ -364,7 +362,7 @@ const handlePaiement2 = () => {
                     setBankDetails((prev) => ({ ...prev, expDate: value }));
                   }}
                   className="p-2 w-full border border-gray-300 rounded"
-                  maxLength="5"
+                  maxLength={5}
                   autoComplete="off"
                 />
               </div>
@@ -383,7 +381,7 @@ const handlePaiement2 = () => {
                     setBankDetails((prev) => ({ ...prev, cvvNumber: value }));
                   }}
                   className="p-2 w-full border border-gray-300 rounded"
-                  maxLength="3"
+                  maxLength={3}
                   autoComplete="off"
                 />
               </div>
