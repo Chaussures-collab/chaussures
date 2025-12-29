@@ -20,8 +20,8 @@ export default function RegisterView({ form }: Props) {
   }
 
   return (
-    <Container className="grid grid-cols-1 sm:grid-cols-2 gap-2 md:space-x-6 mb-2">
-      <div className="flex">
+    <Container className="grid grid-cols-1 sm:grid-cols-2 gap-2 md:space-x-6 mb-8">
+      <div className="flex mt-6">
         <div className="relative w-full h-[531px] hidden sm:flex">
           <Image
             fill

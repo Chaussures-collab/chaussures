@@ -40,9 +40,8 @@ function Modal({ isOpen, onClose, children }: ModalProps) {
           <Typography variant="h5">Catégories</Typography>
           <button
             onClick={onClose}
-            className="text-gray-500 hover:text-gray-800"
-            aria-label="Fermer le modal"
-          >
+            className="text-gray-400 hover:text-gray-800"
+            aria-label="Fermer le modal">
             <RiCloseFill size={24} />
           </button>
         </div>
@@ -76,8 +75,7 @@ export default function Navbar({
           selectedCategory === category
             ? "bg-blue-500 text-white"
             : "bg-gray-200 hover:bg-gray-300"
-        }`}
-      >
+        }`}>
         {category}
       </Button>
     </div>
@@ -86,11 +84,10 @@ export default function Navbar({
   return (
     <>
       {/* Barre de navigation */}
-      <Container className="flex items-center sticky top-30 md:top-20 z-50 justify-between h-16 bg-primary-1">
+      <Container className="flex items-center sticky top-30 md:top-20 z-50 justify-between h-16 bg-primary-50">
         <Typography
           variant="caption1"
-          className="flex space-x-4 items-center mx-4"
-        >
+          className="flex space-x-4 items-center mx-4">
           <Typography component="span">Filtre</Typography>
           <Button action={toggleModal} aria-label="Afficher le filtre">
             {isModalOpen ? (
@@ -109,15 +106,15 @@ export default function Navbar({
           <input
             type="text"
             disabled
-            value="8"
-            className="w-auto px-2 bg-white text-gray-3 max-w-10"
+            value="10"
+            className="w-auto px-2 bg-white text-gray-400 max-w-10"
           />{" "}
           partie par{" "}
           <input
             type="text"
             disabled
             value="défaut"
-            className="w-auto px-2 bg-white text-gray-3 max-w-20"
+            className="w-auto px-2 bg-white text-gray-400 max-w-20"
           />
         </Typography>
 

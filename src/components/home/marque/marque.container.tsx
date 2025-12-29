@@ -6,7 +6,7 @@ import React from "react";
 
 export default function MarqueContainer() {
   return (
-    <div className="bg-primary-1">
+    <div className="bg-primary-50">
       <Container className="justify-center items-center py-5 text-center">
         <Typography variant="h3" theme="primary">
           Toute marque confondue

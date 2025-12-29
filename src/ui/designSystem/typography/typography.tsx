@@ -32,8 +32,8 @@ export default function Typography({
   variant = "body",
   component: Component = "div",
   theme = "black",
-  weight = "regular",
-  className,
+  weight = "medium",
+  className
 }: Props) {
   // Styles pour les variantes
   const variantStyles: Record<string, string> = {
@@ -48,7 +48,7 @@ export default function Typography({
     body: "text-base lg:text-lg",
     "body-base": "text-base",
     "body-sm": "text-sm",
-    caption1: "text-caption1 lg:text-sm",
+    caption1: "text-2xl lg:text-sm",
     caption2: "text-caption2 lg:text-sm",
     caption3: "text-caption3 lg:text-sm",
     caption4: "text-caption4 lg:text-sm",
@@ -57,10 +57,10 @@ export default function Typography({
   // Couleurs dynamiques
   const themeStyles: Record<string, string> = {
     black: "text-gray",
-    gray: "text-gray-4",
+    gray: "text-gray-400",
     white: "text-white",
     primary: "text-primary",
-    secondary: "text-secondary",
+    secondary: "text-secondary"
   };
 
   return (
@@ -69,12 +69,12 @@ export default function Typography({
         variantStyles[variant],
         themeStyles[theme],
         {
+          "font-normal": weight === "regular",
           "font-medium": weight === "medium",
-          "font-bold": weight === "bold",
+          "font-bold": weight === "bold"
         },
         className
-      )}
-    >
+      )}>
       {children}
     </Component>
   );

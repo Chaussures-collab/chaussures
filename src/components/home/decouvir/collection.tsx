@@ -13,10 +13,9 @@ export default function Collection({ className }: Props) {
   return (
     <div
       className={clsx(
-        "z-10 p-5 bg-primary-1 max-w-[543px] min-w-[143px] mx-8 overflow-hidden bg-opacity-85 flex flex-col ",
+        "z-10 p-5 bg-primary-50 max-w-[543px] min-w-[143px] mx-8 overflow-hidden bg-opacity-85 flex flex-col ",
         className
-      )}
-    >
+      )}>
       <Typography variant="caption1" className="md:my-3 sm:text-left">
         Nouvel arrivant
       </Typography>
@@ -24,8 +23,7 @@ export default function Collection({ className }: Props) {
         component="h3"
         variant="h3"
         theme="primary"
-        className=" md:text-4xl"
-      >
+        className=" md:text-4xl">
         Découvrez Nos <br /> Nouvelle Collection,
       </Typography>
       <Typography variant="body-lg" className="mb-5 hidden sm:block ">

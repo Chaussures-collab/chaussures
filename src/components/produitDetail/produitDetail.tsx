@@ -87,15 +87,13 @@ export default function ProduitDetail({ produit }: ProduitDetailProps) {
             <Typography
               variant="body"
               component="span"
-              className="font-bold text-green-600"
-            >
+              className="font-bold text-green-600">
               {produit.promotion}€
             </Typography>
             <Typography
               variant="body"
               component="span"
-              className="line-through text-gray-4"
-            >
+              className="line-through text-gray-4">
               {produit.prix}€
             </Typography>
           </div>
@@ -118,8 +116,7 @@ export default function ProduitDetail({ produit }: ProduitDetailProps) {
       <Typography
         variant="body"
         component="p"
-        className="max-w-[500px] text-justify"
-      >
+        className="max-w-[500px] text-justify">
         {produit.description}
       </Typography>
       <hr className="my-2 border-gray-4" />
@@ -138,8 +135,7 @@ export default function ProduitDetail({ produit }: ProduitDetailProps) {
               }`}
               style={{ backgroundColor: color.code }} // Applique la couleur spécifique
               onClick={() => setSelectedColor(color.name)}
-              aria-label={`Choisir la couleur ${color.name}`}
-            ></button>
+              aria-label={`Choisir la couleur ${color.name}`}></button>
           ))}
         </div>
       </div>
@@ -158,11 +154,10 @@ export default function ProduitDetail({ produit }: ProduitDetailProps) {
               className={`w-10 h-10 rounded ${
                 selectedSize === size
                   ? "bg-primary text-white"
-                  : "bg-primary-1 text-gray-600"
+                  : "bg-primary-50 text-gray-400"
               }`}
               onClick={() => setSelectedSize(size)}
-              aria-label={`Choisir la taille ${size}`}
-            >
+              aria-label={`Choisir la taille ${size}`}>
               {size}
             </button>
           ))}
@@ -177,8 +172,7 @@ export default function ProduitDetail({ produit }: ProduitDetailProps) {
           <div className="flex gap-2">
             <button
               onClick={() => updateQuantity(1)} // Augmente la quantité
-              className="rounded bg-primary text-white items-center px-5 w-12 hover:shadow hover hover:scale-105 h-12"
-            >
+              className="rounded bg-primary text-white items-center px-5 w-12 hover:shadow hover hover:scale-105 h-12">
               +
             </button>
             {/* Sélecteur de quantité */}
@@ -194,8 +188,7 @@ export default function ProduitDetail({ produit }: ProduitDetailProps) {
             />
             <button
               onClick={() => updateQuantity(-1)} // Diminue la quantité
-              className="rounded bg-primary text-white items-center px-5 w-12 hover:shadow hover hover:scale-105 h-12"
-            >
+              className="rounded bg-primary text-white items-center px-5 w-12 hover:shadow hover hover:scale-105 h-12">
               -
             </button>
           </div>
@@ -208,8 +201,7 @@ export default function ProduitDetail({ produit }: ProduitDetailProps) {
               action={handleAddToCart}
               className="w-[156px] rounded"
               //disabled={!selectedColor || !selectedSize}
-              aria-label={`Ajouter ${quantity} ${produit.nom} au panier`}
-            >
+              aria-label={`Ajouter ${quantity} ${produit.nom} au panier`}>
               Ajouter au panier
             </Button>
             <Button
@@ -217,8 +209,7 @@ export default function ProduitDetail({ produit }: ProduitDetailProps) {
               action={handlePage}
               className="rounded"
               //disabled={!selectedColor || !selectedSize}
-              aria-label={`Ajouter ${quantity} ${produit.nom} au panier`}
-            >
+              aria-label={`Ajouter ${quantity} ${produit.nom} au panier`}>
               Commander
             </Button>
           </div>

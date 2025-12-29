@@ -18,34 +18,37 @@ export default function RegisterForm({ form }: Props) {
   const {  onSubmit, errors, isLoading, register, handleSubmit } = form;
 
   return (
-    <form onSubmit={handleSubmit(onSubmit)} className= "pt-8 pb-5 space-y-4">
+    <form onSubmit={handleSubmit(onSubmit)} className="pt-8 pb-5 space-y-4">
       <div className="grid grid-cols-2 gap-4">
         <Input
-        isLoading={isLoading}
-        placeholder="Nom"
-        type="text"
-        register={register}
-        errors={errors}
-        errorMsg="Champs obligatoire"
-        id="nom"
-        required={true}
-        isAutoCompleted={false}
-      />
-      <Input
-        isLoading={isLoading}
-        placeholder="Prenom"
-        type="text"
-        register={register}
-        errors={errors}
-        errorMsg="Champs obligatoire"
-        id="prenom"
-        required={true}
-        isAutoCompleted={false}
-      />
+          isLoading={isLoading}
+          label="Nom"
+          placeholder="Ex: Dupont"
+          type="text"
+          register={register}
+          errors={errors}
+          errorMsg="Champs obligatoire"
+          id="nom"
+          required={true}
+          isAutoCompleted={false}
+        />
+        <Input
+          isLoading={isLoading}
+          label="Prenom"
+          placeholder="Ex: Lucien"
+          type="text"
+          register={register}
+          errors={errors}
+          errorMsg="Champs obligatoire"
+          id="prenom"
+          required={true}
+          isAutoCompleted={false}
+        />
       </div>
       <Input
         isLoading={isLoading}
-        placeholder="email@gmail.com"
+        label="Email"
+        placeholder="Ex: email@gmail.com"
         type="email"
         register={register}
         errors={errors}
@@ -54,31 +57,36 @@ export default function RegisterForm({ form }: Props) {
         required={true}
         isAutoCompleted={false}
       />
+      <div className="grid grid-cols-2 gap-4">
+        <Input
+          isLoading={isLoading}
+          label="Mot de passe"
+          placeholder="Ex: ......."
+          type="password"
+          register={register}
+          errors={errors}
+          errorMsg="Champs obligatoire"
+          id="password"
+          required={true}
+          isAutoCompleted={false}
+        />
+        <Input
+          isLoading={isLoading}
+          label="Confirme le mot de passe"
+          placeholder="Ex: ......."
+          type="password"
+          register={register}
+          errors={errors}
+          errorMsg="Champs obligatoire"
+          id="confirmPassword"
+          required={true}
+          isAutoCompleted={false}
+        />
+      </div>
       <Input
         isLoading={isLoading}
-        placeholder="Entrez password"
-        type="password"
-        register={register}
-        errors={errors}
-        errorMsg="Champs obligatoire"
-        id="password"
-        required={true}
-        isAutoCompleted={false}
-      />
-      <Input
-        isLoading={isLoading}
-        placeholder="Confirmez password"
-        type="password"
-        register={register}
-        errors={errors}
-        errorMsg="Champs obligatoire" 
-        id="confirmPassword"
-        required={true}
-        isAutoCompleted={false}
-      />
-      <Input
-        isLoading={isLoading}
-        placeholder="Comment vous nous aviez connu"
+        label="Comment vous nous aviez connu"
+        placeholder="Ex: Facebook, Google, etc."
         register={register}
         errors={errors}
         type="text"
@@ -87,7 +95,11 @@ export default function RegisterForm({ form }: Props) {
         required={true}
         isAutoCompleted={false}
       />
-      <Button isLoading={isLoading} fullwidth type="submit">
+      <Button
+        isLoading={isLoading}
+        fullwidth
+        type="submit"
+        className="w-full px-4 py-2 text-white bg-primary rounded hover:bg-primary-dark">
         S{"'"}inscrire
       </Button>
     </form>

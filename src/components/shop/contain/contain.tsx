@@ -19,7 +19,7 @@ export default function Contain({ produits }: ContainProps) {
   const indexOfLastProduct = currentPage * productsPerPage;
   const indexOfFirstProduct = indexOfLastProduct - productsPerPage;
   const currentProducts = produits.slice(
-    indexOfFirstProduct,
+    indexOfFirstProduct,  
     indexOfLastProduct
   );
   const totalPages = Math.ceil(produits.length / productsPerPage);

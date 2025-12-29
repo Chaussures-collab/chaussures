@@ -11,7 +11,7 @@ interface Props {
 
 export default function Card({ src, alt, nom }: Props) {
   return (
-    <div className="relative flex flex-col items-center justify-center overflow-hidden bg-gray-200 rounded-lg w-80 h-80">
+    <div className="relative flex flex-col items-center justify-center overflow-hidden bg-gray-200 rounded-lg w-80 h-80 hover:scale-105 transition-transform duration-500 rounded-lg shadow-lg">
       {/* Conteneur pour l'image */}
       <div className="relative w-full h-full">
         <Image
@@ -20,7 +20,7 @@ export default function Card({ src, alt, nom }: Props) {
           width={300} // Valeur à adapter
           height={200} // Valeur à adapter
           objectFit="cover"
-          className="hover:scale-105 transition-transform duration-500 rounded"
+          className=""
         />
       </div>
 

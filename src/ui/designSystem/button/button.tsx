@@ -49,34 +49,30 @@ export default function Button({
 
   switch (variant) {
     case "accent":
-      variantStyles = "bg-primary hover:bg-primary-400 text-white";
+      variantStyles = "bg-primary hover:bg-primary-600 text-white";
       break;
     case "suivant":
-      variantStyles = "bg-primary-1 hover:text-white hover:bg-primary text-gray";
+      variantStyles =
+        "bg-primary-50 hover:text-white hover:bg-primary text-gray";
       break;
     case "secondary":
-      variantStyles =
-        "bg-white hover:bg-secondary-300/50 text-black";
+      variantStyles = "bg-white hover:bg-secondary-300/50 text-black";
       break;
     case "outline":
-      variantStyles =
-        "border border-primary text-primary hover:bg-gray-4 ";
+      variantStyles = "border border-primary text-primary hover:bg-gray-4 ";
       break;
     case "disabled":
       variantStyles = "bg-gray-600 text-gray-700 ";
       break;
     case "ico":
       if (iconTheme === "accent") {
-        variantStyles =
-          "bg-primary hover:bg-primary-400 text-white";
+        variantStyles = "bg-primary hover:bg-primary-600 text-white";
       }
       if (iconTheme === "secondary") {
-        variantStyles =
-          "bg-white hover:bg-gray-4 text-black";
+        variantStyles = "bg-white hover:bg-gray-4 text-black";
       }
       if (iconTheme === "gray") {
-        variantStyles =
-          "bg-gray-700 rimary  hover:bg-gray-600 text-white-full";
+        variantStyles = "bg-gray-700 rimary  hover:bg-gray-600 text-white-full";
       }
       break;
   }
@@ -90,7 +86,7 @@ export default function Button({
       }`;
       icoSize = 24;
       break;
-      case "produit":
+    case "produit":
       sizeStyles = `text-caption3 font-medium ${
         variant === "ico"
           ? "w-[40px] h-[40px] w-[40px] h-[40px] flex items-center justify-center"
@@ -107,7 +103,7 @@ export default function Button({
       icoSize = 24;
       break;
     case "large":
-      sizeStyles = `text-caption1 font-medium  ${
+      sizeStyles = `text-xl font-medium  ${
         variant === "ico"
           ? "w-[40px] h-[40px] md:w-[60px] md:h-[60px] flex items-center justify-center"
           : "px-[22px] py-[18px]"

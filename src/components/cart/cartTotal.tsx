@@ -9,13 +9,12 @@ export default function CartTotal({ totalAmount = 2500 }) {
   const route = useRouter();
   const handleCaissement = () => route.push("/checkout");
   return (
-    <div className="w-full max-w-sm p-6 mx-auto  text-center shadow bg-primary-1">
+    <div className="w-full max-w-sm p-6 mx-auto  text-center shadow bg-primary-50">
       {/* Titre */}
       <Typography
         variant="h4"
         component="h4"
-        className="mb-4 text-center text-primary"
-      >
+        className="mb-4 text-center text-primary">
         Totaux des paniers
       </Typography>
 
@@ -28,8 +27,7 @@ export default function CartTotal({ totalAmount = 2500 }) {
           variant="body"
           theme="primary"
           component="span"
-          className="font-bold text-gray-900"
-        >
+          className="font-bold text-gray-900">
           € {totalAmount.toLocaleString()}
         </Typography>
       </div>
@@ -42,8 +40,7 @@ export default function CartTotal({ totalAmount = 2500 }) {
           variant="body"
           theme="primary"
           component="span"
-          className="font-bold text-gray-900"
-        >
+          className="font-bold text-gray-900">
           € {totalAmount.toLocaleString()}
         </Typography>
       </div>
@@ -54,8 +51,7 @@ export default function CartTotal({ totalAmount = 2500 }) {
         action={handleCaissement}
         size="small"
         className="rounded"
-        aria-label="Passer à la caisse"
-      >
+        aria-label="Passer à la caisse">
         Caisse
       </Button>
     </div>

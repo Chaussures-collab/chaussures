@@ -32,12 +32,11 @@ export default function CartTable() {
   return (
     <Container className="flex flex-col sm:flex-rows gap-8 shadow bg-white md:flex-row p-6 md:justify-between md:items-start">
       {/* Liste des produits */}
-      <div className="bg-primary-1 w-full p-6 rounded-lg mt-9 shadow md:w-3/5 space-y-4">
+      <div className="bg-primary-50 w-full p-6 rounded-lg mt-9 shadow md:w-3/5 space-y-4">
         {cart.map((item) => (
           <div
             key={item.id}
-            className="flex items-center justify-between border-b border-primary pb-4 last:border-none"
-          >
+            className="flex items-center justify-between border-b border-primary pb-4 last:border-none">
             {/* Image du produit */}
             <div className="relative h-16 w-16 md:h-24 md:w-24 overflow-hidden rounded-lg">
               <Image
@@ -58,8 +57,7 @@ export default function CartTable() {
                 <button
                   onClick={() => handleDelete(item.id)}
                   className="text-red-500 hover:text-red-700 transition duration-200"
-                  aria-label="Supprimer l'article"
-                >
+                  aria-label="Supprimer l'article">
                   <RiDeleteBinLine size={24} className="text-primary" />
                 </button>
               </div>
@@ -67,11 +65,11 @@ export default function CartTable() {
               <div className="flex items-center gap-4 mt-2">
                 <Typography variant="body">
                   Taille :{" "}
-                  <span className="text-gray-600">{item.selectedSize}</span>
+                  <span className="text-gray-400">{item.selectedSize}</span>
                 </Typography>
                 <Typography variant="body">
                   Couleur :{" "}
-                  <span className="text-gray-600">{item.selectedColor}</span>
+                  <span className="text-gray-400">{item.selectedColor}</span>
                 </Typography>
               </div>
 

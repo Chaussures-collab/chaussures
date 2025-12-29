@@ -67,8 +67,7 @@ export default function Navigation() {
         {/* Logo */}
         <Link
           href="/"
-          className="flex items-center space-x-2 transition-all duration-300"
-        >
+          className="flex items-center space-x-2 transition-all duration-300">
           <Avatar
             src="/assets/images/logo.png"
             alt="logo"
@@ -80,8 +79,7 @@ export default function Navigation() {
             theme="black"
             component="h2"
             weight="medium"
-            className="text-animation "
-          >
+            className="text-animation ">
             Market
           </Typography>
         </Link>
@@ -91,8 +89,7 @@ export default function Navigation() {
           <Typography
             variant="caption4"
             component="div"
-            className="space-x-4 text-sm sm:text-base md:text-lg lg:text-xl"
-          >
+            className="space-x-4 text-sm sm:text-base md:text-lg lg:text-xl">
             <ActiveLink href="/">Accueil</ActiveLink>
             <ActiveLink href="/shop">Boutique</ActiveLink>
             {/* <ActiveLink href="/nouveaux-arrivants">Nouveau Arrivant</ActiveLink> */}
@@ -101,8 +98,7 @@ export default function Navigation() {
           {/* Search Bar */}
           <form
             onSubmit={handleSearch}
-            className="items-center hidden px-3 py-1 bg-gray-100 border lg:flex"
-          >
+            className="items-center hidden px-3 py-1 bg-gray-100 border lg:flex">
             <input
               type="text"
               placeholder="Rechercher un produit..."
@@ -110,7 +106,7 @@ export default function Navigation() {
               onChange={(e) => setSearchQuery(e.target.value)}
               className="flex-grow text-gray-700 bg-transparent outline-none"
             />
-            <button type="submit" className="text-gray-600">
+            <button type="submit" className="text-gray-400">
               <FaSearch size={18} />
             </button>
           </form>
@@ -148,9 +144,8 @@ export default function Navigation() {
           {/* Mobile Menu Button */}
           <button
             onClick={toggleMobileMenu}
-            className="block p-2 text-gray-600 rounded-md lg:hidden hover:bg-gray-200 focus:outline-none"
-            aria-label="Toggle mobile menu"
-          >
+            className="block p-2 text-gray-400 rounded-md lg:hidden hover:bg-gray-200 focus:outline-none"
+            aria-label="Toggle mobile menu">
             {isMobileMenuOpen ? <FaTimes size={24} /> : <FaBars size={24} />}
           </button>
         </div>
@@ -160,8 +155,7 @@ export default function Navigation() {
       <div
         className={`lg:hidden bg-white transition-all duration-300 ease-in-out ${
           isMobileMenuOpen ? "max-h-screen pb-4" : "max-h-0 overflow-hidden"
-        }`}
-      >
+        }`}>
         <div className="flex flex-col px-10">
           <div className="flex space-x-4">
             <ActiveLink href="/" className="block py-2 text-lg sm:text-xl">
@@ -178,8 +172,7 @@ export default function Navigation() {
             </ActiveLink> */}
             <ActiveLink
               href="/contact"
-              className="block py-2 text-lg sm:text-xl"
-            >
+              className="block py-2 text-lg sm:text-xl">
               Contact
             </ActiveLink>
           </div>
@@ -187,8 +180,7 @@ export default function Navigation() {
           {/* Mobile Search */}
           <form
             onSubmit={handleSearch}
-            className="flex items-center px-3 py-1 bg-gray-100 border"
-          >
+            className="flex items-center px-3 py-1 bg-gray-100 border">
             <input
               type="text"
               placeholder="Rechercher un produit..."
@@ -196,7 +188,7 @@ export default function Navigation() {
               onChange={(e) => setSearchQuery(e.target.value)}
               className="flex-grow text-gray-700 bg-transparent outline-none"
             />
-            <button type="submit" className="text-gray-600">
+            <button type="submit" className="text-gray-400">
               <FaSearch size={18} />
             </button>
           </form>

@@ -105,6 +105,7 @@ const ContactContainer = () => {
     <div key={field.id} className="space-y-1">
       <Input
         placeholder={field.placeholder}
+        label={field.label}
         register={register}
         errors={errors}
         id={field.id as keyof FormData}
@@ -123,33 +124,34 @@ const ContactContainer = () => {
         <Typography variant="h3" component="h3">
           Contactez-nous
         </Typography>
-        <Typography variant="body" component="p" className="mb-8">
+        <Typography variant="body" component="p" className="mb-8 text-gray-500">
           Pour plus d{"'"}informations sur nos produits et services, n{"'"}
           hésitez pas à nous envoyer un e-mail. Notre équipe est toujours là
           pour vous aider. Ne soyez pas hésitant !
         </Typography>
       </div>
-      <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
+      <form onSubmit={handleSubmit(onSubmit)} className="space-y-6  w-full max-w-5xl mx-auto space-y-5">
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-8 justify-center max-w-92">
           <div className="grid m:grid-cols-2 sm:grid-cols-1 space-y-2 justify-center ">
             <div className="flex space-x-4">
-              <RiLock2Fill className="text-4xl mt-2" />
+              <RiLock2Fill className="text-2xl mt-2" />
               <div>
-                <Typography variant="h4" component="h4">
+                <Typography variant="h5" component="h5">
                   Adresse
                 </Typography>
-                <Typography variant="body">
-                  68 Rue Saint-Ferréot, <br /> 13000 Marseille, France<br />  Etage E
+                <Typography variant="body" className="text-gray-500">
+                  68 Rue Saint-Ferréot, <br /> 13000 Marseille, France
+                  <br /> Etage E
                 </Typography>
               </div>
             </div>
             <div className="flex space-x-4">
-              <RiPhoneFill className="text-4xl mt-2" />
+              <RiPhoneFill className="text-2xl mt-2" />
               <div>
-                <Typography variant="h4" component="h4">
+                <Typography variant="h5" component="h5">
                   Numéro de téléphone
                 </Typography>
-                <Typography variant="body">
+                <Typography variant="body" className="text-gray-500">
                   Mobile: +(33) 760604485
                   <br />
                   Hotline: +(33) 760604485
@@ -157,12 +159,12 @@ const ContactContainer = () => {
               </div>
             </div>
             <div className="flex space-x-4">
-              <RiLock2Fill className="text-4xl mt-2" />
+              <RiLock2Fill className="text-2xl mt-2" />
               <div>
-                <Typography variant="h4" component="h4">
+                <Typography variant="h5" component="h5">
                   Heure de travail
                 </Typography>
-                <Typography variant="body">
+                <Typography variant="body" className="text-gray-500">
                   Lundi-Samedi 09:00 - 22:00
                 </Typography>
               </div>
@@ -173,8 +175,7 @@ const ContactContainer = () => {
             <Button
               type="submit"
               isLoading={isLoading}
-              className="w-full px-4 py-2 text-white bg-primary rounded hover:bg-primary-dark"
-            >
+              className="w-full px-4 py-2 text-white bg-primary rounded hover:bg-primary-dark">
               Envoyer
             </Button>
           </div>
