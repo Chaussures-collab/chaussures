@@ -7,11 +7,9 @@ import { RegisterFormFieldsType } from "@/types/forms";
 import { firebaseCreateUser, firebaseEmailVerification } from "@/pages/api/authentification";
 // Toast retiré - utilisation de FormError et validation inline à la place
 import { firestoreCreateDoc } from "@/pages/api/firestore";
-//import useToggle from "@/hooks/use-toggle";
 
 export default function RegisterContainer() {
   const [isLoading, setisLoading] = useState<boolean>(false);
-  //const {isLoading, setIsLoading} = useToggle();
 
   const {
     handleSubmit,
