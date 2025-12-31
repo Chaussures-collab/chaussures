@@ -29,7 +29,7 @@
     id: 1,
     src: "/assets/images/AIR_NIKE5.png",
     alt: "Slide 1",
-    prix: 70,
+    prix: 5,
     nom: "AIR NIKE",
     categorie: "Chaussures",
     dateAjout: "2024-02-10T12:00:00Z", // Produit ajouté il y a 7 jours

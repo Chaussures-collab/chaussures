@@ -5,7 +5,7 @@ import RegisterView from "./register.view";
 import { SubmitHandler, useForm } from "react-hook-form";
 import { RegisterFormFieldsType } from "@/types/forms";
 import { firebaseCreateUser, firebaseEmailVerification } from "@/pages/api/authentification";
-import { toast } from "react-toastify";
+// Toast retiré - utilisation de FormError et validation inline à la place
 import { firestoreCreateDoc } from "@/pages/api/firestore";
 //import useToggle from "@/hooks/use-toggle";
 
@@ -18,7 +18,8 @@ export default function RegisterContainer() {
     formState: { errors },
     register,
     setError,
-    reset
+    reset,
+    watch
   } = useForm<RegisterFormFieldsType>();
 
   const handleCreateUserDocument = async (
@@ -28,14 +29,18 @@ export default function RegisterContainer() {
   ) => {
     const { error } = await firestoreCreateDoc(collectionName, docId, document);
     if (error) {
-      toast.error(error.message);
+      setError("root", {
+        type: "manual",
+        message: error.message || "Erreur lors de la création du compte"
+      });
+      setisLoading(false);
       return;
     }
-    console.log("User created successfully:", document);
     setisLoading(false);
-    toast.success("Votre compte a été créée avec succès");
     reset();
     firebaseEmailVerification();
+    // Redirection silencieuse après inscription réussie
+    // route.push("/connexion");
   };
 
   const handleCreateUserAuth = async ({
@@ -45,13 +50,13 @@ export default function RegisterContainer() {
     prenom,
     how_did_hear
   }: RegisterFormFieldsType) => {
-    console.log("Email:", email);
-    console.log("Password:", password);
-    console.log("How did he hear:", how_did_hear);
     const { error, data } = await firebaseCreateUser(email, password);
     if (error) {
+      setError("root", {
+        type: "manual",
+        message: error.message || "Erreur lors de la création du compte utilisateur"
+      });
       setisLoading(false);
-      console.log("Error creating user:", error);
       return;
     }
     const userDocData = {
@@ -71,43 +76,38 @@ export default function RegisterContainer() {
   const onSubmit: SubmitHandler<RegisterFormFieldsType> = async (formdata) => {
     setisLoading(true);
     const { password, confirmPassword } = formdata;
-    console.log("Password:", password);
+    
     if (password.length < 6) {
       setError("password", {
         type: "manual",
-        message: "Password must be at least 6 characters long"
+        message: "Le mot de passe doit contenir au moins 6 caractères"
       });
-      console.log("Password doit contenu au moins 6 caractère");
-      toast.error("Password doit contenu au moins 6 caractère");
       setisLoading(false);
       return;
     }
     if (password !== confirmPassword) {
       setError("confirmPassword", {
         type: "manual",
-        message: "Vos deux passwords sont pas identiques"
+        message: "Les deux mots de passe ne correspondent pas"
       });
-      toast.error("Vos deux passwords sont pas identiques");
       setisLoading(false);
       return;
     }
-    console.log("Form soumit:", formdata);
     handleCreateUserAuth(formdata);
   };
 
-  const form = {
+  /* const form = {
     errors,
     register,
     handleSubmit,
     onSubmit,
-    isLoading
-  };
-
-  console.log("Les données du formulaire sont:", form); // Vérifiez ici.
+    isLoading,
+    watch
+  }; */
 
   return (
     <RegisterView
-      form={{ errors, register, handleSubmit, onSubmit, isLoading }}
+      form={{ errors, register, handleSubmit, onSubmit, isLoading, watch }}
     />
   );
 }

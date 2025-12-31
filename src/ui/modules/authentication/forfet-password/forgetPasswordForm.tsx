@@ -13,6 +13,7 @@ export default function ForgetPasswordForm({form}:Props) {
       <form onSubmit={handleSubmit(onSubmit)} className= "pt-8 pb-5 space-y-4">
         <Input
           isLoading={isLoading}
+          label="Email"
           placeholder="Email@gmail.com"
           type="email"
           register={register}

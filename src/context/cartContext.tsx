@@ -37,15 +37,16 @@ const CartContext = createContext<CartContextType | undefined>(undefined);
 // Fournisseur du contexte
 export function CartProvider({ children }: Context) {
   const [cart, setCart] = useState<Product[]>([]);
+  
 
   // Fonction pour ajouter un produit au panier
   const addToCart = (product: Product) => {
     setCart((prevCart) => {
       // Vérifie si le produit est déjà dans le panier
-      const isProductInCart = prevCart.some((item) => item.nom === product.nom);
+      /* const isProductInCart = prevCart.some((item) => item.nom === product.nom);
       if (isProductInCart) {
         return prevCart; // Ne rien faire si le produit est déjà dans le panier
-      }
+      } */
       return [...prevCart, product];
     });
   };
@@ -61,6 +62,7 @@ export function CartProvider({ children }: Context) {
 
   // Fonction pour supprimer un produit du panier
   const removeCartItem = (productId: string) => {
+    console.log("Suppression du produit avec l'ID :", productId);
     setCart((prevCart) =>
       prevCart.filter((product) => product.id !== productId)
     );

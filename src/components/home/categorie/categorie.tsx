@@ -16,7 +16,7 @@ export default function Categorie() {
         weight="regular">
         Parcourir la gamme
       </Typography>
-      <Typography variant="body-lg" className="text-center">
+      <Typography theme="gray" variant="body-lg" className="text-center">
         Explorez notre large sélection de produits et découvrez des options
         adaptées à tous vos besoins. Parcourez notre gamme pour trouver des
         articles de qualité, soigneusement choisis pour vous.

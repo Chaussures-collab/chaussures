@@ -21,7 +21,7 @@ interface Props {
     | "caption3"
     | "caption4";
   component?: "h1" | "h2" | "h3" | "h4" | "h5" | "div" | "p" | "span";
-  theme?: "black" | "white" | "gray" | "primary" | "secondary";
+  theme?: "black" | "white" | "gray" | "primary" | "secondary" | "red";
   weight?: "regular" | "medium" | "bold";
   className?: string;
   children: React.ReactNode;
@@ -60,7 +60,8 @@ export default function Typography({
     gray: "text-gray-400",
     white: "text-white",
     primary: "text-primary",
-    secondary: "text-secondary"
+    secondary: "text-secondary",
+    red: "text-danger"
   };
 
   return (
