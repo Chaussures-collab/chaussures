@@ -14,24 +14,18 @@ import { useCart } from "@/context/cartContext";
 import { toast } from "react-toastify";
 import { useRouter } from "next/router";
 
-/* interface ColorOption {
-  name: string; // Nom de la couleur (ex. "Rouge")
-  code: string; // Code CSS de la couleur (ex. "bg-red-500")
-  icon?: JSX.Element; // Optionnel : Icône associée à la couleur
-} */
-
 interface ProduitDetailProps {
   produit: ProduitType;
 }
 
 export default function ProduitDetail({ produit }: ProduitDetailProps) {
   const route = useRouter();
+  const { addToCart } = useCart();
   // Appel de `useCart` au bon endroit (dans le composant fonctionnel)
   const [selectedColor, setSelectedColor] = useState<string | null>(null);
   const [selectedSize, setSelectedSize] = useState<string | number | null>(
     null
   );
-
   const handlePage = () => {
     if (!selectedColor || !selectedSize) {
       toast.error(
@@ -40,7 +34,13 @@ export default function ProduitDetail({ produit }: ProduitDetailProps) {
       return;
     }
     if (selectedColor && selectedSize) {
-      addToCart({ ...produit, quantity, selectedColor, selectedSize });
+      addToCart({
+        ...produit,
+        quantity,
+        selectedColor,
+        selectedSize,
+        id: `${produit.id}-${selectedSize}-${selectedColor}`
+      });
       console.log(
         `Produit ajouté : ID ${produit.id}, Quantité : ${quantity}, Couleur : ${selectedColor}, Taille : ${selectedSize}`
       );
@@ -49,12 +49,9 @@ export default function ProduitDetail({ produit }: ProduitDetailProps) {
   };
   const [quantity, setQuantity] = useState(1);
 
-  const { addToCart } = useCart();
-
   const updateQuantity = (amount: number) => {
     setQuantity((prevQuantity) => Math.max(1, prevQuantity + amount));
   };
-
   /* const handleQuantityChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const newQuantity = parseInt(e.target.value, 10);
     setQuantity(isNaN(newQuantity) || newQuantity < 1 ? 1 : newQuantity);
@@ -68,9 +65,15 @@ export default function ProduitDetail({ produit }: ProduitDetailProps) {
       return;
     }
     if (selectedColor && selectedSize) {
-      addToCart({ ...produit, quantity, selectedColor, selectedSize });
-      console.log(
-        `Produit ajouté : ID ${produit.id}, Quantité : ${quantity}, Couleur : ${selectedColor}, Taille : ${selectedSize}`
+      addToCart({
+        ...produit,
+        quantity,
+        selectedColor,
+        selectedSize,
+        id: `${produit.id}-${selectedSize}-${selectedColor}`
+      });
+      toast.success(
+        `Produit ajouté : Nom : ${produit.nom}, Quantité : ${quantity}, Couleur : ${selectedColor}, Taille : ${selectedSize}`
       );
     }
   };
@@ -130,7 +133,7 @@ export default function ProduitDetail({ produit }: ProduitDetailProps) {
           {produit.colors.map((color, index) => (
             <button
               key={index}
-              className={`w-8 h-8 rounded-full border border-gray-3 ${
+              className={`w-8 h-8 rounded-full border border-gray-300 ${
                 selectedColor === color.name ? "ring-2 ring-primary" : ""
               }`}
               style={{ backgroundColor: color.code }} // Applique la couleur spécifique

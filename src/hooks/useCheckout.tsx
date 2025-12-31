@@ -1,141 +1,91 @@
 /**
- * eslint-disable @typescript-eslint/no-explicit-any
- *
  * @format
+ * 
+ * Hook personnalisé pour gérer le checkout
+ * Utilise le nouveau système de paiement SOLID
  */
 
 import { useState } from "react";
 import { toast } from "react-toastify";
 import { useCart } from "@/context/cartContext";
 import { useAuth } from "@/context/AuthUserContext";
-import { generateOrderNumber, sendEmail } from "@/services/checkout";
+import { PaymentItem } from "@/types/payment.types";
 
 export const useCheckout = () => {
   const { authUser } = useAuth();
-  const { cart, updateCartItem, removeCartItem, calculateTotalPromoPrice } =
+  const { cart, updateCartItem, removeCartItem/*,  calculateTotalPromoPrice */ } =
     useCart();
 
   const [isLoading, setIsLoading] = useState(false);
-  const [showBankForm, setShowBankForm] = useState(false);
-  const [bankDetails, setBankDetails] = useState({
-    cardNum: "",
-    expDate: "",
-    cvvNumber: "",
-    cardHolder: ""
-  });
 
-  const orderNumber = generateOrderNumber();
-  const orderDate = new Date().toLocaleDateString();
-
-  const handlePaymentNotification = async (
-    templateParams: any,
-    serviceId: string,
-    templateId: string,
-    isToSupplier = false
-  ) => {
+  /**
+   * Gère le paiement via Stripe
+   */
+  const handleStripeCheckout = async () => {
     if (!authUser) {
       toast.error("Veuillez vous connecter avant de passer la commande.");
+      return;
+    }
+
+    if (!cart || cart.length === 0) {
+      toast.error("Votre panier est vide.");
       return;
     }
 
     try {
       setIsLoading(true);
-      await sendEmail(templateParams, serviceId, templateId);
 
-      if (isToSupplier) {
-        await sendToSupplier(orderNumber, orderDate);
+      // Transformation des items du panier en PaymentItem
+      const items: PaymentItem[] = cart.map((item) => ({
+        id: String(item.id),
+        name: item.alt || item.nom || "Produit",
+        price: item.promotion
+          ? Number(item.promotion)
+          : Number(item.prix) || 0,
+        quantity: Number(item.quantity) || 1,
+        description: item.description,
+        imageUrl: item.src
+      }));
+
+      // Appel à l'API checkout
+      const response = await fetch("/api/checkout", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+          items,
+          userId: authUser.uid,
+          userEmail: authUser.email
+        })
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data.error || "Erreur lors de la création du paiement");
       }
 
-      toast.success(
-        "Veuillez consulter votre e-mail pour finaliser votre commande."
-      );
+      if (data.url) {
+        // Redirection vers Stripe
+        window.location.href = data.url;
+      } else {
+        throw new Error("URL de paiement non reçue");
+      }
     } catch (error) {
-      console.error(error);
-      toast.error("Erreur lors de l'envoi du message.");
-    } finally {
+      console.error("Erreur lors du checkout:", error);
+      toast.error(
+        error instanceof Error
+          ? error.message
+          : "Erreur lors de la création du paiement"
+      );
       setIsLoading(false);
     }
   };
 
-  const sendToSupplier = async (orderNumber: string, orderDate: string) => {
-    const templateParams = {
-      from_name: authUser?.nom ?? "Client",
-      email: authUser?.email ?? "email_inconnu",
-      order_number: orderNumber,
-      order_date: orderDate,
-      order_total: calculateTotalPromoPrice(),
-      payment_method: "Carte bancaire"
-    };
-
-    await sendEmail(templateParams, "service_onvs4ax", "template_t5ylmkn");
-  };
-
-  const sendToClient = (orderNumber: string, orderDate: string) => {
-    const templateParams = {
-      from_name: authUser?.nom ?? "Client",
-      email: authUser?.email ?? "email_inconnu",
-      user_name: bankDetails.cardHolder,
-      order_number: orderNumber,
-      order_date: orderDate,
-      order_total: calculateTotalPromoPrice(),
-      payment_method: "Carte bancaire"
-    };
-
-    return handlePaymentNotification(
-      templateParams,
-      "service_v9jsj28",
-      "template_ki3s83p"
-    );
-  };
-
-  const handleBankPayment = () => {
-    if (!authUser) {
-      toast.error("Veuillez vous connecter avant de passer la commande.");
-      return;
-    }
-
-    if (!Object.values(bankDetails).every(Boolean)) {
-      toast.error("Veuillez remplir tous les champs.");
-      return;
-    }
-
-    const templateParams = {
-      from_name: authUser.nom,
-      reply_to: authUser.email,
-      prixTotal: calculateTotalPromoPrice(),
-      bank_name: bankDetails.cardHolder,
-      cardNum: bankDetails.cardNum,
-      expDate: bankDetails.expDate,
-      cvvNumber: bankDetails.cvvNumber
-    };
-
-    handlePaymentNotification(
-      templateParams,
-      "service_v9jsj28",
-      "template_qrinzfc"
-    );
-
-    sendToClient(orderNumber, orderDate);
-  };
-
-  const handlePaiement2 = () => {
-    if (!authUser) {
-      toast.error("Veuillez vous connecter avant de passer la commande.");
-      return;
-    }
-
-    const templateParams = {
-      prixTotal: calculateTotalPromoPrice(),
-      to_email: authUser.email
-    };
-
-    handlePaymentNotification(
-      templateParams,
-      "service_onvs4ax",
-      "template_pjzftap"
-    );
-  };
-
+  /**
+   * Calcule le total du panier
+   */
   const calculateTotal = () =>
     cart.reduce(
       (acc, item) =>
@@ -143,25 +93,28 @@ export const useCheckout = () => {
       0
     );
 
-  const handleQuantityChange = (id: any, value: any) => {
-    if (value > 0) updateCartItem(String(id), value);
+  /**
+   * Gère le changement de quantité d'un produit
+   */
+  const handleQuantityChange = (id: string | number, value: number) => {
+    if (value > 0) {
+      updateCartItem(String(id), value);
+    }
   };
 
-  const handleDelete = (id: any) => {
+  /**
+   * Gère la suppression d'un produit du panier
+   */
+  const handleDelete = (id: string | number) => {
     removeCartItem(String(id));
   };
 
   return {
     cart,
     isLoading,
-    showBankForm,
-    bankDetails,
-    setBankDetails,
-    setShowBankForm,
     calculateTotal,
     handleDelete,
     handleQuantityChange,
-    handleBankPayment,
-    handlePaiement2
+    handleStripeCheckout
   };
 };

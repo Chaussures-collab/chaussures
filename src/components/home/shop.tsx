@@ -92,7 +92,7 @@ export default function Decouvrir() {
           {/* Statistiques */}
           <div className="flex flex-row justify-center items-center gap-6 md:mt-8">
             <div className="text-center m-0 p-0">
-              <Typography variant="h3" className="text-gray-900 font-bold">
+              <Typography variant="h4" className="text-gray-900 font-bold">
                 {count}+
               </Typography>
               <Typography
@@ -102,9 +102,9 @@ export default function Decouvrir() {
                 Marques internationales
               </Typography>
             </div>
-            <div className="h-20 w-[2px] bg-gray-3 mx-auto"></div>
+            <div className="h-20 w-[2px] bg-gray-300 mx-auto"></div>
             <div className="text-center">
-              <Typography variant="h3" className="text-gray-900 font-bold">
+              <Typography variant="h4" className="text-gray-900 font-bold">
                 {count}+
               </Typography>
               <Typography
@@ -114,10 +114,10 @@ export default function Decouvrir() {
                 Produits de haute qualité
               </Typography>
             </div>
-            <div className="h-20 w-[2px] bg-gray-3 mx-auto hidden m:flex"></div>
+            <div className="h-20 w-[2px] bg-gray-300 mx-auto"></div>
 
-            <div className="text-center hidden xs:flex">
-              <Typography variant="h3" className="text-gray-900 font-bold">
+            <div className="text-center">
+              <Typography variant="h4" className="text-gray-900 font-bold">
                 {count}+
               </Typography>
               <Typography

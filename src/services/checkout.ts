@@ -1,14 +1,9 @@
-/**
- * eslint-disable @typescript-eslint/no-explicit-any
- *
- * @format
- */
-
 import emailjs from "emailjs-com";
 
 const EMAIL_PUBLIC_KEY = "PVVkJyq_LdxNGmNBV";
 
 export const sendEmail = async (
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   templateParams: any,
   serviceId: string,
   templateId: string

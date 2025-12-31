@@ -1,0 +1,32 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // Règles pour la collection des commandes
+    match /orders/{orderId} {
+      // Permet la création de commandes uniquement pour les utilisateurs authentifiés
+      // et uniquement pour leur propre userId
+      allow create: if request.auth != null 
+                    && request.resource.data.userId == request.auth.uid;
+      
+      // Permet la lecture de ses propres commandes
+      allow read: if request.auth != null 
+                 && resource.data.userId == request.auth.uid;
+      
+      // Permet la mise à jour uniquement pour le propriétaire
+      // et uniquement pour certains champs (statut, etc.)
+      allow update: if request.auth != null 
+                   && resource.data.userId == request.auth.uid
+                   && request.resource.data.userId == resource.data.userId;
+      
+      // Interdit la suppression
+      allow delete: if false;
+    }
+    
+    // Règles par défaut : refuser tout accès non spécifié
+    match /{document=**} {
+      allow read, write: if false;
+    }
+  }
+}
+
+

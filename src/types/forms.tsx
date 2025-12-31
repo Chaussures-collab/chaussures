@@ -1,4 +1,4 @@
-import { FieldErrors, FieldValues, UseFormHandleSubmit, UseFormRegister } from 'react-hook-form';
+import { FieldErrors, FieldValues, UseFormHandleSubmit, UseFormRegister, UseFormWatch } from 'react-hook-form';
 
 // Définir le type des champs du formulaire
 export type FormsType<T extends FieldValues> = {
@@ -7,6 +7,7 @@ export type FormsType<T extends FieldValues> = {
   handleSubmit: UseFormHandleSubmit<T>;
   onSubmit: (data: T) => void;
   isLoading: boolean;
+  watch?: UseFormWatch<T>; // Pour la validation en temps réel
 };
 
 // Exemple de type pour le formulaire de connexion

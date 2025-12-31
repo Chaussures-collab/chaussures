@@ -106,7 +106,6 @@ export default function ProduitElement() {
       reader.onload = (e) => {
         let imgDataUrl: string | ArrayBuffer | null = null;
         if (e.target) {
-          // eslint-disable-next-line @typescript-eslint/no-unused-vars
           imgDataUrl = e.target.result;
         }
         setImagePreview(imgDataUrl);
@@ -181,6 +180,7 @@ export default function ProduitElement() {
   const renderInputField = (field: (typeof fields)[number]) => (
     <div key={field.id} className="space-y-1">
       <Input
+        label={field.label}
         placeholder={field.placeholder}
         type={field.type}
         register={register}
@@ -205,7 +205,7 @@ export default function ProduitElement() {
     if (selectImage != null) {
       storageRef = ref(
         storage,
-        `users-medias/${authUser.uid}/avatar-${authUser.uid}`
+        `users-medias/${authUser?.uid}/avatar-${authUser?.uid}`
       );
 
       uploadTask = uploadBytesResumable(storageRef, selectImage);

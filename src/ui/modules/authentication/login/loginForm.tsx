@@ -11,12 +11,21 @@ interface Props {
 }
 
 export default function LoginForm({ form }: Props) {
-  const { onSubmit, errors, isLoading, register, handleSubmit } = form;
+  const { onSubmit, errors, isLoading, register, handleSubmit, watch } = form;
 
   const [showPassword, setShowPassword] = useState(false);
 
   return (
     <form onSubmit={handleSubmit(onSubmit)} className="pt-8 pb-5 space-y-4">
+      {/* Affichage des erreurs générales */}
+      {errors.root && (
+        <div className="p-3 mb-4 bg-red-50 border border-red-400 rounded-md">
+          <p className="text-danger text-sm">
+            {errors.root.message as string}
+          </p>
+        </div>
+      )}
+
       {/* EMAIL */}
       <Input
         isLoading={isLoading}
@@ -25,10 +34,17 @@ export default function LoginForm({ form }: Props) {
         type="email"
         register={register}
         errors={errors}
-        errorMsg="Champs obligatoire"
+        errorMsg="Veuillez entrer une adresse email valide"
         id="email"
         required={true}
         isAutoCompleted={false}
+        watch={watch}
+        validationRules={{
+          pattern: {
+            value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i,
+            message: "Format d'email invalide"
+          }
+        }}
       />
 
       {/* PASSWORD */}
@@ -36,14 +52,21 @@ export default function LoginForm({ form }: Props) {
         <Input
           isLoading={isLoading}
           placeholder="Mot de passe"
-          label="Email"
+          label="Mot de passe"
           type={showPassword ? "text" : "password"}
           register={register}
           errors={errors}
-          errorMsg="Champs obligatoire"
+          errorMsg="Le mot de passe est requis"
           id="password"
           required={true}
           isAutoCompleted={false}
+          watch={watch}
+          validationRules={{
+            minLength: {
+              value: 6,
+              message: "Le mot de passe doit contenir au moins 6 caractères"
+            }
+          }}
         />
 
         {/* TOGGLE SHOW / HIDE */}
