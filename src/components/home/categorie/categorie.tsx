@@ -13,10 +13,10 @@ export default function Categorie() {
         variant="h2"
         component="h2"
         className="text-center"
-      >
+        weight="regular">
         Parcourir la gamme
       </Typography>
-      <Typography variant="caption1" className="text-center">
+      <Typography variant="body-lg" className="text-center">
         Explorez notre large sélection de produits et découvrez des options
         adaptées à tous vos besoins. Parcourez notre gamme pour trouver des
         articles de qualité, soigneusement choisis pour vous.
@@ -26,15 +26,15 @@ export default function Categorie() {
         <Card />
       </div> */}
       <div className="flex flex-wrap justify-center gap-4 mx-auto ">
-      {dbCategories.map((category, index) => (
-        <Card
-          key={index}
-          src={category.src}
-          alt={category.alt}
-          nom={category.nom}
-        />
-      ))}
-    </div>
+        {dbCategories.map((category, index) => (
+          <Card
+            key={index}
+            src={category.src}
+            alt={category.alt}
+            nom={category.nom}
+          />
+        ))}
+      </div>
     </Container>
   );
 }

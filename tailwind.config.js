@@ -1,108 +1,186 @@
 /** @type {import('tailwindcss').Config} */
 module.exports = {
   content: ["./src/**/*.{js,ts,jsx,tsx,mdx}"],
+
+  darkMode: "class",
+
   theme: {
+    /* -----------------------------
+       TYPOGRAPHIE
+    ------------------------------*/
+    fontFamily: {
+      sans: ["Inter", "ui-sans-serif", "system-ui"],
+      display: ["Poppins", "Inter", "sans-serif"],
+      mono: ["JetBrains Mono", "monospace"]
+    },
+
     fontSize: {
       "8xl": [
         "120px",
-        { lineHeight: "120px", letterSpacing: "-6px", fontWeight: "500" }
+        { lineHeight: "1", letterSpacing: "-0.06em", fontWeight: "600" }
       ],
       "7xl": [
         "72px",
-        { lineHeight: "80px", letterSpacing: "-4.5px", fontWeight: "600" }
+        { lineHeight: "1.1", letterSpacing: "-0.045em", fontWeight: "600" }
       ],
       "6xl": [
-        "55px",
-        { lineHeight: "60px", letterSpacing: "-2.5px", fontWeight: "500" }
+        "56px",
+        { lineHeight: "1.15", letterSpacing: "-0.03em", fontWeight: "600" }
       ],
       "5xl": [
         "48px",
-        { lineHeight: "54px", letterSpacing: "-1.6px", fontWeight: "500" }
+        { lineHeight: "1.2", letterSpacing: "-0.025em", fontWeight: "500" }
       ],
       "4xl": [
         "36px",
-        { lineHeight: "44px", letterSpacing: "-1.2px", fontWeight: "500" }
+        { lineHeight: "1.25", letterSpacing: "-0.02em", fontWeight: "500" }
       ],
       "3xl": [
         "28px",
-        { lineHeight: "34px", letterSpacing: "-0.8px", fontWeight: "500" }
+        { lineHeight: "1.3", letterSpacing: "-0.015em", fontWeight: "500" }
       ],
       "2xl": [
         "24px",
-        { lineHeight: "30px", letterSpacing: "-1px", fontWeight: "500" }
+        { lineHeight: "1.35", letterSpacing: "-0.01em", fontWeight: "500" }
       ],
-      xl: [
-        "24px",
-        { lineHeight: "30px", letterSpacing: "-1px", fontWeight: "400" }
-      ],
-      lg: [
-        "21px",
-        { lineHeight: "30px", letterSpacing: "-0.8px", fontWeight: "400" }
-      ],
+      xl: ["20px", { lineHeight: "1.5" }],
+      lg: ["18px", { lineHeight: "1.6" }],
+      base: ["16px", { lineHeight: "1.6" }],
+      sm: ["14px", { lineHeight: "1.5" }],
+      xs: ["12px", { lineHeight: "1.4" }],
       sm: [
-        "21px",
-        { lineHeight: "23px", letterSpacing: "-0.6px", fontWeight: "400" }
-      ],
-      caption1: [
-        "20px",
-        { lineHeight: "24px", letterSpacing: "-0.6px", fontWeight: "400" }
-      ],
-      caption2: [
         "18px",
-        { lineHeight: "20px", letterSpacing: "-0.3px", fontWeight: "400" }
-      ],
-      caption3: [
-        "16px",
-        { lineHeight: "18px", letterSpacing: "-0.5px", fontWeight: "400" }
-      ],
-      caption4: [
-        "13px",
-        { lineHeight: "15px", letterSpacing: "-0.2px", fontWeight: "400" }
+        { lineHeight: "23px" }
       ]
     },
+
+    /* -----------------------------
+       COULEURS (DESIGN TOKENS)
+    ------------------------------*/
     colors: {
-      yellow: "#FFC700",
-      white: "#ffffff",
-      white: "#FDFAFAFF",
+      transparent: "transparent",
+      current: "currentColor",
+
+      white: "#FFFFFF",
+      black: "#0A0A0A",
+
       primary: {
-        1: "#FFF3E3",
-        2: "#F7E4CCFF",
+        50: "#FFF7E6",
+        80: "#FFF3E3",
+        100: "#FFE7BF",
+        200: "#FFD27A",
+        300: "#FFC046",
+        400: "#FFB020",
+        500: "#B88E2F",
+        600: "#9E7826",
+        700: "#7C5E1E",
+        800: "#5A4416",
+        900: "#3A2C0E",
         DEFAULT: "#B88E2F"
       },
-      light: "#F4F5F7",
-      red: "#E97171",
-      green: "#2EC1AC",
+
       secondary: {
-        200: "#eaf8f4",
-        300: "#bfe9de",
-        400: "#56c4a7",
-        DEFAULT: "#2AB691",
-        600: "#26a482"
+        50: "#EAF8F4",
+        100: "#CFF0E6",
+        200: "#9EE1CE",
+        300: "#6FD1B6",
+        400: "#2AB691",
+        500: "#22A081",
+        600: "#1C8A71",
+        700: "#16645A",
+        800: "#104E47",
+        900: "#0B3A36",
+        DEFAULT: "#2AB691"
       },
+
       gray: {
-        1: "#3A3A3A",
-        2: "#dedede", // Corrigé
-        3: "#9F9F9F",
-        4: "#C4C4C4",
-        5: "#333333",
-        6: "#F4F5F7",
+        50: "#FAFAFA",
+        100: "#F4F4F5",
+        200: "#E4E4E7",
+        300: "#D4D4D8",
+        400: "#A1A1AA",
+        500: "#71717A",
+        600: "#52525B",
+        700: "#3F3F46",
+        800: "#27272A",
+        900: "#18181B",
         DEFAULT: "#1D1D1D"
-      }
+      },
+
+      success: "#22C55E",
+      warning: "#F59E0B",
+      danger: "#EF4444",
+      info: "#3B82F6"
     },
+
+    /* -----------------------------
+       RADIUS (MODERNE / SOFT)
+    ------------------------------*/
     borderRadius: {
+      none: "0px",
+      sm: "6px",
       DEFAULT: "10px",
+      md: "14px",
+      lg: "18px",
+      xl: "24px",
       full: "9999px"
     },
+
+    /* -----------------------------
+       SHADOWS MODERNES
+    ------------------------------*/
+    boxShadow: {
+      sm: "0 2px 8px rgba(0,0,0,0.04)",
+      DEFAULT: "0 4px 16px rgba(0,0,0,0.06)",
+      md: "0 8px 30px rgba(0,0,0,0.08)",
+      lg: "0 20px 60px rgba(0,0,0,0.12)",
+      glow: "0 0 0 4px rgba(184,142,47,0.15)"
+    },
+
+    /* -----------------------------
+       BREAKPOINTS
+    ------------------------------*/
     screens: {
-      m: "439px",
+      xs: "390px",
       sm: "700px",
       md: "768px",
-      custom: "900px", // Nouveau breakpoint
-      lg: "1146px",
+      custom: "900px",
+      lg: "1024px",
       xl: "1280px",
       "2xl": "1536px"
     },
-    extend: {}
+
+    /* -----------------------------
+       EXTENSIONS
+    ------------------------------*/
+    extend: {
+      spacing: {
+        18: "4.5rem",
+        22: "5.5rem",
+        30: "7.5rem"
+      },
+
+      transitionTimingFunction: {
+        smooth: "cubic-bezier(0.4, 0, 0.2, 1)"
+      },
+
+      animation: {
+        fade: "fade 0.3s ease-out",
+        slideUp: "slideUp 0.4s ease-out"
+      },
+
+      keyframes: {
+        fade: {
+          "0%": { opacity: 0 },
+          "100%": { opacity: 1 }
+        },
+        slideUp: {
+          "0%": { transform: "translateY(10px)", opacity: 0 },
+          "100%": { transform: "translateY(0)", opacity: 1 }
+        }
+      }
+    }
   },
+
   plugins: []
 };

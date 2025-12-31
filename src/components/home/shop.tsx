@@ -51,18 +51,19 @@ export default function Decouvrir() {
         isLoaded
           ? "opacity-100 transform transition-all duration-1000"
           : "opacity-0 transform translate-y-10"
-      }`}
-    >
+      }`}>
       {/* Section Desktop */}
       <Container className="flex flex-wrap sm:flex-nowrap overflow-visible">
         <div className="flex-1 space-y-2 sm:space-y-6 relative p-2 lg:p-10">
           {/* Titre principal */}
-          <Typography variant="h4" className="text-gray-900 font-bold">
+          <Typography
+            variant="h4"
+            className="text-gray-900 font-bold text-start">
             TROUVEZ VOTRE PRODUIT FAVORI EN FONCTION DE VOS BESOINS
           </Typography>
 
           {/* Description */}
-          <Typography variant="body" className="text-gray-600 text-justify">
+          <Typography variant="body" className="text-gray-400 text-justify">
             Découvrez notre vaste collection de produits soigneusement conçus,
             pensés pour révéler votre individualité et répondre à votre sens du
             style.
@@ -73,8 +74,7 @@ export default function Decouvrir() {
               variant="accent"
               size="medium"
               className="mt-4 rounded-full transition-transform transform hover:scale-105"
-              action={pageShop}
-            >
+              action={pageShop}>
               Visitez la boutique
             </Button>
           </div>
@@ -84,8 +84,7 @@ export default function Decouvrir() {
               variant="accent"
               size="medium"
               className="mt-4 rounded-full w-full transition-transform transform hover:scale-105"
-              action={pageShop}
-            >
+              action={pageShop}>
               Visitez la boutique
             </Button>
           </div>
@@ -99,40 +98,37 @@ export default function Decouvrir() {
               <Typography
                 variant="caption3"
                 theme="gray"
-                className="text-gray-500"
-              >
+                className="text-gray-400">
                 Marques internationales
               </Typography>
             </div>
             <div className="h-20 w-[2px] bg-gray-3 mx-auto"></div>
             <div className="text-center">
               <Typography variant="h3" className="text-gray-900 font-bold">
-                2,000+
+                {count}+
               </Typography>
               <Typography
                 variant="caption3"
                 theme="gray"
-                className="text-gray-500"
-              >
+                className="text-gray-400">
                 Produits de haute qualité
               </Typography>
             </div>
             <div className="h-20 w-[2px] bg-gray-3 mx-auto hidden m:flex"></div>
 
-            <div className="text-center hidden m:flex">
+            <div className="text-center hidden xs:flex">
               <Typography variant="h3" className="text-gray-900 font-bold">
                 {count}+
               </Typography>
               <Typography
                 variant="caption3"
                 theme="gray"
-                className="text-gray-500"
-              >
+                className="text-gray-400">
                 Clients satisfaits
               </Typography>
             </div>
           </div>
-          <div className="justify-center flex-1 m:hidden mt-2">
+          <div className="justify-center flex-1 xs:hidden mt-2">
             <div className="text-center  ">
               <Typography variant="h3" className="text-gray-900 font-bold">
                 {count}+
@@ -140,8 +136,7 @@ export default function Decouvrir() {
               <Typography
                 variant="caption3"
                 theme="gray"
-                className="text-gray-500"
-              >
+                className="text-gray-400">
                 Clients satisfaits
               </Typography>
             </div>

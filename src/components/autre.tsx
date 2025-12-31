@@ -41,8 +41,10 @@ const ImageCard: React.FC<ImageCardProps> = ({ src, alt }) => (
 );
 const FunForFurnitureGrid: React.FC = () => {
   return (
-    <div className="p-6 mx-auto ">
-      <h1 className="mb-6 text-2xl font-bold text-center">Apperçu de nos produits</h1>
+    <div className="p-6 mx-auto bg-primary-50 rounded-lg my-16">
+      <h1 className="mb-6 text-5xl font-bold text-center">
+        Apperçu de nos produits
+      </h1>
       {/* Conteneur principal */}
       <div className="grid sm:grid-cols-2 md:grid-cols-2 gap-1 sm:gap-4">
         {images.map((image, index) => (

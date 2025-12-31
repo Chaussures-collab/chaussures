@@ -6,7 +6,8 @@ import Typography from "../typography/typography";
 interface InputProps<T extends FieldValues> {
   isLoading?: boolean;
   placeholder: string;
-  type?: "text" | "email" | "password" | "tel" | "number"| "file";
+  label: string;
+  type?: "text" | "email" | "password" | "tel" | "number" | "file";
   register: UseFormRegister<T>;
   errors: FieldErrors<T>;
   errorMsg?: string;
@@ -17,6 +18,7 @@ interface InputProps<T extends FieldValues> {
 }
 
 export const Input = <T extends FieldValues>({
+  label,
   isLoading,
   placeholder,
   type = "text",
@@ -26,12 +28,13 @@ export const Input = <T extends FieldValues>({
   id,
   className,
   required = true,
-  isAutoCompleted = false,
+  isAutoCompleted = false
 }: InputProps<T>) => {
   return (
     <div className="space-y-2">
-      <label htmlFor={id as string} className="text-sm text-gray-700">
-        {placeholder}
+      <label htmlFor={id as string} className="text-sm text-gray-900">
+        {label}
+        <span className="text-danger">{required ? " *" : ""}</span>
       </label>
 
       <input
@@ -42,7 +45,7 @@ export const Input = <T extends FieldValues>({
           "w-full p-1 font-light border border-gray-4 rounded placeholder-gray-500 focus:outline-none focus:ring-1 focus:ring-primary",
           {
             "cursor-not-allowed": isLoading,
-            "border-red-500 placeholder-red-500": errors[id],
+            "border-red-500 placeholder-red-500": errors[id]
           },
           className
         )}
@@ -52,7 +55,11 @@ export const Input = <T extends FieldValues>({
       />
 
       {errors[id] && (
-        <Typography variant="caption4" component="div" theme="secondary" className="text-red-500">
+        <Typography
+          variant="caption4"
+          component="div"
+          theme="secondary"
+          className="text-red-500">
           {errors[id]?.message as string}
         </Typography>
       )}

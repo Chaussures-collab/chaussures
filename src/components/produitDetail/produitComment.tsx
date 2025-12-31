@@ -56,10 +56,9 @@ export default function ProduitComment({src, alt}:Props) {
             className={`tab-button px-2 py-2 text-gray-3 ${
               activeTab === index
                 ? "font-bold text-black border-b-2 border-gray-1"
-                : "text-gray-500"
+                : "text-gray-400"
             }`}
-            onClick={() => setActiveTab(index)}
-          >
+            onClick={() => setActiveTab(index)}>
             {tab.title}
           </button>
         ))}
@@ -80,7 +79,8 @@ export default function ProduitComment({src, alt}:Props) {
             objectFit="cover"
             className="rounded-lg shadow-lg"
           />
-        </div>{/* 
+        </div>
+        {/* 
         <div className="relative min-w-[283px] min-h-[143px] max-w-[600px] max-h-[600px]">
           <Image
             src={src}

@@ -14,7 +14,7 @@ type Props = {
 export default function ProduitDetailContainer({ produit }: Props) {
   return (
     <>
-      <Breadcrumbs nom={produit.nom} className="bg-primary-1 py-auto" />
+      <Breadcrumbs nom={produit.nom} className="bg-primary-50 py-auto" />
 
       <Container>
         <div className="flex flex-col md:flex-row justify-center gap-8 my-2 lg:grid-cols-3">
@@ -56,12 +56,9 @@ export default function ProduitDetailContainer({ produit }: Props) {
           </div>
 
           {/* Détails du produit */}
-          <ProduitDetail
-            produit={produit}
-          />
+          <ProduitDetail produit={produit} />
         </div>
-        <ProduitComment src={produit.src}
-                alt={produit.alt} />
+        <ProduitComment src={produit.src} alt={produit.alt} />
         <hr className="my-2 border-gray-4" />
         <ProduitCategorie categorie={produit.categorie} />
       </Container>

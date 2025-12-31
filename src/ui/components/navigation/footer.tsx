@@ -27,8 +27,8 @@ export default function Footer() {
             Markets
           </Typography>
           <Typography variant="caption1" theme="gray" className="mt-2">
-            Markets : votre boutique en ligne pour des produits de qualité,
-            pratiques et sécurisés.
+            Votre boutique en ligne pour des produits de qualité, pratiques et
+            sécurisés.
           </Typography>
         </div>
         {footNavigationList}
@@ -40,9 +40,9 @@ export default function Footer() {
             <input
               type="email"
               placeholder="Enter your email"
-              className="w-full px-4 py-2 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary"
+              className="w-full px-4 py-2 focus:outline-none focus:ring-2 focus:ring-primary"
             />
-            <button className="px-4 py-2 text-white rounded-lg bg-primary hover:bg-primary-400">
+            <button className="px-4 py-2 text-white bg-primary hover:bg-primary-600">
               S{"'"}abonner
             </button>
           </div>
@@ -61,23 +61,13 @@ export default function Footer() {
           <Typography variant="caption1" theme="gray">
             {`Copyright © 2010 - ${currentYear}`}
           </Typography>
-        <div className="flex items-center justify-center">
-          <Avatar
-            src="/assets/images/badge2.png"
-            alt="Logo"/>
-          <Avatar
-            src="/assets/images/badge3.png"
-            alt="Logo"/>
-          <Avatar
-            src="/assets/images/badge4.png"
-            alt="Logo" />
-          <Avatar
-            src="/assets/images/badge1.png"
-            alt="Logo"/>
-          <Avatar
-            src="/assets/images/Badge.jpg"
-            alt="Logo"/>
-        </div>
+          <div className="flex items-center justify-center">
+            <Avatar src="/assets/images/badge2.png" alt="Logo" />
+            <Avatar src="/assets/images/badge3.png" alt="Logo" />
+            <Avatar src="/assets/images/badge4.png" alt="Logo" />
+            <Avatar src="/assets/images/badge1.png" alt="Logo" />
+            <Avatar src="/assets/images/Badge.jpg" alt="Logo" />
+          </div>
         </div>
       </Container>
     </div>

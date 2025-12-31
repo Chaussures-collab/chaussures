@@ -23,10 +23,8 @@ export default function Avatar({ size = "medium", src, alt, className }: Props) 
       break;
   }
   return (
-    <div className={clsx(sizeStyles,className, 'bg-gray-400 relative')}>
-      <Image
-      fill src={src} alt={alt} className="object-center "
-      />
+    <div className={clsx(sizeStyles, className, "relative")}>
+      <Image fill src={src} alt={alt} className="object-center " />
     </div>
   );
 }

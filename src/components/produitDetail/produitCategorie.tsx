@@ -17,7 +17,8 @@ export default function ProduitCategorie({ categorie }: Props) {
   return (
     <div className="py-12 my-12 bg-white">
       <Typography component="h2" variant="h2" className="text-center">
-        Nos produits de la catégorie : <span className="text-primary">{categorie}</span>
+        Nos produits de la catégorie :{" "}
+        <span className="text-primary">{categorie}</span>
       </Typography>
 
       {produitsFiltres.length > 0 ? (
@@ -39,8 +40,7 @@ export default function ProduitCategorie({ categorie }: Props) {
         <Typography
           component="p"
           variant="body"
-          className="mt-8 text-center text-gray-600"
-        >
+          className="mt-8 text-center text-gray-400">
           Aucun produit trouvé dans cette catégorie.
         </Typography>
       )}
