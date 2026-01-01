@@ -21,7 +21,7 @@ export default function DetailProduit({ produit }: Props) {
   return (
     <>
       <Seo
-        title="{produit.nom} - ShopiMarket | {produit.categorie}"
+        title="{produit.nom} - SnipersMarket| {produit.categorie}"
         description="Découvrez {produit.nom} sur ShopiMarket. {produit.description}. Livraison rapide et offres exclusives !"
       />{" "}
       <Layout isDisplayCreadCrumbs={false}>

@@ -13,8 +13,8 @@ export default function Inscription() {
   return (
     <>
       <Seo
-        title="Inscription à ShopiMarket | Accédez à votre espace client"
-        description="Créez-vous un compte ShopiMarket pour suivre vos commandes en temps réel, gérer vos informations personnelles et bénéficier de promotions exclusives."
+        title="Inscription à SnipersMarket| Accédez à votre espace client"
+        description="Créez-vous un compte SnipersMarketpour suivre vos commandes en temps réel, gérer vos informations personnelles et bénéficier de promotions exclusives."
       />
 
       <Layout sessionStatus={GUEST} isDisplayCreadCrumbs={false}>

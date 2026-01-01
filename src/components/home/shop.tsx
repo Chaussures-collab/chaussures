@@ -47,124 +47,102 @@ export default function Decouvrir() {
 
   return (
     <div
-      className={`text-center flex ${
+      className={`relative overflow-hidden ${
         isLoaded
           ? "opacity-100 transform transition-all duration-1000"
           : "opacity-0 transform translate-y-10"
       }`}>
-      {/* Section Desktop */}
-      <Container className="flex flex-wrap sm:flex-nowrap overflow-visible">
-        <div className="flex-1 space-y-2 sm:space-y-6 relative p-2 lg:p-10">
-          {/* Titre principal */}
-          <Typography
-            variant="h4"
-            className="text-gray-900 font-bold text-start">
-            TROUVEZ VOTRE PRODUIT FAVORI EN FONCTION DE VOS BESOINS
-          </Typography>
+      {/* Section Hero avec gradient */}
+      <div className="relative bg-gradient-to-br from-primary/10 via-white to-primary/5">
+        <Container className="py-16 md:py-24">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+            {/* Contenu texte */}
+            <div className="space-y-6 lg:space-y-8">
+              {/* Badge */}
+              <div className="inline-block px-4 py-2 bg-primary/10 rounded-full">
+                <Typography variant="caption1" className="text-primary font-semibold">
+                  ✨ Nouvelle collection disponible
+                </Typography>
+              </div>
 
-          {/* Description */}
-          <Typography variant="body" className="text-gray-400 text-justify">
-            Découvrez notre vaste collection de produits soigneusement conçus,
-            pensés pour révéler votre individualité et répondre à votre sens du
-            style.
-          </Typography>
-          <div className="hidden sm:flex">
-            {/* Bouton Boutique */}
-            <Button
-              variant="accent"
-              size="medium"
-              className="mt-4 rounded-full transition-transform transform hover:scale-105"
-              action={pageShop}>
-              Visitez la boutique
-            </Button>
-          </div>
-          <div className="sm:hidden">
-            {/* Bouton Boutique */}
-            <Button
-              variant="accent"
-              size="medium"
-              className="mt-4 rounded-full w-full transition-transform transform hover:scale-105"
-              action={pageShop}>
-              Visitez la boutique
-            </Button>
-          </div>
+              {/* Titre principal */}
+              <Typography
+                variant="h1"
+                className="text-4xl md:text-5xl lg:text-6xl font-bold text-gray-900 leading-tight">
+                Trouvez votre produit favori en fonction de vos besoins
+              </Typography>
 
-          {/* Statistiques */}
-          <div className="flex flex-row justify-center items-center gap-6 md:mt-8">
-            <div className="text-center m-0 p-0">
-              <Typography variant="h4" className="text-gray-900 font-bold">
-                {count}+
+              {/* Description */}
+              <Typography variant="body-lg" className="text-gray-600 max-w-xl">
+                Découvrez notre vaste collection de produits soigneusement conçus,
+                pensés pour révéler votre individualité et répondre à votre sens du
+                style. Qualité garantie, livraison rapide.
               </Typography>
-              <Typography
-                variant="caption3"
-                theme="gray"
-                className="text-gray-400">
-                Marques internationales
-              </Typography>
-            </div>
-            <div className="h-20 w-[2px] bg-gray-300 mx-auto"></div>
-            <div className="text-center">
-              <Typography variant="h4" className="text-gray-900 font-bold">
-                {count}+
-              </Typography>
-              <Typography
-                variant="caption3"
-                theme="gray"
-                className="text-gray-400">
-                Produits de haute qualité
-              </Typography>
-            </div>
-            <div className="h-20 w-[2px] bg-gray-300 mx-auto"></div>
 
-            <div className="text-center">
-              <Typography variant="h4" className="text-gray-900 font-bold">
-                {count}+
-              </Typography>
-              <Typography
-                variant="caption3"
-                theme="gray"
-                className="text-gray-400">
-                Clients satisfaits
-              </Typography>
-            </div>
-          </div>
-          <div className="justify-center flex-1 xs:hidden mt-2">
-            <div className="text-center  ">
-              <Typography variant="h3" className="text-gray-900 font-bold">
-                {count}+
-              </Typography>
-              <Typography
-                variant="caption3"
-                theme="gray"
-                className="text-gray-400">
-                Clients satisfaits
-              </Typography>
-            </div>
-          </div>
-        </div>
+              {/* Boutons CTA */}
+              <div className="flex flex-col sm:flex-row gap-4">
+                <Button
+                  variant="accent"
+                  size="large"
+                  className="rounded-lg px-8 py-4 font-semibold transition-transform transform hover:scale-105"
+                  action={pageShop}>
+                  Découvrir la boutique
+                </Button>
+                <Button
+                  variant="outline"
+                  size="large"
+                  className="rounded-lg px-8 py-4 font-semibold"
+                  action={() => window.scrollTo({ top: window.innerHeight, behavior: 'smooth' })}>
+                  Voir les produits
+                </Button>
+              </div>
 
-        {/* Image */}
-        <div className="relative w-full sm:w-1/2 sm:mt-6 sm:mt-0 overflow-hidden">
-          <div className="relative w-full h-76 sm:h-full">
-            {/* <Image
-              src="/assets/images/accueils.jpg"
-              alt="Decouvrir"
-              layout="fill"
-              objectFit="contain"
-              objectPosition="center"
-              className="rounded-lg shadow-md transition-transform transform hover:scale-105"
-            /> */}
-            <Image
-              src="/assets/images/accueils.jpg"
-              alt="Decouvrir"
-              width={600} // Valeur à adapter
-              height={500} // Valeur à adapter
-              objectFit="cover"
-              className="hover:scale-105 transition-transform duration-500"
-            />
+              {/* Statistiques */}
+              <div className="grid grid-cols-3 gap-4 pt-8 border-t border-gray-200">
+                <div className="text-center">
+                  <Typography variant="h3" className="text-primary font-bold mb-1">
+                    {count}+
+                  </Typography>
+                  <Typography variant="caption1" className="text-gray-600">
+                    Marques
+                  </Typography>
+                </div>
+                <div className="text-center">
+                  <Typography variant="h3" className="text-primary font-bold mb-1">
+                    {count}+
+                  </Typography>
+                  <Typography variant="caption1" className="text-gray-600">
+                    Produits
+                  </Typography>
+                </div>
+                <div className="text-center">
+                  <Typography variant="h3" className="text-primary font-bold mb-1">
+                    {count}+
+                  </Typography>
+                  <Typography variant="caption1" className="text-gray-600">
+                    Clients
+                  </Typography>
+                </div>
+              </div>
+            </div>
+
+            {/* Image */}
+            <div className="relative w-full lg:w-auto">
+              <div className="relative aspect-square lg:aspect-auto lg:h-[500px] rounded-2xl overflow-hidden shadow-2xl">
+                <Image
+                  src="/assets/images/accueils.jpg"
+                  alt="Découvrez nos produits"
+                  fill
+                  className="object-cover"
+                  sizes="(max-width: 1024px) 100vw, 50vw"
+                  priority
+                />
+                {/* Overlay décoratif */}
+                <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent" />
+              </div>
+            </div>
           </div>
-        </div>
-      </Container>
+        </Container>
 
       {/* Section Mobile */}
       {/* <Container className="relative h-[70vh] lg:hidden overflow-visible">
@@ -178,6 +156,7 @@ export default function Decouvrir() {
         />
         <Collection className="absolute p-5 bg-white bg-opacity-80 rounded-lg shadow-lg bottom-10 right-10" />
       </Container> */}
+    </div>
     </div>
   );
 }

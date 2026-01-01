@@ -20,6 +20,7 @@ import {
 } from "@/types/payment.types";
 import { PaymentError } from "./errors/PaymentError";
 import { ErrorHandler } from "./errors/ErrorHandler";
+import { emailService, OrderEmailData } from "../email/EmailService";
 
 export class PaymentManager {
   constructor(
@@ -164,6 +165,25 @@ export class PaymentManager {
           metadata: webhookData.metadata
         });
 
+        // Envoi des emails de notification (client et admin)
+        try {
+          await this.sendOrderEmails({
+            orderId,
+            userEmail,
+            items,
+            totalAmount: webhookData.amountTotal ? webhookData.amountTotal / 100 : totalAmount,
+            currency: webhookData.currency || "eur",
+            paymentMethod: "STRIPE",
+            metadata: webhookData.metadata
+          });
+        } catch (emailError) {
+          // On log l'erreur mais on ne fait pas échouer le paiement si l'email échoue
+          ErrorHandler.logError(
+            emailError instanceof Error ? emailError : new Error("Erreur envoi email"),
+            { operation: "sendOrderEmails", orderId }
+          );
+        }
+
         return {
           success: true,
           orderId,
@@ -230,6 +250,53 @@ export class PaymentManager {
         { sessionId }
       );
     }
+  }
+
+  /**
+   * Envoie les emails de notification après une commande
+   * @private
+   */
+  private async sendOrderEmails(data: {
+    orderId: string;
+    userEmail: string;
+    items: PaymentItem[];
+    totalAmount: number;
+    currency: string;
+    paymentMethod: string;
+    metadata?: Record<string, string>;
+  }): Promise<void> {
+    // Récupérer le nom du client depuis les métadonnées ou utiliser l'email
+    const customerName =
+      data.metadata?.nom && data.metadata?.prenom
+        ? `${data.metadata.prenom} ${data.metadata.nom}`
+        : data.metadata?.prenom || data.metadata?.nom || data.userEmail.split("@")[0] || "Client";
+
+    const orderEmailData: OrderEmailData = {
+      orderId: data.orderId,
+      customerName,
+      customerEmail: data.userEmail,
+      items: data.items.map((item) => ({
+        name: item.name,
+        quantity: item.quantity,
+        price: item.price
+      })),
+      totalAmount: data.totalAmount,
+      currency: data.currency,
+      paymentMethod: data.paymentMethod,
+      orderDate: new Date().toLocaleDateString("fr-FR", {
+        year: "numeric",
+        month: "long",
+        day: "numeric",
+        hour: "2-digit",
+        minute: "2-digit"
+      })
+    };
+
+    // Envoyer l'email de confirmation au client
+    await emailService.sendOrderConfirmationEmail(orderEmailData);
+
+    // Envoyer l'alerte à l'administrateur
+    await emailService.sendAdminOrderAlert(orderEmailData);
   }
 }
 

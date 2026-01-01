@@ -12,8 +12,8 @@ export default function cart() {
   return (
     <>
       <Seo
-        title="Votre Panier - ShopiMarket | Vérifiez vos articles avant l'achat"
-        description="Consultez votre panier sur ShopiMarket et finalisez votre commande. Vérifiez vos articles et profitez d'une expérience d'achat fluide et sécurisée."
+        title="Votre Panier - SnipersMarket| Vérifiez vos articles avant l'achat"
+        description="Consultez votre panier sur SnipersMarketet finalisez votre commande. Vérifiez vos articles et profitez d'une expérience d'achat fluide et sécurisée."
       />
 
       <Layout isDisplayCreadCrumbs={false}>

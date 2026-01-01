@@ -12,8 +12,8 @@ export default function Profil() {
   return (
     <>
       <Seo
-        title="Mon Profil - ShopiMarket | Gérez votre compte"
-        description="Accédez à votre profil ShopiMarket pour gérer vos informations personnelles, suivre vos commandes et modifier vos préférences."
+        title="Mon Profil - SnipersMarket| Gérez votre compte"
+        description="Accédez à votre profil SnipersMarketpour gérer vos informations personnelles, suivre vos commandes et modifier vos préférences."
       />
       <Layout isDisplayCreadCrumbs={false}>
         <ShobLink />

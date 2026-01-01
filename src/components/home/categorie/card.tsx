@@ -11,25 +11,32 @@ interface Props {
 
 export default function Card({ src, alt, nom }: Props) {
   return (
-    <div className="relative flex flex-col items-center justify-center overflow-hidden bg-gray-200 rounded-lg w-80 h-80 hover:scale-105 transition-transform duration-500 rounded-lg shadow-lg">
+    <div className="group relative flex flex-col items-center justify-center overflow-hidden bg-white rounded-2xl w-full aspect-square hover:scale-105 transition-all duration-300 shadow-lg hover:shadow-2xl border border-gray-100">
       {/* Conteneur pour l'image */}
       <div className="relative w-full h-full">
         <Image
           src={src}
           alt={alt}
-          width={300} // Valeur à adapter
-          height={200} // Valeur à adapter
-          objectFit="cover"
-          className=""
+          fill
+          className="object-cover group-hover:scale-110 transition-transform duration-500"
+          sizes="(max-width: 768px) 50vw, (max-width: 1200px) 33vw, 25vw"
         />
+        {/* Overlay gradient */}
+        <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/20 to-transparent" />
       </div>
 
       {/* Conteneur pour le texte */}
-      <div className="absolute mt-4">
-        <Typography variant="h4" component="h4" weight="regular">
+      <div className="absolute bottom-0 left-0 right-0 p-6 text-center">
+        <Typography
+          variant="h4"
+          component="h4"
+          className="text-white font-bold drop-shadow-lg">
           {nom}
         </Typography>
       </div>
+      
+      {/* Badge hover */}
+      <div className="absolute inset-0 bg-primary/0 group-hover:bg-primary/10 transition-colors duration-300" />
     </div>
   );
 }

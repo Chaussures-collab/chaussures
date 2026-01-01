@@ -13,8 +13,8 @@ export default function Connexion() {
   return (
     <>
       <Seo
-        title="Connexion - ShopiMarket | Accédez à votre compte"
-        description="Connectez-vous à votre compte ShopiMarket pour suivre vos commandes, gérer vos informations et profiter de nos offres exclusives."
+        title="Connexion - SnipersMarket| Accédez à votre compte"
+        description="Connectez-vous à votre compte SnipersMarketpour suivre vos commandes, gérer vos informations et profiter de nos offres exclusives."
       />
       <Layout sessionStatus={GUEST} isDisplayCreadCrumbs={false}>
         <Breadcrumbs />

@@ -14,7 +14,7 @@ export default function MotsDePassePerdue() {
     <>
       <Seo
         title="Mot de passe oublié ? Réinitialisez-le rapidement | ShopiMarket"
-        description="Mot de passe oublié ? Suivez les étapes simples pour réinitialiser votre mot de passe et retrouver l'accès à votre compte ShopiMarket en toute sécurité."
+        description="Mot de passe oublié ? Suivez les étapes simples pour réinitialiser votre mot de passe et retrouver l'accès à votre compte SnipersMarketen toute sécurité."
       />
       <Layout sessionStatus={GUEST} isDisplayCreadCrumbs={false}>
         <Breadcrumbs />

@@ -1,5 +1,6 @@
 /** @format */
 
+import NewsletterSection from "@/components/home/newsletter/NewsletterSection";
 import ShopContain from "@/components/shop/contain/shop.contain";
 import Paiement from "@/components/shop/paiement/paiement";
 import QualiteContainer from "@/components/shop/qualite/qualite.container";
@@ -12,13 +13,15 @@ export default function Shop() {
   return (
     <>
       <Seo
-        title="Boutique - ShopiMarket | Découvrez nos produits tendance"
-        description="Parcourez notre boutique en ligne ShopiMarket et trouvez des vêtements, accessoires et bien plus. Offres exclusives et livraison rapide !"
+        title="Boutique - SnipersMarket| Découvrez nos produits tendance"
+        description="Parcourez notre boutique en ligne SnipersMarketet trouvez des vêtements, accessoires et bien plus. Offres exclusives et livraison rapide !"
       />
 
       <Layout isDisplayCreadCrumbs={false}>
         <ShobLink />
         <ShopContain />
+        {/* Newsletter */}
+        <NewsletterSection />
         <QualiteContainer />
         <Paiement />
       </Layout>

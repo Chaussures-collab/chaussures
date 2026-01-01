@@ -9,14 +9,20 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@azure/identity": "^4.13.0",
+    "@azure/msal-node": "^3.8.4",
     "@firebasegen/default-connector": "file:dataconnect-generated/js/default-connector",
     "@headlessui/react": "^2.2.0",
     "@heroicons/react": "^2.2.0",
+    "@microsoft/microsoft-graph-client": "^3.0.7",
     "@paypal/react-paypal-js": "^8.8.1",
+    "@stripe/react-stripe-js": "^5.4.1",
+    "@stripe/stripe-js": "^8.6.0",
     "clsx": "^2.1.1",
     "emailjs-com": "^3.2.0",
     "firebase": "^11.2.0",
     "next": "^16.1.1",
+    "nodemailer": "^7.0.12",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
     "react-hook-form": "^7.54.2",
@@ -31,14 +37,15 @@
   "devDependencies": {
     "@eslint/eslintrc": "^3",
     "@types/node": "^20",
+    "@types/nodemailer": "^7.0.4",
     "@types/react": "^19",
     "@types/react-dom": "^19",
     "@types/react-slick": "^0.23.13",
-    "autoprefixer": "^10.4.20",
+    "autoprefixer": "^10.4.23",
     "eslint": "^9",
     "eslint-config-next": "15.1.4",
-    "postcss": "^8.5.1",
-    "tailwindcss": "^3.4.17",
+    "postcss": "^8.5.6",
+    "tailwindcss": "^3.4.19",
     "typescript": "^5"
   }
 }

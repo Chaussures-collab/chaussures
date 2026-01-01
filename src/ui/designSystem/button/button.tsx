@@ -49,7 +49,7 @@ export default function Button({
 
   switch (variant) {
     case "accent":
-      variantStyles = "bg-primary hover:bg-primary-600 text-white";
+      variantStyles = "bg-primary hover:bg-primary-700 text-white";
       break;
     case "suivant":
       variantStyles =
@@ -59,7 +59,7 @@ export default function Button({
       variantStyles = "bg-white hover:bg-secondary-300/50 text-black";
       break;
     case "outline":
-      variantStyles = "border border-primary text-primary hover:bg-gray-4 ";
+      variantStyles = "border border-primary text-primary hover:bg-primary-500 hover:text-white ";
       break;
     case "disabled":
       variantStyles = "bg-gray-600 text-gray-700 ";

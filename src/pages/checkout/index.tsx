@@ -13,7 +13,7 @@ export default function Checkout() {
   return (
     <>
       <Seo
-        title="Paiement sécurisé - ShopiMarket | Finalisez votre achat"
+        title="Paiement sécurisé - SnipersMarket| Finalisez votre achat"
         description="Procédez au paiement en toute sécurité sur ShopiMarket. Options de paiement variées et cryptage sécurisé pour une transaction sans souci."
       />
 

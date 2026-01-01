@@ -53,73 +53,82 @@ export default function CartProduit({
   }, [prix, promotion, hasPromotion]);
 
   return (
-    <Link
-      href={`/detail-produit/${id}`}
-      className="hover:scale-105 transition-transform duration-500">
-      <div className="relative flex flex-col bg-gray-100 rounded-lg shadow-lg hover:shadow-xl transition-shadow duration-300">
+    <Link href={`/detail-produit/${id}`} className="block h-full group">
+      <div className="flex overflow-hidden relative flex-col h-full bg-white rounded-xl border border-gray-100 shadow-md transition-all duration-300 hover:shadow-2xl hover:border-primary/20 item-center">
         {/* Image et badges */}
-        <div className="relative w-full md:h-48 h-32 sm:h-44 overflow-hidden rounded-t-lg">
+        <div className="overflow-hidden relative w-full bg-gray-50 aspect-square flex items-center">
           <Image
             src={src}
             alt={alt}
-            width={300} // Valeur à adapter
-            height={200} // Valeur à adapter
+            layout="responsive"
+            width={381}
+            height={450}
             objectFit="cover"
-            className=""
+            // className="rounded-lg shadow-lg"
+            className="object-cover transition-transform duration-500 group-hover:scale-110"
+            sizes="(max-width: 768px) 50vw, (max-width: 1200px) 33vw, 20vw"
           />
+
+          {/* Overlay au survol */}
+          <div className="absolute inset-0 transition-all duration-300 bg-black/0 group-hover:bg-black/5" />
 
           {/* Badge promotion */}
           {hasPromotion && discountPercentage && (
-            <Typography
-              component="span"
-              variant="caption4"
-              className="absolute flex flex-col items-center justify-center md:top-4 md:right-4 bg-white text-gray-900 rounded-full shadow-md md:w-[50px] md:h-[50px] w-[30px] h-[30px] top-1 right-1 bg-opacity-85">
+            <div className="absolute top-3 right-3 bg-red-500 text-white rounded-full shadow-lg px-3 py-1.5 text-xs font-bold animate-pulse">
               -{discountPercentage}%
-            </Typography>
+            </div>
           )}
+
           {/* Badge nouveauté */}
           {isNewProduct && (
-            <Typography
-              component="span"
-              variant="caption4"
-              className="absolute flex flex-col items-center justify-center top-1 left-1 md:top-4 md:left-4 bg-secondary bg-opacity-85 text-white rounded-full shadow-md md:p-5 w-[30px] h-[30px] md:w-[50px] md:h-[50px]">
+            <div className="absolute top-3 left-3 bg-green-500 text-white rounded-full shadow-lg px-3 py-1.5 text-xs font-bold">
               Nouveau
-            </Typography>
+            </div>
           )}
+
+          {/* Bouton rapide au survol */}
+          <div className="flex absolute inset-0 justify-center items-center opacity-0 transition-opacity duration-300 group-hover:opacity-100">
+            <div className="px-4 py-2 text-sm font-semibold rounded-lg shadow-lg backdrop-blur-sm transition-transform transform translate-y-2 bg-white/95 text-primary group-hover:translate-y-0">
+              Voir les détails
+            </div>
+          </div>
         </div>
 
         {/* Détails du produit */}
-        <div className="flex flex-col px-2 md:p-4">
-          <Typography variant="h5" component="h2" className="md:mb-2 truncate">
+        <div className="flex flex-col flex-grow p-4">
+          <Typography
+            variant="h5"
+            component="h2"
+            className="mb-2 font-semibold text-gray-900 transition-colors line-clamp-2 group-hover:text-primary">
             {nom}
           </Typography>
-          <Typography variant="caption1" className="text-gray-400 md:mb-4">
-            <div className="flex space-x-2 text-yellow-500 truncate">
-              <Typography
-                variant="caption4"
-                className="text-gray-4 flex items-center gap-1">
-                <RiStarFill className="text-primary-300" />
-                <RiStarFill className="text-primary-300" />
-                <RiStarFill className="text-primary-300" />
-                <RiStarFill className="text-primary-300" />
-                <RiStarFill className="text-primary-300" />
-              </Typography>
-              <Typography variant="caption4" className="text-gray-400">
-                | 4.5/5
-              </Typography>
+
+          {/* Note et avis */}
+          <div className="flex gap-2 items-center mb-3">
+            <div className="flex items-center gap-0.5">
+              {[...Array(5)].map((_, i) => (
+                <RiStarFill key={i} className="text-yellow-400" size={14} />
+              ))}
             </div>
-          </Typography>
+            <Typography variant="caption4" className="text-gray-500">
+              4.5 (128 avis)
+            </Typography>
+          </div>
 
           {/* Prix et promotion */}
-          <div className="flex items-center justify-between md:mb-4 space-x-4">
-            <Typography variant="body" className="text-black font-bold">
-              € {promotion ? promotion : prix}
+          <div className="flex gap-2 items-center mt-auto">
+            <Typography
+              variant="body"
+              className={`font-bold ${
+                hasPromotion ? "text-primary" : "text-gray-900"
+              } text-lg`}>
+              € {promotion ? Number(promotion).toFixed(2) : prix.toFixed(2)}
             </Typography>
             {hasPromotion && (
               <Typography
                 variant="caption1"
-                className="line-through text-gray-3">
-                € {prix}
+                className="text-gray-400 line-through">
+                € {prix.toFixed(2)}
               </Typography>
             )}
           </div>

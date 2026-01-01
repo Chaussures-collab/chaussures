@@ -5,25 +5,24 @@ import "@/styles/globals.css";
 import { ToastContainer } from "react-toastify";
 import type { AppProps } from "next/app";
 import AuthUserProvider from "@/context/AuthUserContext";
-import { PayPalScriptProvider } from "@paypal/react-paypal-js";
 import { SearchProvider } from "@/context/SearchContext";
+import { Elements } from "@stripe/react-stripe-js";
+import { loadStripe } from "@stripe/stripe-js";
 
 export default function App({ Component, pageProps }: AppProps) {
+  const stripePromise = loadStripe(
+    process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY || ""
+  );
+
   return (
     <AuthUserProvider>
       <CartProvider>
-        <PayPalScriptProvider
-          options={{
-            clientId:
-              "AemNB4srMcvG-8emHlc_EakJX0Nar8j4cvLhHaAHNCD8Ug5_r8143HbV1_ukGdx5LPt2IoigS5YATfA4",
-            currency: "EUR" // Ajout de la devise ici
-          }}
-        >
+        <Elements stripe={stripePromise}>
           <SearchProvider>
             <ToastContainer />
             <Component {...pageProps} />
-          </SearchProvider>
-        </PayPalScriptProvider>
+          </SearchProvider>{" "}
+        </Elements>
       </CartProvider>
     </AuthUserProvider>
   );

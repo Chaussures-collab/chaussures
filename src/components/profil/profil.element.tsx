@@ -134,6 +134,8 @@ console.log(authUser?.userDocument?.nom);
             </div>
             <Button
               action={action}
+              variant="ico"
+              // icon={<FiPhone className="" />}
               className="w-full mt-4 bg-red-500 hover:bg-red-600 text-white flex items-center justify-center gap-2">
               <FiLogOut />
               Déconnexion

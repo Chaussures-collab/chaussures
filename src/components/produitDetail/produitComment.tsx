@@ -21,12 +21,24 @@ export default function ProduitComment({src, alt}:Props) {
       content: (
         <>
           <p className="text-justify">
-            Découvrez une large sélection de produits de qualité, soigneusement choisis pour répondre à tous vos besoins. Chez ShopiMarket, nous vous proposons des articles variés allant des dernières tendances en électronique, mode et accessoires, jusqu{"'"}à des solutions pratiques pour la maison, le bien-être et bien plus encore. Chaque produit est conçu pour offrir une expérience utilisateur optimale, alliant performance, fiabilité et prix compétitifs. Que vous soyez à la recherche de nouveautés, de produits phares ou d{"'"}offres exclusives, notre catalogue regroupe des articles sélectionnés pour vous garantir satisfaction et qualité.
-
-
+            Découvrez une large sélection de produits de qualité, soigneusement
+            choisis pour répondre à tous vos besoins. Chez ShopiMarket, nous
+            vous proposons des articles variés allant des dernières tendances en
+            électronique, mode et accessoires, jusqu{"'"}à des solutions
+            pratiques pour la maison, le bien-être et bien plus encore. Chaque
+            produit est conçu pour offrir une expérience utilisateur optimale,
+            alliant performance, fiabilité et prix compétitifs. Que vous soyez à
+            la recherche de nouveautés, de produits phares ou d{"'"}offres
+            exclusives, notre catalogue regroupe des articles sélectionnés pour
+            vous garantir satisfaction et qualité.
           </p>
           <p>
-            Nous mettons également un accent particulier sur la diversité et l{"'"}innovation, en vous permettant d{"'"}explorer des produits uniques qui simplifient et améliorent votre quotidien. Grâce à notre service client dédié et une livraison rapide, ShopiMarket est votre destination de choix pour faire vos achats en ligne en toute confiance.
+            Nous mettons également un accent particulier sur la diversité et l
+            {"'"}innovation, en vous permettant d{"'"}explorer des produits
+            uniques qui simplifient et améliorent votre quotidien. Grâce à notre
+            service client dédié et une livraison rapide, SnipersMarketest votre
+            destination de choix pour faire vos achats en ligne en toute
+            confiance.
           </p>
         </>
       )

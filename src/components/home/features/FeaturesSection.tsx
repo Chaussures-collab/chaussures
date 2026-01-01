@@ -45,10 +45,20 @@ const features = [
   }
 ];
 
-export default function qualiteContainer() {
+export default function FeaturesSection() {
   return (
     <div className="bg-gray-50 py-16">
       <Container>
+        <div className="text-center mb-12">
+          <Typography variant="h2" className="font-bold text-gray-900 mb-4">
+            Pourquoi nous choisir ?
+          </Typography>
+          <Typography variant="body" className="text-gray-600 max-w-2xl mx-auto">
+            Nous nous engageons à vous offrir la meilleure expérience d{"'"}achat
+            en ligne avec des services de qualité supérieure
+          </Typography>
+        </div>
+
         <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-6">
           {features.map((feature, index) => (
             <div

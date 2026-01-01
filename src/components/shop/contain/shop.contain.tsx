@@ -1,24 +1,27 @@
 /** @format */
 import React, { useState } from "react";
 import { dbProduits } from "@/components/home/produits/produitsDB";
-import Navbar from "../navbar/navbar";
+import ModernFilter from "../filters/ModernFilter";
 import Contain from "./contain";
+
 export const totalProduits = dbProduits.length;
 
 export default function ShopContain() {
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
 
   const filteredProducts =
-    selectedCategory === "Tous" || !selectedCategory
+    !selectedCategory || selectedCategory === "all"
       ? dbProduits
       : dbProduits.filter((produit) => produit.categorie === selectedCategory);
 
   return (
     <>
-      {/* Passer les props pour gérer la sélection de catégories */}
-      <Navbar
-        selectedCategory={selectedCategory} productsPerPage={filteredProducts.length}
+      {/* Nouveau système de filtrage moderne */}
+      <ModernFilter
+        selectedCategory={selectedCategory}
         setSelectedCategory={setSelectedCategory}
+        productsPerPage={filteredProducts.length}
+        totalProducts={totalProduits}
       />
       <Contain produits={filteredProducts} />
     </>

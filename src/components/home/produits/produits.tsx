@@ -30,33 +30,45 @@ export default function Produits() {
   };
 
   return (
-    <Container className="py-6 my-6 bg-white">
-      {/* Titre de la section */}
-      <Typography component="h2" variant="h2" className="text-center mb-6">
-        Nos Produits
-      </Typography>
+    <div className="bg-white py-16">
+      <Container>
+        {/* En-tête de section */}
+        <div className="text-center mb-12">
+          <Typography component="h2" variant="h2" className="font-bold text-gray-900 mb-4">
+            Nos Produits Populaires
+          </Typography>
+          <Typography variant="body" className="text-gray-600 max-w-2xl mx-auto">
+            Découvrez notre sélection de produits les plus appréciés par nos clients
+          </Typography>
+        </div>
 
-      {/* Grille des produits */}
-      <div className="grid grid-cols-2 m:grid-cols-4 lg:grid-cols-5 gap-3 md:gap-6">
-        {getLimitedProducts(dbProduits).map((produit) => (
-          <CartProduit
-            key={produit.id}
-            id={produit.id}
-            src={produit.src}
-            alt={produit.alt}
-            prix={produit.prix}
-            nom={produit.nom}
-            description={produit.description}
-            date={produit.dateAjout}
-            promotion={produit.promotion ?? ""}
-          />
-        ))}
-      </div>
+        {/* Grille des produits */}
+        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4 md:gap-6 mb-12">
+          {getLimitedProducts(dbProduits, 10).map((produit) => (
+            <CartProduit
+              key={produit.id}
+              id={produit.id}
+              src={produit.src}
+              alt={produit.alt}
+              prix={produit.prix}
+              nom={produit.nom}
+              description={produit.description}
+              date={produit.dateAjout}
+              promotion={produit.promotion ?? ""}
+            />
+          ))}
+        </div>
 
-      {/* Bouton "Voir plus" */}
-      <div className="flex justify-center mt-8">
-        <Button variant="outline" action={pageShop}>Voir plus</Button>
-      </div>
-    </Container>
+        {/* Bouton "Voir plus" */}
+        <div className="flex justify-center">
+          <Button
+            variant="outline"
+            action={pageShop}
+            className="px-8 py-3 rounded-lg font-semibold">
+            Voir tous les produits
+          </Button>
+        </div>
+      </Container>
+    </div>
   );
 }

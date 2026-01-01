@@ -9,13 +9,17 @@ interface Props {
 
 export default function ListeImageProduit({ src, alt }: Props) {
   return (
-    <div className="relative min-w-20 min-h-20">
+    <div className="relative w-full h-full flex items-center">
       <Image
         src={src}
         alt={alt}
-        layout="fill"
+        layout="responsive"
+        width={381}
+        height={450}
         objectFit="cover"
-        className="rounded"
+        // className="rounded-lg shadow-lg"
+        className="object-cover rounded"
+        sizes="80px"
       />
     </div>
   );

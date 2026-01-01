@@ -12,8 +12,8 @@ export default function Contact() {
   return (
     <>
       <Seo
-        title="Contact - ShopiMarket | Service Client et Assistance"
-        description="Besoin d'aide ? Contactez ShopiMarket pour toute question sur vos commandes, paiements et livraisons. Notre service client est à votre écoute."
+        title="Contact - SnipersMarket| Service Client et Assistance"
+        description="Besoin d'aide ? Contactez SnipersMarketpour toute question sur vos commandes, paiements et livraisons. Notre service client est à votre écoute."
       />
 
       <Layout isDisplayCreadCrumbs={false}>

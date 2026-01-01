@@ -13,6 +13,7 @@ import { ProduitType } from "@/types/produitType";
 import { useCart } from "@/context/cartContext";
 import { toast } from "react-toastify";
 import { useRouter } from "next/router";
+import ColorGallery from "./ColorGallery";
 
 interface ProduitDetailProps {
   produit: ProduitType;
@@ -27,6 +28,18 @@ export default function ProduitDetail({ produit }: ProduitDetailProps) {
     null
   );
   const handlePage = () => {
+    // Déclencher les erreurs si les champs ne sont pas remplis
+    if (!selectedColor) {
+      setShowColorError(true);
+    }
+    if (!selectedSize) {
+      setShowSizeError(true);
+    }
+
+    // Si l'un des champs est manquant, ne pas continuer
+    if (!selectedColor || !selectedSize) {
+      return;
+    }
     if (!selectedColor || !selectedSize) {
       toast.error(
         "Veuillez choisir une couleur et une taille pour ajouter au panier."
@@ -57,13 +70,26 @@ export default function ProduitDetail({ produit }: ProduitDetailProps) {
     setQuantity(isNaN(newQuantity) || newQuantity < 1 ? 1 : newQuantity);
   }; */
 
+  const [showColorError, setShowColorError] = useState(false);
+  const [showSizeError, setShowSizeError] = useState(false);
+
   const handleAddToCart = () => {
+    // Déclencher les erreurs si les champs ne sont pas remplis
+    if (!selectedColor) {
+      setShowColorError(true);
+    }
+    if (!selectedSize) {
+      setShowSizeError(true);
+    }
+
+    // Si l'un des champs est manquant, ne pas continuer
     if (!selectedColor || !selectedSize) {
-      toast.error(
-        "Veuillez choisir une couleur et une taille pour ajouter au panier."
-      );
       return;
     }
+
+    // Réinitialiser les erreurs si tout est OK
+    setShowColorError(false);
+    setShowSizeError(false);
     if (selectedColor && selectedSize) {
       addToCart({
         ...produit,
@@ -124,47 +150,63 @@ export default function ProduitDetail({ produit }: ProduitDetailProps) {
       </Typography>
       <hr className="my-2 border-gray-4" />
 
-      {/* Couleur */}
-      <div className="space-y-4">
-        <Typography variant="body" className="text-gray-4">
-          Sélectionnez la couleur
-        </Typography>
-        <div className="flex gap-4">
-          {produit.colors.map((color, index) => (
-            <button
-              key={index}
-              className={`w-8 h-8 rounded-full border border-gray-300 ${
-                selectedColor === color.name ? "ring-2 ring-primary" : ""
-              }`}
-              style={{ backgroundColor: color.code }} // Applique la couleur spécifique
-              onClick={() => setSelectedColor(color.name)}
-              aria-label={`Choisir la couleur ${color.name}`}></button>
-          ))}
-        </div>
+      {/* Couleur avec galerie améliorée */}
+      <div>
+        <ColorGallery
+          colors={produit.colors}
+          selectedColor={selectedColor}
+          onColorSelect={(color) => {
+            setSelectedColor(color);
+            setShowColorError(false);
+          }}
+          showError={showColorError}
+        />
       </div>
 
       <hr className="my-2 border-gray-4" />
 
       {/* Taille */}
       <div className="space-y-2">
-        <Typography variant="body" className="text-gray-4">
-          Sélectionnez la taille
-        </Typography>
+        <div className="flex items-center justify-between">
+          <Typography variant="body" className="text-gray-4">
+            Sélectionnez la taille
+          </Typography>
+        </div>
         <div className="flex flex-wrap gap-4">
           {produit.sizes.map((size, index) => (
             <button
               key={index}
-              className={`w-10 h-10 rounded ${
+              className={`w-10 h-10 rounded transition-all ${
                 selectedSize === size
-                  ? "bg-primary text-white"
-                  : "bg-primary-50 text-gray-400"
+                  ? "bg-primary text-white shadow-md scale-105"
+                  : "bg-primary-50 text-gray-400 hover:bg-primary-100"
               }`}
-              onClick={() => setSelectedSize(size)}
+              onClick={() => {
+                setSelectedSize(size);
+                setShowSizeError(false);
+              }}
               aria-label={`Choisir la taille ${size}`}>
               {size}
             </button>
           ))}
         </div>
+        {showSizeError && !selectedSize && (
+          <div className="flex items-center gap-2 text-sm text-danger animate-fadeIn mt-2">
+            <svg
+              className="w-4 h-4 flex-shrink-0"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24">
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+              />
+            </svg>
+            <span>Veuillez sélectionner une taille</span>
+          </div>
+        )}
       </div>
 
       <div className="space-y-2 items-center gap-4">

@@ -83,6 +83,64 @@ export default async function handler(
   }
 
   // Traitement des événements de paiement
+  // Support pour Payment Intents (nouveau système)
+  if (event.type === "payment_intent.succeeded") {
+    try {
+      const paymentIntent = event.data.object as Stripe.PaymentIntent;
+
+      // Construction des données du webhook
+      const webhookData: StripeWebhookData = {
+        sessionId: paymentIntent.id, // Utilise l'ID du Payment Intent comme sessionId
+        customerEmail: paymentIntent.receipt_email || paymentIntent.metadata?.userEmail || null,
+        amountTotal: paymentIntent.amount,
+        currency: paymentIntent.currency,
+        paymentStatus: "PAID",
+        metadata: paymentIntent.metadata as Record<string, string> | undefined
+      };
+
+      // Traitement du paiement via le gestionnaire
+      const paymentManager = PaymentFactory.createPaymentManager();
+      const result = await paymentManager.handlePaymentWebhook(webhookData);
+
+      if (!result.success) {
+        const errorResponse = ErrorHandler.handleError(
+          new WebhookError(result.error || "Erreur lors du traitement du paiement", "WEBHOOK_PROCESS_ERROR", 500, {
+            sessionId: webhookData.sessionId,
+            orderId: result.orderId
+          }),
+          {
+            endpoint: "/api/webhooks/stripe",
+            operation: "handlePaymentWebhook",
+            eventType: event.type
+          }
+        );
+
+        return res.status(errorResponse.statusCode).json({
+          error: errorResponse.error,
+          code: errorResponse.code,
+          details: errorResponse.details
+        });
+      }
+
+      console.log(`✅ Paiement traité avec succès pour la commande: ${result.orderId}`);
+    } catch (error) {
+      const paymentIntent = event.data.object as Stripe.PaymentIntent;
+      const errorResponse = ErrorHandler.handleError(error, {
+        endpoint: "/api/webhooks/stripe",
+        operation: "process_webhook_event",
+        eventType: event.type,
+        sessionId: paymentIntent?.id
+      });
+
+      return res.status(errorResponse.statusCode).json({
+        error: errorResponse.error,
+        code: errorResponse.code,
+        details: errorResponse.details
+      });
+    }
+  }
+
+  // Support pour Checkout Sessions (ancien système - pour compatibilité)
   if (event.type === "checkout.session.completed") {
     try {
       const session = event.data.object as Stripe.Checkout.Session;
