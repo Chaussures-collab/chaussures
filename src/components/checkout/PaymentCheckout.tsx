@@ -17,10 +17,12 @@ const stripePromise = loadStripe(
 
 interface PaymentCheckoutProps {
   onPaymentSuccess?: () => void;
+  embedded?: boolean; // Mode intégré sans Container
 }
 
 export default function PaymentCheckout({
-  onPaymentSuccess
+  onPaymentSuccess,
+  embedded = false
 }: PaymentCheckoutProps) {
   const [clientSecret, setClientSecret] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(true);
@@ -117,14 +119,22 @@ export default function PaymentCheckout({
   }, [authUser, cart, router]);
 
   if (isLoading) {
+    const LoadingContent = (
+      <div className="flex flex-col items-center justify-center py-12">
+        <div className="animate-spin rounded-full h-10 w-10 border-b-2 border-primary mb-3"></div>
+        <Typography variant="body-sm" className="text-gray-600">
+          Préparation du paiement...
+        </Typography>
+      </div>
+    );
+    
+    if (embedded) {
+      return LoadingContent;
+    }
+    
     return (
       <Container className="py-12">
-        <div className="flex flex-col items-center justify-center py-20">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mb-4"></div>
-          <Typography variant="body" className="text-gray-600">
-            Préparation du paiement...
-          </Typography>
-        </div>
+        {LoadingContent}
       </Container>
     );
   }
@@ -132,47 +142,63 @@ export default function PaymentCheckout({
   if (error) {
     const isStripeAccountError = error.includes("onboarding") || error.includes("activé");
     
+    const ErrorContent = (
+      <div className={`p-4 rounded-lg border ${
+        isStripeAccountError 
+          ? "bg-yellow-50 border-yellow-200" 
+          : "bg-red-50 border-red-200"
+      }`}>
+        <Typography variant="h5" className={`mb-2 ${
+          isStripeAccountError ? "text-yellow-800" : "text-red-800"
+        }`}>
+          {isStripeAccountError ? "Compte non activé" : "Erreur"}
+        </Typography>
+        <Typography variant="body-sm" className={
+          isStripeAccountError ? "text-yellow-700" : "text-red-600"
+        }>
+          {error}
+        </Typography>
+        {isStripeAccountError && (
+          <div className="mt-3">
+            <a
+              href="https://dashboard.stripe.com/account/onboarding"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-block px-4 py-2 bg-primary text-white rounded-lg hover:bg-primary-600 transition-colors text-sm">
+              Compléter l{"'"}onboarding Stripe
+            </a>
+          </div>
+        )}
+      </div>
+    );
+    
+    if (embedded) {
+      return ErrorContent;
+    }
+    
     return (
       <Container className="py-12">
-        <div className={`p-6 rounded-lg border ${
-          isStripeAccountError 
-            ? "bg-yellow-50 border-yellow-200" 
-            : "bg-red-50 border-red-200"
-        }`}>
-          <Typography variant="h4" className={`mb-2 ${
-            isStripeAccountError ? "text-yellow-800" : "text-red-800"
-          }`}>
-            {isStripeAccountError ? "Compte non activé" : "Erreur"}
-          </Typography>
-          <Typography variant="body" className={
-            isStripeAccountError ? "text-yellow-700" : "text-red-600"
-          }>
-            {error}
-          </Typography>
-          {isStripeAccountError && (
-            <div className="mt-4">
-              <a
-                href="https://dashboard.stripe.com/account/onboarding"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="inline-block px-4 py-2 bg-primary text-white rounded-lg hover:bg-primary-600 transition-colors">
-                Compléter l{"'"}onboarding Stripe
-              </a>
-            </div>
-          )}
-        </div>
+        {ErrorContent}
       </Container>
     );
   }
 
   if (!clientSecret) {
+    const NoSecretContent = (
+      <div className="p-4 bg-yellow-50 border border-yellow-200 rounded-lg">
+        <Typography variant="body-sm" className="text-yellow-800">
+          Impossible de créer la session de paiement. Veuillez réessayer.
+        </Typography>
+      </div>
+    );
+    
+    if (embedded) {
+      return NoSecretContent;
+    }
+    
     return (
       <Container className="py-12">
-        <div className="p-6 bg-yellow-50 border border-yellow-200 rounded-lg">
-          <Typography variant="body" className="text-yellow-800">
-            Impossible de créer la session de paiement. Veuillez réessayer.
-          </Typography>
-        </div>
+        {NoSecretContent}
       </Container>
     );
   }
@@ -192,6 +218,21 @@ export default function PaymentCheckout({
       }
     }
   };
+
+  const PaymentContent = (
+    <div className="space-y-4">
+      <Elements stripe={stripePromise} options={options}>
+        <StripePaymentForm
+          clientSecret={clientSecret}
+          amount={totalAmount}
+        />
+      </Elements>
+    </div>
+  );
+
+  if (embedded) {
+    return PaymentContent;
+  }
 
   return (
     <Container className="py-8">
@@ -223,12 +264,7 @@ export default function PaymentCheckout({
 
         {/* Formulaire de paiement */}
         <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
-          <Elements stripe={stripePromise} options={options}>
-            <StripePaymentForm
-              clientSecret={clientSecret}
-              amount={totalAmount}
-            />
-          </Elements>
+          {PaymentContent}
         </div>
 
         {/* Informations de sécurité */}

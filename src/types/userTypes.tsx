@@ -20,10 +20,22 @@ export interface UserInterfaces{
     userDocument?: UserDocument;
 }
 export interface UserDocument{
-    uid: string;
-    email: string|null;
-    how_did_her: string|null;
-    creation_date: Timestamp;
-    nom: string|null;
-    prenom: string|null;
+    uid?: string;
+    email?: string|null;
+    how_did_hear?: string|null;
+    how_did_her?: string|null; // Ancien nom pour compatibilité
+    created_at?: Timestamp | { seconds: number; nanoseconds: number };
+    creation_date?: Timestamp;
+    last_login?: Timestamp | { seconds: number; nanoseconds: number } | Date;
+    nom?: string|null;
+    prenom?: string|null;
+    userDocData?: {
+        uid?: string;
+        email?: string|null;
+        how_did_hear?: string|null;
+        created_at?: Timestamp | { seconds: number; nanoseconds: number };
+        last_login?: Timestamp | { seconds: number; nanoseconds: number } | Date;
+        nom?: string|null;
+        prenom?: string|null;
+    };
 }

@@ -6,7 +6,7 @@
  */
 
 // Types de base
-export type PaymentStatus = "PENDING" | "PAID" | "FAILED" | "CANCELLED" | "REFUNDED";
+export type PaymentStatus = "PENDING" | "PAID" | "FAILED" | "CANCELLED" | "REFUNDED" | "SHIPPED" | "DELIVERED";
 
 export type PaymentMethod = "STRIPE" | "PAYPAL" | "BANK_TRANSFER";
 

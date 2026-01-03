@@ -31,7 +31,7 @@ export default function ProduitCategorie({ categorie }: Props) {
               alt={produit.alt}
               nom={produit.nom}
               prix={produit.prix}
-              promotion={produit.promotion ?? 0}
+              promotion={produit.promotion ?? ""}
               description={produit.description}
             />
           ))}

@@ -35,11 +35,7 @@ export default function ProduitDetail({ produit }: ProduitDetailProps) {
     if (!selectedSize) {
       setShowSizeError(true);
     }
-
-    // Si l'un des champs est manquant, ne pas continuer
-    if (!selectedColor || !selectedSize) {
-      return;
-    }
+    
     if (!selectedColor || !selectedSize) {
       toast.error(
         "Veuillez choisir une couleur et une taille pour ajouter au panier."
@@ -84,6 +80,9 @@ export default function ProduitDetail({ produit }: ProduitDetailProps) {
 
     // Si l'un des champs est manquant, ne pas continuer
     if (!selectedColor || !selectedSize) {
+      toast.error(
+        "Veuillez choisir une couleur et une taille pour ajouter au panier."
+      );
       return;
     }
 

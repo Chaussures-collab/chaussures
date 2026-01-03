@@ -29,7 +29,20 @@ export default function useFirebaseAuth() {
 
     const unsubscribe = onSnapshot(documentRef, async (doc) => {
       if (doc.exists()) {
-        compactUser.userDocument = doc.data() as UserDocument;
+        const docData = doc.data();
+        // Gérer les deux structures possibles : userDocData ou données directes
+        compactUser.userDocument = docData as UserDocument;
+        
+        // Si les données sont dans userDocData, les extraire aussi au niveau supérieur pour faciliter l'accès
+        if (docData.userDocData) {
+          const userDocData = docData.userDocData;
+          // Fusionner les données pour faciliter l'accès
+          compactUser.userDocument = {
+            ...docData,
+            ...userDocData,
+            userDocData: userDocData
+          } as UserDocument;
+        }
       }
       setAuthUser((prevAuthUser) => ({
         ...prevAuthUser,

@@ -127,49 +127,67 @@ export default function StripePaymentForm({
   }
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-6">
-      {/* Informations de sécurité */}
-      <div className="flex gap-2 items-center p-3 bg-blue-50 rounded-lg border border-blue-200">
-        <FiLock className="text-blue-600" size={18} />
-        <Typography variant="caption4" className="text-blue-700">
-          Paiement sécurisé et crypté via Stripe
-        </Typography>
+    <form onSubmit={handleSubmit} className="space-y-5">
+      {/* Élément de paiement Stripe avec design amélioré */}
+      <div className="relative">
+        <div className="p-5 bg-gray-50 rounded-xl border-2 border-gray-200 focus-within:border-primary transition-colors">
+          <PaymentElement
+            options={{
+              layout: "tabs",
+              business: {
+                name: "ShopiMarket"
+              }
+            }}
+          />
+        </div>
       </div>
 
-      {/* Élément de paiement Stripe */}
-      <div className="p-4 bg-white rounded-lg border border-gray-300">
-        <PaymentElement
-          options={{
-            layout: "tabs"
-          }}
-        />
-      </div>
-
-      {/* Affichage des erreurs */}
+      {/* Affichage des erreurs avec design amélioré */}
       {error && (
-        <div className="flex gap-2 items-center p-3 bg-red-50 rounded-lg border border-red-200">
-          <FiAlertCircle className="text-red-500" size={18} />
-          <Typography variant="body" className="text-red-700">
-            {error}
-          </Typography>
+        <div className="flex gap-3 items-start p-4 bg-red-50 rounded-xl border border-red-200 animate-fadeIn">
+          <div className="flex-shrink-0 mt-0.5">
+            <FiAlertCircle className="text-red-500" size={20} />
+          </div>
+          <div className="flex-1">
+            <Typography variant="body-sm" className="font-medium text-red-800 mb-1">
+              Erreur de paiement
+            </Typography>
+            <Typography variant="caption1" className="text-red-700">
+              {error}
+            </Typography>
+          </div>
         </div>
       )}
 
-      {/* Bouton de paiement */}
-      <Button
-        type="submit"
-        isLoading={isLoading || !stripe || !elements}
-        disabled={isLoading || !stripe || !elements || paymentStatus === "processing"}
-        fullwidth
-        className="py-3 w-full text-lg font-semibold text-white bg-primary hover:bg-primary-dark">
-        {isLoading || paymentStatus === "processing"
-          ? "Traitement du paiement..."
-          : `Payer €${amount.toFixed(2)}`}
-      </Button>
+      {/* Bouton de paiement avec design amélioré */}
+      <div className="pt-2">
+        <Button
+          type="submit"
+          isLoading={isLoading || !stripe || !elements}
+          disabled={isLoading || !stripe || !elements || paymentStatus === "processing"}
+          fullwidth
+          className="py-4 w-full text-base font-semibold text-white bg-gradient-to-r from-primary to-primary-600 hover:from-primary-600 hover:to-primary shadow-lg hover:shadow-xl transition-all duration-200 rounded-xl">
+          {isLoading || paymentStatus === "processing" ? (
+            <span className="flex items-center justify-center gap-2">
+              <svg className="animate-spin h-5 w-5 text-white" fill="none" viewBox="0 0 24 24">
+                <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+              </svg>
+              Traitement du paiement...
+            </span>
+          ) : (
+            <span className="flex items-center justify-center gap-2">
+              <FiLock size={18} />
+              Payer €{amount.toFixed(2)}
+            </span>
+          )}
+        </Button>
+      </div>
 
-      {/* Informations supplémentaires */}
-      <div className="text-center">
-        <Typography variant="caption4" className="text-gray-500">
+      {/* Informations supplémentaires avec design amélioré */}
+      <div className="pt-2 text-center">
+        <Typography variant="caption1" className="text-gray-500 flex items-center justify-center gap-1.5">
+          <FiLock size={12} className="text-gray-400" />
           Vos informations de paiement sont sécurisées et ne seront jamais stockées
         </Typography>
       </div>

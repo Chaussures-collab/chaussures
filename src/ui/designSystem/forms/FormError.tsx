@@ -5,7 +5,7 @@ import Typography from "../typography/typography";
 import { FiAlertCircle } from "react-icons/fi";
 
 interface FormErrorProps {
-  message: string;
+  message?: string;
   className?: string;
 }
 

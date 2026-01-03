@@ -30,9 +30,7 @@ const categories: FilterOption[] = [
 
 export default function ModernFilter({
   selectedCategory,
-  setSelectedCategory,
-  productsPerPage,
-  totalProducts
+  setSelectedCategory
 }: ModernFilterProps) {
   const [isMobileFilterOpen, setIsMobileFilterOpen] = useState(false);
   const [isDesktopFilterOpen, setIsDesktopFilterOpen] = useState(false);
@@ -170,7 +168,9 @@ export default function ModernFilter({
             <div className="p-6 space-y-8">
               {/* Catégories */}
               <div>
-                <Typography variant="body" className="font-bold mb-4 text-gray-900">
+                <Typography
+                  variant="body"
+                  className="font-bold mb-4 text-gray-900">
                   Catégories
                 </Typography>
                 <div className="space-y-2">
@@ -191,7 +191,9 @@ export default function ModernFilter({
 
               {/* Prix */}
               <div>
-                <Typography variant="body" className="font-bold mb-4 text-gray-900">
+                <Typography
+                  variant="body"
+                  className="font-bold mb-4 text-gray-900">
                   Fourchette de prix
                 </Typography>
                 <div className="space-y-4">
@@ -233,7 +235,9 @@ export default function ModernFilter({
 
               {/* Marques */}
               <div>
-                <Typography variant="body" className="font-bold mb-4 text-gray-900">
+                <Typography
+                  variant="body"
+                  className="font-bold mb-4 text-gray-900">
                   Marques
                 </Typography>
                 <div className="space-y-2">
@@ -257,7 +261,9 @@ export default function ModernFilter({
 
               {/* Tri */}
               <div>
-                <Typography variant="body" className="font-bold mb-4 text-gray-900">
+                <Typography
+                  variant="body"
+                  className="font-bold mb-4 text-gray-900">
                   Trier par
                 </Typography>
                 <div className="space-y-2">

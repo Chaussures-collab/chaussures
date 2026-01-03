@@ -20,7 +20,18 @@ import {
 } from "@/types/payment.types";
 import { PaymentError } from "./errors/PaymentError";
 import { ErrorHandler } from "./errors/ErrorHandler";
-import { emailService, OrderEmailData } from "../email/EmailService";
+// Import dynamique pour éviter l'import côté client (nodemailer nécessite child_process)
+type EmailServiceType = typeof import("../email/EmailService");
+let emailService: EmailServiceType["emailService"] | null = null;
+
+// Fonction pour charger EmailService uniquement côté serveur
+async function getEmailService() {
+  if (typeof window === "undefined" && !emailService) {
+    const emailModule = await import("../email/EmailService");
+    emailService = emailModule.emailService;
+  }
+  return emailService;
+}
 
 export class PaymentManager {
   constructor(
@@ -271,7 +282,7 @@ export class PaymentManager {
         ? `${data.metadata.prenom} ${data.metadata.nom}`
         : data.metadata?.prenom || data.metadata?.nom || data.userEmail.split("@")[0] || "Client";
 
-    const orderEmailData: OrderEmailData = {
+    const orderEmailData = {
       orderId: data.orderId,
       customerName,
       customerEmail: data.userEmail,
@@ -292,11 +303,12 @@ export class PaymentManager {
       })
     };
 
-    // Envoyer l'email de confirmation au client
-    await emailService.sendOrderConfirmationEmail(orderEmailData);
-
-    // Envoyer l'alerte à l'administrateur
-    await emailService.sendAdminOrderAlert(orderEmailData);
+    // Envoyer l'email de confirmation au client - uniquement côté serveur
+    const emailServiceInstance = await getEmailService();
+    if (emailServiceInstance) {
+      await emailServiceInstance.sendOrderConfirmationEmail(orderEmailData);
+      await emailServiceInstance.sendAdminOrderAlert(orderEmailData);
+    }
   }
 }
 
