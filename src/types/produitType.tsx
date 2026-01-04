@@ -11,7 +11,8 @@ export interface ProduitType {
   description: string;
   description1: string;
   quantity?: number; //quantiteStock
-  promotion?: number; //prixPromo
+  promotion?: string | number | null;
+  //prixPromo
   images: { id: number; src: string; alt: string }[];
   colors: { id: number; name: string; code: string }[];
   sizes: string[];

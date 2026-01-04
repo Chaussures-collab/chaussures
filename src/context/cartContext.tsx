@@ -12,7 +12,7 @@ interface Product {
   alt: string;
   nom: string;
   prix: number;
-  promotion?: string | number;
+  promotion?: string | number | null;
   date?: string;
   description?: string;
   size?: number | string | undefined;

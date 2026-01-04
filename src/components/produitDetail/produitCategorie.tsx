@@ -1,7 +1,7 @@
 import React from "react";
 import Typography from "@/ui/designSystem/typography/typography";
 import Button from "@/ui/designSystem/button/button";
-import { dbProduits } from "../home/produits/produitsDB";
+import { useProducts } from "@/hooks/useProducts";
 import CartProduit from "../home/produits/cartProduit";
 
 interface Props {
@@ -9,10 +9,22 @@ interface Props {
 }
 
 export default function ProduitCategorie({ categorie }: Props) {
+  const { products, isLoading } = useProducts();
+  
   // Filtrer les produits par catégorie
-  const produitsFiltres = dbProduits.filter(
+  const produitsFiltres = products.filter(
     (produit) => produit.categorie === categorie
   );
+
+  if (isLoading) {
+    return (
+      <div className="py-12 my-12 bg-white">
+        <div className="flex justify-center items-center py-20">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary"></div>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="py-12 my-12 bg-white">

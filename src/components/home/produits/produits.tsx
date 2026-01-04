@@ -4,13 +4,12 @@ import React from "react";
 import Container from "@/ui/components/container/container";
 import Typography from "@/ui/designSystem/typography/typography";
 import CartProduit from "./cartProduit";
-import { dbProduits } from "./produitsDB";
+import { useProducts } from "@/hooks/useProducts";
 import Button from "@/ui/designSystem/button/button";
 import { useRouter } from "next/router";
 
 // Définition de l'interface Produit
 interface Produit {
-  
   id: number; // ou string
   src: string;
   alt: string;
@@ -18,16 +17,30 @@ interface Produit {
   nom: string;
   description: string;
   dateAjout: string; // ou Date
-  promotion?: string |number; // Optionnel
+  promotion?: string | number | null;
 }
 
 export default function Produits() {
   const router = useRouter(); // Remplacer useNavigate par useRouter
   const pageShop =() => {router.push('/shop')};
+  const { products, isLoading } = useProducts();
+  
   // Fonction pour afficher un nombre limité de produits
   const getLimitedProducts = (products: Produit[], limit: number = 30): Produit[] => {
     return products.slice(0, limit); // Retourne seulement les premiers "limit" produits
   };
+
+  if (isLoading) {
+    return (
+      <div className="bg-white py-16">
+        <Container>
+          <div className="flex justify-center items-center py-20">
+            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary"></div>
+          </div>
+        </Container>
+      </div>
+    );
+  }
 
   return (
     <div className="bg-white py-16">
@@ -44,7 +57,7 @@ export default function Produits() {
 
         {/* Grille des produits */}
         <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4 md:gap-6 mb-12">
-          {getLimitedProducts(dbProduits, 10).map((produit) => (
+          {getLimitedProducts(products, 10).map((produit) => (
             <CartProduit
               key={produit.id}
               id={produit.id}

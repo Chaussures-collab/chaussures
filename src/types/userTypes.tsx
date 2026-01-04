@@ -29,6 +29,8 @@ export interface UserDocument{
     last_login?: Timestamp | { seconds: number; nanoseconds: number } | Date;
     nom?: string|null;
     prenom?: string|null;
+    admin?: boolean;
+    role?: string;
     userDocData?: {
         uid?: string;
         email?: string|null;
@@ -37,5 +39,7 @@ export interface UserDocument{
         last_login?: Timestamp | { seconds: number; nanoseconds: number } | Date;
         nom?: string|null;
         prenom?: string|null;
+        admin?: boolean;
+        role?: string;
     };
 }

@@ -61,8 +61,8 @@ export default function OrdersListContainer() {
   if (authUserIsLoading || isLoading) {
     return (
       <Container className="py-12">
-        <div className="flex flex-col items-center justify-center py-20">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mb-4"></div>
+        <div className="flex flex-col justify-center items-center py-20">
+          <div className="mb-4 w-12 h-12 rounded-full border-b-2 animate-spin border-primary"></div>
           <Typography variant="body" className="text-gray-600">
             Chargement de vos commandes...
           </Typography>
@@ -74,8 +74,8 @@ export default function OrdersListContainer() {
   if (error) {
     return (
       <Container className="py-12">
-        <div className="p-6 bg-red-50 border border-red-200 rounded-lg">
-          <Typography variant="h5" className="text-red-800 mb-2">
+        <div className="p-6 bg-red-50 rounded-lg border border-red-200">
+          <Typography variant="h5" className="mb-2 text-red-800">
             Erreur
           </Typography>
           <Typography variant="body" className="text-red-600">
@@ -90,15 +90,15 @@ export default function OrdersListContainer() {
     <Container className="py-8 md:py-12">
       {/* En-tête */}
       <div className="mb-8">
-        <div className="flex items-center gap-3 mb-4">
-          <div className="p-3 bg-primary/10 rounded-lg">
+        <div className="flex gap-3 items-center mb-4">
+          <div className="p-3 rounded-lg bg-primary/10">
             <FiShoppingBag className="text-primary" size={24} />
           </div>
           <div>
             <Typography variant="h2" className="font-bold text-gray-900">
               Mes commandes
             </Typography>
-            <Typography variant="body-sm" className="text-gray-600 mt-1">
+            <Typography variant="body-sm" className="mt-1 text-gray-600">
               {orders.length === 0
                 ? "Aucune commande"
                 : `${orders.length} ${orders.length === 1 ? "commande" : "commandes"}`}
@@ -109,21 +109,21 @@ export default function OrdersListContainer() {
 
       {/* Liste des commandes */}
       {orders.length === 0 ? (
-        <div className="bg-white rounded-xl border border-gray-200 p-12 text-center">
-          <div className="flex flex-col items-center justify-center">
-            <div className="p-4 bg-gray-100 rounded-full mb-4">
+        <div className="p-12 text-center bg-white rounded-xl border border-gray-200">
+          <div className="flex flex-col justify-center items-center">
+            <div className="p-4 mb-4 bg-gray-100 rounded-full">
               <FiShoppingBag className="text-gray-400" size={48} />
             </div>
-            <Typography variant="h4" className="font-bold text-gray-900 mb-2">
+            <Typography variant="h4" className="mb-2 font-bold text-gray-900">
               Aucune commande
             </Typography>
-            <Typography variant="body" className="text-gray-600 mb-6 max-w-md">
+            <Typography variant="body" className="mb-6 max-w-md text-gray-600">
               Vous n&apos;avez pas encore passé de commande. Parcourez notre catalogue et
               commencez vos achats !
             </Typography>
             <button
               onClick={() => router.push("/shop")}
-              className="px-6 py-3 bg-primary hover:bg-primary-600 text-white rounded-lg font-semibold transition-colors">
+              className="px-6 py-3 font-semibold text-white rounded-lg transition-colors bg-primary hover:bg-primary-600">
               Découvrir nos produits
             </button>
           </div>

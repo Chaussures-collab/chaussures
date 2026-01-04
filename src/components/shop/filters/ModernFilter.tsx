@@ -1,11 +1,12 @@
 /** @format */
 
-import React, { useState } from "react";
-import { FiFilter, FiX } from "react-icons/fi";
+import React, { useState, useRef, useEffect, useMemo, useCallback } from "react";
+import { FiFilter, FiX, FiChevronLeft, FiChevronRight } from "react-icons/fi";
 import { IoClose } from "react-icons/io5";
 import Typography from "@/ui/designSystem/typography/typography";
 import Container from "@/ui/components/container/container";
 import Button from "@/ui/designSystem/button/button";
+import { Category } from "@/hooks/useCategories";
 
 interface FilterOption {
   id: string;
@@ -18,25 +19,73 @@ interface ModernFilterProps {
   setSelectedCategory: (category: string | null) => void;
   productsPerPage: number;
   totalProducts: number;
+  categories: Category[];
 }
-
-const categories: FilterOption[] = [
-  { id: "all", label: "Tous les produits" },
-  { id: "Chaussures", label: "Chaussures" },
-  { id: "Doudoune", label: "Doudoune" },
-  { id: "Survetement", label: "Survetement" },
-  { id: "Veste", label: "Veste" }
-];
 
 export default function ModernFilter({
   selectedCategory,
-  setSelectedCategory
+  setSelectedCategory,
+  categories
 }: ModernFilterProps) {
+  const scrollContainerRef = useRef<HTMLDivElement>(null);
+  const [showLeftArrow, setShowLeftArrow] = useState(false);
+  const [showRightArrow, setShowRightArrow] = useState(true);
   const [isMobileFilterOpen, setIsMobileFilterOpen] = useState(false);
   const [isDesktopFilterOpen, setIsDesktopFilterOpen] = useState(false);
   const [priceRange, setPriceRange] = useState<[number, number]>([0, 1000]);
   const [selectedBrands, setSelectedBrands] = useState<string[]>([]);
   const [sortBy, setSortBy] = useState<string>("default");
+
+  // Dédupliquer les catégories par nom et transformer en FilterOption
+  const categoryOptions: FilterOption[] = useMemo(() => {
+    // Dédupliquer les catégories par nom
+    const uniqueCategories = categories.filter(
+      (category, index, self) => index === self.findIndex((c) => c.nom === category.nom)
+    );
+
+    // Transformer les catégories de la base en format FilterOption
+    return [
+      { id: "all", label: "Tous les produits" },
+      ...uniqueCategories.map((cat) => ({
+        id: cat.nom,
+        label: cat.nom
+      }))
+    ];
+  }, [categories]);
+
+  // Vérifier si le scroll est nécessaire et mettre à jour les flèches
+  const checkScrollButtons = useCallback(() => {
+    if (scrollContainerRef.current) {
+      const { scrollLeft, scrollWidth, clientWidth } = scrollContainerRef.current;
+      setShowLeftArrow(scrollLeft > 0);
+      setShowRightArrow(scrollLeft < scrollWidth - clientWidth - 10);
+    }
+  }, []);
+
+  useEffect(() => {
+    checkScrollButtons();
+    const container = scrollContainerRef.current;
+    if (container) {
+      container.addEventListener("scroll", checkScrollButtons);
+      window.addEventListener("resize", checkScrollButtons);
+      return () => {
+        container.removeEventListener("scroll", checkScrollButtons);
+        window.removeEventListener("resize", checkScrollButtons);
+      };
+    }
+  }, [categoryOptions, checkScrollButtons]);
+
+  const scroll = (direction: "left" | "right") => {
+    if (scrollContainerRef.current) {
+      const scrollAmount = 200;
+      const newScrollLeft =
+        scrollContainerRef.current.scrollLeft + (direction === "right" ? scrollAmount : -scrollAmount);
+      scrollContainerRef.current.scrollTo({
+        left: newScrollLeft,
+        behavior: "smooth"
+      });
+    }
+  };
 
   const brands = ["Nike", "Adidas", "Puma", "Reebok", "New Balance", "Converse"];
   const sortOptions = [
@@ -69,39 +118,65 @@ export default function ModernFilter({
   return (
     <>
       {/* Barre de filtres sticky (Desktop) */}
-      <div className="sticky md:top-22 top-16 z-40 bg-white border-b border-gray-200 shadow-sm">
+      <div className="sticky top-16 z-40 bg-white border-b border-gray-200 shadow-sm md:top-22">
         <Container>
-          <div className="flex items-center justify-between py-4">
-            {/* Filtres desktop */}
-            <div className="hidden lg:flex items-center gap-3 flex-wrap">
-              <div className="flex items-center gap-2 text-sm font-medium text-gray-700">
+          <div className="flex justify-between items-center py-4">
+            {/* Filtres desktop avec scroll horizontal */}
+            <div className="hidden flex-1 gap-2 items-center min-w-0 lg:flex">
+              <div className="flex flex-shrink-0 gap-2 items-center text-sm font-medium text-gray-700">
                 <FiFilter size={18} />
                 <span>Filtres :</span>
               </div>
-              {categories.map((category) => (
+              
+              {/* Flèche gauche */}
+              {showLeftArrow && (
                 <button
-                  key={category.id}
-                  onClick={() => handleCategorySelect(category.id)}
-                  className={`px-4 py-2 text-sm font-medium transition-all duration-200 ${
-                    activeCategory === category.id
-                      ? "bg-primary text-white shadow-md"
-                      : "bg-gray-100 text-gray-700 hover:bg-gray-200"
-                  }`}>
-                  {category.label}
+                  onClick={() => scroll("left")}
+                  className="flex-shrink-0 p-1 text-gray-600 rounded-full transition-colors hover:text-gray-900 hover:bg-gray-100"
+                  aria-label="Faire défiler vers la gauche">
+                  <FiChevronLeft size={20} />
                 </button>
-              ))}
+              )}
+
+              {/* Container avec scroll horizontal */}
+              <div
+                ref={scrollContainerRef}
+                className="flex overflow-x-auto flex-1 gap-3 items-center min-w-0 scrollbar-hide">
+                {categoryOptions.map((category) => (
+                  <button
+                    key={category.id}
+                    onClick={() => handleCategorySelect(category.id)}
+                    className={`px-4 py-2 text-sm font-medium transition-all duration-200 whitespace-nowrap flex-shrink-0 ${
+                      activeCategory === category.id
+                        ? "bg-primary text-white shadow-md"
+                        : "bg-gray-100 text-gray-700 hover:bg-gray-200"
+                    }`}>
+                    {category.label}
+                  </button>
+                ))}
+              </div>
+
+              {/* Flèche droite */}
+              {showRightArrow && (
+                <button
+                  onClick={() => scroll("right")}
+                  className="flex-shrink-0 p-1 text-gray-600 rounded-full transition-colors hover:text-gray-900 hover:bg-gray-100"
+                  aria-label="Faire défiler vers la droite">
+                  <FiChevronRight size={20} />
+                </button>
+              )}
             </div>
 
             {/* Boutons filtres */}
-            <div className="flex items-center gap-3">
+            <div className="flex gap-3 items-center">
               {/* Bouton filtre mobile */}
               <button
                 onClick={() => setIsMobileFilterOpen(true)}
-                className="lg:hidden flex items-center gap-2 px-4 py-2 bg-primary text-white font-medium">
+                className="flex gap-2 items-center px-4 py-2 font-medium text-white lg:hidden bg-primary">
                 <FiFilter size={18} />
                 <span>Filtres</span>
                 {selectedCategory && (
-                  <span className="bg-white text-primary w-5 h-5 flex items-center justify-center text-xs font-bold">
+                  <span className="flex justify-center items-center w-5 h-5 text-xs font-bold bg-white text-primary">
                     1
                   </span>
                 )}
@@ -110,7 +185,7 @@ export default function ModernFilter({
               {/* Bouton filtres avancés desktop */}
               <button
                 onClick={() => setIsDesktopFilterOpen(true)}
-                className="flex items-center gap-2 px-4 py-2 bg-white border border-gray-300  hover:bg-gray-50 transition text-gray-700 font-medium">
+                className="flex gap-2 items-center px-4 py-2 font-medium text-gray-700 bg-white border border-gray-300 transition hover:bg-gray-50">
                 <FiFilter size={18} />
                 <span>Filtres avancés</span>
               </button>
@@ -127,7 +202,7 @@ export default function ModernFilter({
 
           {/* Badge catégorie active (mobile) */}
           {selectedCategory && (
-            <div className="lg:hidden pb-3">
+            <div className="pb-3 lg:hidden">
               <div className="inline-flex items-center gap-2 px-3 py-1.5 bg-primary/10 text-primary rounded-full text-sm">
                 <span>{selectedCategory}</span>
                 <button
@@ -146,20 +221,20 @@ export default function ModernFilter({
         <div className="block fixed inset-0 z-50 pointer-events-none">
           {/* Overlay */}
           <div
-            className="absolute inset-0 bg-black/50 transition-opacity"
+            className="absolute inset-0 transition-opacity bg-black/50"
             onClick={() => setIsDesktopFilterOpen(false)}
           />
 
           {/* Panel à droite */}
-          <div className="absolute right-0 top-0 bottom-0 w-full max-w-md bg-white shadow-2xl overflow-y-auto pointer-events-auto transform transition-transform">
+          <div className="overflow-y-auto absolute top-0 right-0 bottom-0 w-full max-w-md bg-white shadow-2xl transition-transform transform pointer-events-auto">
             {/* Header */}
-            <div className="sticky top-0 bg-white border-b border-gray-200 px-6 py-4 flex items-center justify-between z-10">
+            <div className="flex sticky top-0 z-10 justify-between items-center px-6 py-4 bg-white border-b border-gray-200">
               <Typography variant="h5" className="font-bold">
                 Filtres avancés
               </Typography>
               <button
                 onClick={() => setIsDesktopFilterOpen(false)}
-                className="p-2 hover:bg-gray-100 rounded-full transition">
+                className="p-2 rounded-full transition hover:bg-gray-100">
                 <FiX size={24} />
               </button>
             </div>
@@ -170,11 +245,11 @@ export default function ModernFilter({
               <div>
                 <Typography
                   variant="body"
-                  className="font-bold mb-4 text-gray-900">
+                  className="mb-4 font-bold text-gray-900">
                   Catégories
                 </Typography>
                 <div className="space-y-2">
-                  {categories.map((category) => (
+                  {categoryOptions.map((category) => (
                     <button
                       key={category.id}
                       onClick={() => handleCategorySelect(category.id)}
@@ -193,11 +268,11 @@ export default function ModernFilter({
               <div>
                 <Typography
                   variant="body"
-                  className="font-bold mb-4 text-gray-900">
+                  className="mb-4 font-bold text-gray-900">
                   Fourchette de prix
                 </Typography>
                 <div className="space-y-4">
-                  <div className="flex items-center gap-4">
+                  <div className="flex gap-4 items-center">
                     <input
                       type="range"
                       min="0"
@@ -212,7 +287,7 @@ export default function ModernFilter({
                       €{priceRange[0]}
                     </span>
                   </div>
-                  <div className="flex items-center gap-4">
+                  <div className="flex gap-4 items-center">
                     <input
                       type="range"
                       min="0"
@@ -227,7 +302,7 @@ export default function ModernFilter({
                       €{priceRange[1]}
                     </span>
                   </div>
-                  <div className="text-center text-sm text-gray-600">
+                  <div className="text-sm text-center text-gray-600">
                     €{priceRange[0]} - €{priceRange[1]}
                   </div>
                 </div>
@@ -237,19 +312,19 @@ export default function ModernFilter({
               <div>
                 <Typography
                   variant="body"
-                  className="font-bold mb-4 text-gray-900">
+                  className="mb-4 font-bold text-gray-900">
                   Marques
                 </Typography>
                 <div className="space-y-2">
                   {brands.map((brand) => (
                     <label
                       key={brand}
-                      className="flex items-center gap-3 p-3 rounded-lg hover:bg-gray-50 cursor-pointer">
+                      className="flex gap-3 items-center p-3 rounded-lg cursor-pointer hover:bg-gray-50">
                       <input
                         type="checkbox"
                         checked={selectedBrands.includes(brand)}
                         onChange={() => handleBrandToggle(brand)}
-                        className="w-5 h-5 text-primary rounded border-gray-300 focus:ring-primary"
+                        className="w-5 h-5 rounded border-gray-300 text-primary focus:ring-primary"
                       />
                       <Typography variant="body" className="text-gray-700">
                         {brand}
@@ -263,7 +338,7 @@ export default function ModernFilter({
               <div>
                 <Typography
                   variant="body"
-                  className="font-bold mb-4 text-gray-900">
+                  className="mb-4 font-bold text-gray-900">
                   Trier par
                 </Typography>
                 <div className="space-y-2">
@@ -284,11 +359,11 @@ export default function ModernFilter({
             </div>
 
             {/* Footer avec boutons */}
-            <div className="sticky bottom-0 bg-white border-t border-gray-200 p-6 space-y-3">
+            <div className="sticky bottom-0 p-6 space-y-3 bg-white border-t border-gray-200">
               <Button
                 variant="suivant"
                 action={() => setIsDesktopFilterOpen(false)}
-                className="w-full py-3">
+                className="py-3 w-full">
                 Appliquer les filtres
               </Button>
               <Button
@@ -299,7 +374,7 @@ export default function ModernFilter({
                   setSelectedBrands([]);
                   setSortBy("default");
                 }}
-                className="w-full py-3">
+                className="py-3 w-full">
                 Réinitialiser
               </Button>
             </div>
@@ -318,24 +393,24 @@ export default function ModernFilter({
 
           {/* Panel */}
           <div className="absolute bottom-0 left-0 right-0 bg-white rounded-t-2xl shadow-2xl max-h-[80vh] overflow-y-auto">
-            <div className="sticky top-0 bg-white border-b border-gray-200 px-4 py-4 flex items-center justify-between">
+            <div className="flex sticky top-0 justify-between items-center px-4 py-4 bg-white border-b border-gray-200">
               <Typography variant="h5" className="font-bold">
                 Filtres
               </Typography>
               <button
                 onClick={() => setIsMobileFilterOpen(false)}
-                className="p-2 hover:bg-gray-100 rounded-full">
+                className="p-2 rounded-full hover:bg-gray-100">
                 <FiX size={24} />
               </button>
             </div>
 
             <div className="p-4 space-y-6">
               <div>
-                <Typography variant="body" className="font-semibold mb-4">
+                <Typography variant="body" className="mb-4 font-semibold">
                   Catégories
                 </Typography>
                 <div className="space-y-2">
-                  {categories.map((category) => (
+                  {categoryOptions.map((category) => (
                     <button
                       key={category.id}
                       onClick={() => handleCategorySelect(category.id)}
@@ -352,11 +427,11 @@ export default function ModernFilter({
             </div>
 
             {/* Bouton appliquer */}
-            <div className="sticky bottom-0 bg-white border-t border-gray-200 p-4">
+            <div className="sticky bottom-0 p-4 bg-white border-t border-gray-200">
               <Button
                 // variant="primary"
                 action={() => setIsMobileFilterOpen(false)}
-                className="w-full py-3">
+                className="py-3 w-full">
                 Appliquer les filtres
               </Button>
             </div>

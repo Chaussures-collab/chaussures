@@ -6,7 +6,8 @@ import { RiCloseFill, RiColorFilterFill } from "react-icons/ri";
 import Container from "@/ui/components/container/container";
 import Typography from "@/ui/designSystem/typography/typography";
 import Button from "@/ui/designSystem/button/button";
-import { totalProduits } from "../contain/shop.contain";
+import { useProducts } from "@/hooks/useProducts";
+// import { totalProduits } from "../contain/shop.contain";
 
 // Interfaces pour les props
 interface ModalProps {
@@ -66,6 +67,9 @@ export default function Navbar({
     setIsModalOpen(false); // Ferme le modal après sélection
   };
 
+  const { products } = useProducts();
+  const totalProduits = products.length;
+  
   const renderCategoryButton = (category: string) => (
     <div className="w-full">
       <Button

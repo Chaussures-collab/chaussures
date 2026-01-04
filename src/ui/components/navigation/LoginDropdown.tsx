@@ -9,14 +9,18 @@ import { firebaseLoginUser } from "@/pages/api/authentification";
 import { Input } from "@/ui/designSystem/forms/input";
 import Button from "@/ui/designSystem/button/button";
 import { FiUser, FiLogIn, FiX } from "react-icons/fi";
+import { isAdmin } from "@/utils/auth";
 import Link from "next/link";
 
 export default function LoginDropdown() {
   const [isOpen, setIsOpen] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
+  const [userIsAdmin, setUserIsAdmin] = useState(false);
+  const [checkingAdmin, setCheckingAdmin] = useState(true);
   const dropdownRef = useRef<HTMLDivElement>(null);
   const router = useRouter();
   const { authUser } = useAuth();
+  console.log("Auth ", authUser);
 
   const {
     handleSubmit,
@@ -25,6 +29,21 @@ export default function LoginDropdown() {
     watch,
     setError
   } = useForm<LoginFormFieldsType>();
+
+  // Vérifier le statut admin
+  useEffect(() => {
+    const checkAdminStatus = async () => {
+      if (authUser) {
+        const admin = await isAdmin(authUser);
+        setUserIsAdmin(admin);
+        setCheckingAdmin(false);
+      } else {
+        setCheckingAdmin(false);
+        setUserIsAdmin(false);
+      }
+    };
+    checkAdminStatus();
+  }, [authUser]);
 
   // Fermer le dropdown si on clique en dehors
   useEffect(() => {
@@ -85,23 +104,24 @@ export default function LoginDropdown() {
       <div className="relative" ref={dropdownRef}>
         <button
           onClick={() => setIsOpen(!isOpen)}
-          className="relative flex items-center gap-2 p-2 text-gray-700 hover:text-primary transition">
+          className="flex relative gap-2 items-center p-2 text-gray-700 transition hover:text-primary">
           <div className="relative">
             <FiUser size={20} />
             <span className="absolute top-0 right-0 w-2 h-2 bg-green-500 rounded-full border-2 border-white"></span>
           </div>
-          <span className="hidden md:block text-sm font-medium">
+          <span className="hidden text-sm font-medium md:block">
             {authUser.prenom || authUser.email?.split("@")[0] || "Profil"}
           </span>
         </button>
 
         {isOpen && (
-          <div className="absolute right-0 mt-2 w-56 bg-white rounded-lg shadow-lg border border-gray-200 py-2 z-50">
+          <div className="absolute right-0 z-50 py-2 mt-2 w-56 bg-white rounded-lg border border-gray-200 shadow-lg">
             <div className="px-4 py-2 border-b border-gray-200">
               <p className="text-sm font-medium text-gray-900">
-                {authUser.prenom && authUser.nom
+                {/* {authUser.prenom && authUser.nom
                   ? `${authUser.prenom} ${authUser.nom}`
-                  : authUser.email}
+                  : authUser.email} */}
+                {authUser.prenom || authUser.email?.split("@")[0] || "Profil"}
               </p>
               <p className="text-xs text-gray-500">{authUser.email}</p>
             </div>
@@ -117,7 +137,15 @@ export default function LoginDropdown() {
               onClick={() => setIsOpen(false)}>
               Boutique
             </Link>
-            <div className="border-t border-gray-200 mt-2 pt-2">
+            {!checkingAdmin && userIsAdmin && (
+              <Link
+                href="/dashboard"
+                className="block px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-100 text-primary"
+                onClick={() => setIsOpen(false)}>
+                Dashboard Admin
+              </Link>
+            )}
+            <div className="pt-2 mt-2 border-t border-gray-200">
               <Link
                 href="/connexion"
                 className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
@@ -136,14 +164,14 @@ export default function LoginDropdown() {
     <div className="relative" ref={dropdownRef}>
       <button
         onClick={() => setIsOpen(!isOpen)}
-        className="flex items-center gap-2 p-2 border-2 border-primary-500 border-radius-4 hover:bg-primary-500 hover:text-white text-primary-700 hover:text-primary transition">
-        <span className="hidden md:block text-sm font-medium">Connexion</span>
+        className="flex gap-2 items-center p-2 border-2 transition border-primary-500 border-radius-4 hover:bg-primary-500 hover:text-white text-primary-700 hover:text-primary">
+        <span className="hidden text-sm font-medium md:block">Connexion</span>
         <FiLogIn size={20} />
       </button>
 
       {isOpen && (
-        <div className="absolute right-0 mt-2 w-80 bg-white rounded-lg shadow-xl border border-gray-200 p-6 z-50">
-          <div className="flex items-center justify-between mb-4">
+        <div className="absolute right-0 z-50 p-6 mt-2 w-80 bg-white rounded-lg border border-gray-200 shadow-xl">
+          <div className="flex justify-between items-center mb-4">
             <h3 className="text-lg font-semibold text-gray-900">Connexion</h3>
             <button
               onClick={() => setIsOpen(false)}
@@ -154,8 +182,10 @@ export default function LoginDropdown() {
 
           <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
             {errors.root && (
-              <div className="p-3 bg-red-50 border border-red-200 rounded-md">
-                <p className="text-red-700 text-sm">{errors.root.message as string}</p>
+              <div className="p-3 bg-red-50 rounded-md border border-red-200">
+                <p className="text-sm text-red-700">
+                  {errors.root.message as string}
+                </p>
               </div>
             )}
 
@@ -203,17 +233,17 @@ export default function LoginDropdown() {
               isLoading={isLoading}
               fullwidth
               type="submit"
-              className="w-full bg-primary hover:bg-primary-dark text-white">
+              className="w-full text-white bg-primary hover:bg-primary-dark">
               Se connecter
             </Button>
           </form>
 
-          <div className="mt-4 pt-4 border-t border-gray-200 text-center">
+          <div className="pt-4 mt-4 text-center border-t border-gray-200">
             <p className="text-sm text-gray-600">
               Pas encore de compte ?{" "}
               <Link
                 href="/connexion/inscription"
-                className="text-primary hover:underline font-medium"
+                className="font-medium text-primary hover:underline"
                 onClick={() => setIsOpen(false)}>
                 S&apos;inscrire
               </Link>
@@ -224,4 +254,3 @@ export default function LoginDropdown() {
     </div>
   );
 }
-

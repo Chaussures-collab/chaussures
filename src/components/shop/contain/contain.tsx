@@ -1,7 +1,7 @@
 /** @format */
 
 import CartProduit from "@/components/home/produits/cartProduit";
-import { dbProduits } from "@/components/home/produits/produitsDB";
+import { ProduitType } from "@/types/produitType";
 import Container from "@/ui/components/container/container";
 import Button from "@/ui/designSystem/button/button";
 import { useEffect, useState } from "react";
@@ -9,7 +9,7 @@ import { toast } from "react-toastify";
 
 /** @format */
 interface ContainProps {
-  produits: typeof dbProduits;
+  produits: ProduitType[];
 }
 
 export default function Contain({ produits }: ContainProps) {
