@@ -31,8 +31,8 @@ export default function Categorie() {
             </Typography>
           </div>
           <Typography
-            variant="h2"
-            component="h2"
+            variant="h4"
+            component="h4"
             className="mb-4 font-bold text-gray-900">
             Parcourir la gamme
           </Typography>

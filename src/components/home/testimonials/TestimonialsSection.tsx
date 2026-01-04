@@ -39,7 +39,7 @@ export default function TestimonialsSection() {
               Témoignages clients
             </Typography>
           </div>
-          <Typography variant="h2" className="font-bold text-gray-900 mb-4">
+          <Typography variant="h4" className="font-bold text-gray-900 mb-4">
             Ce que disent nos clients
           </Typography>
           <Typography variant="body-lg" className="text-gray-600 max-w-2xl mx-auto">

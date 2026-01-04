@@ -30,7 +30,7 @@ export default function NewsletterSection() {
             </div>
           </div>
 
-          <Typography variant="h2" className="text-white font-bold mb-4">
+          <Typography variant="h4" className="text-white font-bold mb-4">
             Restez informé de nos offres
           </Typography>
           <Typography variant="body" className="text-white/90 mb-8">
@@ -46,7 +46,9 @@ export default function NewsletterSection() {
               </Typography>
             </div>
           ) : (
-            <form onSubmit={handleSubmit} className="flex flex-col sm:flex-row gap-4">
+            <form
+              onSubmit={handleSubmit}
+              className="flex flex-col sm:flex-row gap-4">
               <input
                 type="email"
                 value={email}

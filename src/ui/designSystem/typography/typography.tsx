@@ -48,10 +48,11 @@ export default function Typography({
     body: "text-base lg:text-lg",
     "body-base": "text-base",
     "body-sm": "text-sm",
-    caption1: "text-2xl lg:text-sm",
-    caption2: "text-caption2 lg:text-sm",
-    caption3: "text-caption3 lg:text-sm",
-    caption4: "text-caption4 lg:text-sm",
+    caption1: "text-sm lg:text-base leading-snug text-gray-500",
+    caption2: "text-xs lg:text-sm leading-snug text-gray-500",
+    caption3: "text-[11px] lg:text-xs leading-tight text-gray-400",
+    caption4:
+      "text-[10px] lg:text-[11px] leading-tight text-gray-400 uppercase tracking-wide"
   };
 
   // Couleurs dynamiques

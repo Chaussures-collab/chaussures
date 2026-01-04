@@ -20,7 +20,6 @@ export default function LoginDropdown() {
   const dropdownRef = useRef<HTMLDivElement>(null);
   const router = useRouter();
   const { authUser } = useAuth();
-  console.log("Auth ", authUser);
 
   const {
     handleSubmit,

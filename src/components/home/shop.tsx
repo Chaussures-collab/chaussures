@@ -60,39 +60,46 @@ export default function Decouvrir() {
             <div className="space-y-6 lg:space-y-8">
               {/* Badge */}
               <div className="inline-block px-4 py-2 bg-primary/10 rounded-full">
-                <Typography variant="caption1" className="text-primary font-semibold">
+                <Typography
+                  variant="body-lg"
+                  className="text-primary font-semibold">
                   ✨ Nouvelle collection disponible
                 </Typography>
               </div>
 
               {/* Titre principal */}
               <Typography
-                variant="h1"
-                className="text-4xl md:text-5xl lg:text-6xl font-bold text-gray-900 leading-tight">
+                variant="h4"
+                className="font-bold text-gray-900 leading-tight">
                 Trouvez votre produit favori en fonction de vos besoins
               </Typography>
 
               {/* Description */}
               <Typography variant="body-lg" className="text-gray-600 max-w-xl">
-                Découvrez notre vaste collection de produits soigneusement conçus,
-                pensés pour révéler votre individualité et répondre à votre sens du
-                style. Qualité garantie, livraison rapide.
+                Découvrez notre vaste collection de produits soigneusement
+                conçus, pensés pour révéler votre individualité et répondre à
+                votre sens du style. Qualité garantie, livraison rapide.
               </Typography>
 
               {/* Boutons CTA */}
               <div className="flex flex-col sm:flex-row gap-4">
                 <Button
                   variant="accent"
-                  size="large"
+                  size="small"
                   className="rounded-lg px-8 py-4 font-semibold transition-transform transform hover:scale-105"
                   action={pageShop}>
                   Découvrir la boutique
                 </Button>
                 <Button
                   variant="outline"
-                  size="large"
+                  size="small"
                   className="rounded-lg px-8 py-4 font-semibold"
-                  action={() => window.scrollTo({ top: window.innerHeight, behavior: 'smooth' })}>
+                  action={() =>
+                    window.scrollTo({
+                      top: window.innerHeight,
+                      behavior: "smooth"
+                    })
+                  }>
                   Voir les produits
                 </Button>
               </div>
@@ -100,7 +107,9 @@ export default function Decouvrir() {
               {/* Statistiques */}
               <div className="grid grid-cols-3 gap-4 pt-8 border-t border-gray-200">
                 <div className="text-center">
-                  <Typography variant="h3" className="text-primary font-bold mb-1">
+                  <Typography
+                    variant="h3"
+                    className="text-primary font-bold mb-1">
                     {count}+
                   </Typography>
                   <Typography variant="caption1" className="text-gray-600">
@@ -108,7 +117,9 @@ export default function Decouvrir() {
                   </Typography>
                 </div>
                 <div className="text-center">
-                  <Typography variant="h3" className="text-primary font-bold mb-1">
+                  <Typography
+                    variant="h3"
+                    className="text-primary font-bold mb-1">
                     {count}+
                   </Typography>
                   <Typography variant="caption1" className="text-gray-600">
@@ -116,7 +127,9 @@ export default function Decouvrir() {
                   </Typography>
                 </div>
                 <div className="text-center">
-                  <Typography variant="h3" className="text-primary font-bold mb-1">
+                  <Typography
+                    variant="h3"
+                    className="text-primary font-bold mb-1">
                     {count}+
                   </Typography>
                   <Typography variant="caption1" className="text-gray-600">
@@ -144,8 +157,8 @@ export default function Decouvrir() {
           </div>
         </Container>
 
-      {/* Section Mobile */}
-      {/* <Container className="relative h-[70vh] lg:hidden overflow-visible">
+        {/* Section Mobile */}
+        {/* <Container className="relative h-[70vh] lg:hidden overflow-visible">
         <Image
           src="/assets/images/Slide1.png"
           alt="Decouvrir"
@@ -156,7 +169,7 @@ export default function Decouvrir() {
         />
         <Collection className="absolute p-5 bg-white bg-opacity-80 rounded-lg shadow-lg bottom-10 right-10" />
       </Container> */}
-    </div>
+      </div>
     </div>
   );
 }

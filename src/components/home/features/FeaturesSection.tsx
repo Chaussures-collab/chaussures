@@ -50,7 +50,7 @@ export default function FeaturesSection() {
     <div className="bg-gray-50 py-16">
       <Container>
         <div className="text-center mb-12">
-          <Typography variant="h2" className="font-bold text-gray-900 mb-4">
+          <Typography variant="h4" className="font-bold text-gray-900 mb-4">
             Pourquoi nous choisir ?
           </Typography>
           <Typography variant="body" className="text-gray-600 max-w-2xl mx-auto">
@@ -74,7 +74,7 @@ export default function FeaturesSection() {
                 className="font-semibold text-gray-900 mb-2">
                 {feature.title}
               </Typography>
-              <Typography variant="caption1" className="text-gray-600">
+              <Typography variant="caption2" className="text-gray-600">
                 {feature.description}
               </Typography>
             </div>

@@ -36,7 +36,7 @@ export default function Footer() {
             <Typography variant="h4" className="font-bold text-gray-900 mb-2">
               Market
             </Typography>
-            <Typography variant="body-sm" className="text-gray-600">
+            <Typography variant="body-base" className="text-gray-600">
               Votre boutique en ligne pour des produits de qualité, pratiques et
               sécurisés. Nous nous engageons à vous offrir la meilleure expérience d{"'"}achat.
             </Typography>
@@ -73,7 +73,7 @@ export default function Footer() {
             <Typography variant="h5" className="font-bold text-gray-900 mb-2">
               Newsletter
             </Typography>
-            <Typography variant="body-sm" className="text-gray-600 mb-4">
+            <Typography variant="body-base" className="text-gray-600 mb-4">
               Inscrivez-vous à notre newsletter pour recevoir les dernières
               offres et actualités.
             </Typography>
@@ -105,7 +105,7 @@ export default function Footer() {
 
         {/* Footer bottom */}
         <div className="flex flex-col md:flex-row items-center justify-between gap-4">
-          <Typography variant="caption1" className="text-gray-600">
+          <Typography variant="caption2" className="text-gray-600">
             {`Copyright © 2010 - ${currentYear} ShopiMarket. Tous droits réservés.`}
           </Typography>
           

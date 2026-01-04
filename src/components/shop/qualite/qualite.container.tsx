@@ -64,7 +64,7 @@ export default function qualiteContainer() {
                 className="font-semibold text-gray-900 mb-2">
                 {feature.title}
               </Typography>
-              <Typography variant="caption1" className="text-gray-600">
+              <Typography variant="caption2" className="text-gray-600">
                 {feature.description}
               </Typography>
             </div>

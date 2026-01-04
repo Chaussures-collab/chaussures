@@ -14,6 +14,7 @@ import { useRouter } from "next/router"; // Importer useRouter de Next.js
 import { useCart } from "@/context/cartContext";
 import { useAuth } from "@/context/AuthUserContext";
 import LoginDropdown from "./LoginDropdown";
+import { isAdmin } from "@/utils/auth";
 // Toast retiré - utilisation d'indicateurs visuels à la place
 
 export default function Navigation() {
@@ -23,6 +24,8 @@ export default function Navigation() {
   const [isFocused, setIsFocused] = useState(false); // Etat pour le focus
   const [isFocuseds, setIsFocuseds] = useState(false); // Etat pour le focus
   const router = useRouter(); // Remplacer useNavigate par useRouter
+  const [checkingAdmin, setCheckingAdmin] = useState(true);
+  const [userIsAdmin, setUserIsAdmin] = useState(false);
   const { authUser } = useAuth(); // Utilisation du hook useAuth
   useEffect(() => {
     // Vérifier si l'URL actuelle est "/cart"
@@ -55,7 +58,20 @@ export default function Navigation() {
     }
     router.push("/cart"); // Redirection vers la page du panier
   };
-  
+  // Vérifier le statut admin
+  useEffect(() => {
+    const checkAdminStatus = async () => {
+      if (authUser) {
+        const admin = await isAdmin(authUser);
+        setUserIsAdmin(admin);
+        setCheckingAdmin(false);
+      } else {
+        setCheckingAdmin(false);
+        setUserIsAdmin(false);
+      }
+    };
+    checkAdminStatus();
+  }, [authUser]);
   const nbreProduitParnier = cart.length;
 
   return (
@@ -170,18 +186,25 @@ export default function Navigation() {
           {/* Mobile User Status */}
           <div className="mt-4 pt-4 border-t border-gray-200">
             {authUser ? (
-              <div className="flex items-center gap-2">
-                <div className="flex items-center gap-2">
+              <div className="flex flex-col items-start gap-2">
+                {/* <div className="flex items-center gap-2">
                   <span className="w-2 h-2 bg-green-500 rounded-full"></span>
                   <Typography variant="caption4" className="text-green-600">
                     Connecté
                   </Typography>
-                </div>
+                </div> */}
                 <ActiveLink
                   href="/profil"
                   className="block py-2 text-lg sm:text-xl text-primary">
                   Mon Profil
                 </ActiveLink>
+                {!checkingAdmin && userIsAdmin && (
+                  <ActiveLink
+                    href="/dashboard"
+                    className="block py-2 text-sm font-medium text-gray-700 hover:bg-gray-100 text-primary">
+                    Dashboard Admin
+                  </ActiveLink>
+                )}
               </div>
             ) : (
               <ActiveLink

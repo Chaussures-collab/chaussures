@@ -47,7 +47,7 @@ export default function Produits() {
       <Container>
         {/* En-tête de section */}
         <div className="text-center mb-12">
-          <Typography component="h2" variant="h2" className="font-bold text-gray-900 mb-4">
+          <Typography component="h4" variant="h4" className="font-bold text-gray-900 mb-4">
             Nos Produits Populaires
           </Typography>
           <Typography variant="body" className="text-gray-600 max-w-2xl mx-auto">
