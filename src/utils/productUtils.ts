@@ -33,8 +33,8 @@ export const convertProductDocumentToProduitType = (doc: ProductDocument, firest
     description: doc.description || "",
     description1: doc.description1 || "",
     quantiteStock: doc.quantiteStock,
-    prixPromo: doc.prixPromo || null,
-    promotion: doc.prixPromo || undefined,
+    prixPromo: doc.prixPromo ?? null,
+    promotion: doc.prixPromo ?? null,
     images: doc.images || [],
     colors: doc.colors || [],
     sizes: doc.sizes || []

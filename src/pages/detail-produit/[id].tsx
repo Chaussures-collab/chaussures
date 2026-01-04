@@ -19,12 +19,22 @@ type Props = {
   produit: ProduitType | null;
 };
 
+// Fonction helper pour normaliser un produit pour la sérialisation JSON
+// Utilise JSON.parse/stringify pour éliminer les valeurs undefined
+function normalizeProductForSerialization(produit: ProduitType): ProduitType {
+  return JSON.parse(JSON.stringify({
+    ...produit,
+    promotion: produit.promotion ?? null,
+    prixPromo: produit.prixPromo ?? null
+  }));
+}
+
 export default function DetailProduit({ produit }: Props) {
   if (!produit) {
     return (
       <Layout isDisplayCreadCrumbs={false}>
-        <div className="flex flex-col items-center justify-center py-20">
-          <p className="text-xl font-semibold text-gray-900 mb-2">Produit introuvable</p>
+        <div className="flex flex-col justify-center items-center py-20">
+          <p className="mb-2 text-xl font-semibold text-gray-900">Produit introuvable</p>
           <p className="text-gray-600">Le produit que vous recherchez n&apos;existe pas ou a été supprimé.</p>
         </div>
       </Layout>
@@ -110,8 +120,9 @@ export const getStaticProps: GetStaticProps = async ({ params }) => {
           const convertedId = generateUniqueIdFromFirestoreId(product.id);
           if (convertedId === numericId) {
             const produit = convertProductDocumentToProduitType(product, product.id);
+            const normalizedProduit = normalizeProductForSerialization(produit);
             return {
-              props: { produit },
+              props: { produit: normalizedProduit },
               revalidate: 10
             };
           }
@@ -121,8 +132,9 @@ export const getStaticProps: GetStaticProps = async ({ params }) => {
       // Si l'ID est un nombre normal, chercher dans les produits mockés
       const mockProduct = dbProduits.find((p) => p.id === numericId);
       if (mockProduct) {
+        const normalizedProduit = normalizeProductForSerialization(mockProduct);
         return {
-          props: { produit: mockProduct },
+          props: { produit: normalizedProduit },
           revalidate: 10
         };
       }
@@ -132,8 +144,9 @@ export const getStaticProps: GetStaticProps = async ({ params }) => {
     // En cas d'erreur, essayer de trouver dans les produits mockés
     const mockProduct = dbProduits.find((p) => p.id === numericId);
     if (mockProduct) {
+      const normalizedProduit = normalizeProductForSerialization(mockProduct);
       return {
-        props: { produit: mockProduct },
+        props: { produit: normalizedProduit },
         revalidate: 10
       };
     }
