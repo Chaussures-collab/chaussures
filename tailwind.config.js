@@ -48,10 +48,7 @@ module.exports = {
       base: ["16px", { lineHeight: "1.6" }],
       sm: ["14px", { lineHeight: "1.5" }],
       xs: ["12px", { lineHeight: "1.4" }],
-      sm: [
-        "18px",
-        { lineHeight: "23px" }
-      ]
+      sm: ["18px", { lineHeight: "23px" }]
     },
 
     /* -----------------------------
@@ -105,6 +102,20 @@ module.exports = {
         800: "#27272A",
         900: "#18181B",
         DEFAULT: "#1D1D1D"
+      },
+
+      red: {
+        50: "#FEF2F2",
+        100: "#FEE2E2",
+        200: "#FECACA",
+        300: "#FCA5A5",
+        400: "#F87171",
+        500: "#EF4444",
+        600: "#DC2626",
+        700: "#B91C1C",
+        800: "#991B1B",
+        900: "#7F1D1D",
+        DEFAULT: "#DC2626"
       },
 
       success: "#22C55E",

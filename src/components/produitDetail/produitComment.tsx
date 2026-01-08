@@ -2,6 +2,7 @@
 
 import Image from "next/image";
 import React, { useState } from "react";
+import { normalizeImagePath } from "@/utils/imageUtils";
 
 interface TabContent {
   title: string;
@@ -83,7 +84,7 @@ export default function ProduitComment({src, alt}:Props) {
       <div className="flex flex-wrap justify-center gap-6 mt-2 sm:mt-8 product-images">
         <div className="relative min-w-[283px] min-h-[143px] max-w-[600px] max-h-[600px] overflow-hidden">
           <Image
-            src={src}
+            src={normalizeImagePath(src)}
             alt={alt}
             layout="responsive"
             width={381}

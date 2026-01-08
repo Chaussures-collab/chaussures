@@ -3,6 +3,7 @@
 import { ProductDocument } from "@/services/dashboard/ProductService";
 import { ProduitType } from "@/types/produitType";
 import { dbProduits } from "@/components/home/produits/produitsDB";
+import { normalizeImagePath } from "./imageUtils";
 
 // Fonction pour générer un ID unique à partir d'un ID Firestore
 export const generateUniqueIdFromFirestoreId = (firestoreId: string | undefined): number => {
@@ -24,7 +25,7 @@ export const convertProductDocumentToProduitType = (doc: ProductDocument, firest
   
   return {
     id: uniqueId,
-    src: doc.src || "",
+    src: normalizeImagePath(doc.src),
     alt: doc.alt || "",
     prix: doc.prix || 0,
     nom: doc.nom || "",
@@ -35,7 +36,10 @@ export const convertProductDocumentToProduitType = (doc: ProductDocument, firest
     quantiteStock: doc.quantiteStock,
     prixPromo: doc.prixPromo ?? null,
     promotion: doc.prixPromo ?? null,
-    images: doc.images || [],
+    images: (doc.images || []).map(img => ({
+      ...img,
+      src: normalizeImagePath(img.src)
+    })),
     colors: doc.colors || [],
     sizes: doc.sizes || []
   };

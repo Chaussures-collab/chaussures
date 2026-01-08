@@ -7,6 +7,7 @@ import ProduitCategorie from "./produitCategorie";
 import ProduitComment from "./produitComment";
 import { ProduitType } from "@/types/produitType";
 import { useState } from "react";
+import { normalizeImagePath } from "@/utils/imageUtils";
 
 type Props = {
   produit: ProduitType;
@@ -17,8 +18,11 @@ export default function ProduitDetailContainer({ produit }: Props) {
   
   // Toutes les images : image principale + images secondaires
   const allImages = [
-    { id: 0, src: produit.src, alt: produit.alt },
-    ...(produit.images || [])
+    { id: 0, src: normalizeImagePath(produit.src), alt: produit.alt },
+    ...(produit.images || []).map(img => ({
+      ...img,
+      src: normalizeImagePath(img.src)
+    }))
   ];
   
   const currentImage = allImages[selectedImageIndex] || allImages[0];
@@ -49,7 +53,7 @@ export default function ProduitDetailContainer({ produit }: Props) {
             </div>
 
             {/* Image principale */}
-            <div className="relative w-full aspect-square flex-1 bg-gray-50 rounded-xl overflow-hidden shadow-lg flex item-center">
+            <div className="relative w-full aspect-square flex-1 bg-gray-50 rounded-xl overflow-hidden shadow-lg flex items-center justify-center">
               <Image
                 src={currentImage.src}
                 alt={currentImage.alt}
@@ -58,7 +62,6 @@ export default function ProduitDetailContainer({ produit }: Props) {
                 height={450}
                 objectFit="cover"
                 className="rounded-lg shadow-lg"
-                // className="object-cover transition-opacity duration-300"
                 sizes="(max-width: 1024px) 100vw, 50vw"
                 priority
               />

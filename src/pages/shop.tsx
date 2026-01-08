@@ -4,6 +4,7 @@ import NewsletterSection from "@/components/home/newsletter/NewsletterSection";
 import ShopContain from "@/components/shop/contain/shop.contain";
 import Paiement from "@/components/shop/paiement/paiement";
 import QualiteContainer from "@/components/shop/qualite/qualite.container";
+import ShobLink from "@/components/shop/shobLink/shobLink";
 import Layout from "@/ui/components/layout/layout";
 import Seo from "@/ui/components/seo/seo";
 import React from "react";
@@ -17,7 +18,7 @@ export default function Shop() {
       />
 
       <Layout isDisplayCreadCrumbs={false}>
-        {/* <ShobLink /> */}
+        <ShobLink />
         <ShopContain />
         {/* Newsletter */}
         <NewsletterSection />

@@ -9,6 +9,8 @@ import FormError from "@/ui/designSystem/forms/FormError";
 import Typography from "@/ui/designSystem/typography/typography";
 import { ProductService, ProductDocument } from "@/services/dashboard/ProductService";
 import { CategoryService } from "@/services/dashboard/CategoryService";
+import Image from "next/image";
+import { normalizeImagePath } from "@/utils/imageUtils";
 
 interface ProductModalProps {
   isOpen: boolean;
@@ -45,6 +47,9 @@ export default function ProductModal({ isOpen, onClose, product }: ProductModalP
   const [newSize, setNewSize] = useState("");
   const [newColorName, setNewColorName] = useState("");
   const [newColorCode, setNewColorCode] = useState("#000000");
+  const [supplementaryImages, setSupplementaryImages] = useState<Array<{ id: number; src: string; alt: string }>>([]);
+  const [newImageSrc, setNewImageSrc] = useState("");
+  const [newImageAlt, setNewImageAlt] = useState("");
   const productService = new ProductService();
   const categoryService = new CategoryService();
 
@@ -93,6 +98,7 @@ export default function ProductModal({ isOpen, onClose, product }: ProductModalP
         });
         setSizes(product.sizes || []);
         setColors(product.colors || []);
+        setSupplementaryImages(product.images || []);
       } else {
         reset({
           nom: "",
@@ -107,10 +113,13 @@ export default function ProductModal({ isOpen, onClose, product }: ProductModalP
         });
         setSizes([]);
         setColors([]);
+        setSupplementaryImages([]);
       }
       setNewSize("");
       setNewColorName("");
       setNewColorCode("#000000");
+      setNewImageSrc("");
+      setNewImageAlt("");
       setError(null);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -131,7 +140,7 @@ export default function ProductModal({ isOpen, onClose, product }: ProductModalP
         categorie: data.categorie,
         src: data.src,
         alt: data.alt || data.nom,
-        images: product?.images || [],
+        images: supplementaryImages,
         colors: colors,
         sizes: sizes,
         dateAjout: new Date().toISOString()
@@ -289,6 +298,85 @@ export default function ProductModal({ isOpen, onClose, product }: ProductModalP
             errors={errors}
             watch={watch}
           />
+        </div>
+
+        {/* Gestion des images supplémentaires */}
+        <div className="space-y-4">
+          <Typography variant="h5" className="font-semibold text-gray-900">
+            Images supplémentaires
+          </Typography>
+          <div className="grid grid-cols-1 gap-2 sm:grid-cols-2">
+            <input
+              type="text"
+              value={newImageSrc}
+              onChange={(e) => setNewImageSrc(e.target.value)}
+              placeholder="/assets/images/image-supplementaire.jpg"
+              className="px-3 py-2 rounded-md border border-gray-300 focus:outline-none focus:ring-2 focus:ring-primary"
+            />
+            <div className="flex gap-2">
+              <input
+                type="text"
+                value={newImageAlt}
+                onChange={(e) => setNewImageAlt(e.target.value)}
+                placeholder="Description de l'image"
+                className="flex-1 px-3 py-2 rounded-md border border-gray-300 focus:outline-none focus:ring-2 focus:ring-primary"
+              />
+              <Button
+                type="button"
+                variant="outline"
+                action={() => {
+                  if (newImageSrc.trim()) {
+                    const newImage = {
+                      id: supplementaryImages.length + 1,
+                      src: newImageSrc.trim(),
+                      alt: newImageAlt.trim() || `Image ${supplementaryImages.length + 1}`
+                    };
+                    setSupplementaryImages([...supplementaryImages, newImage]);
+                    setNewImageSrc("");
+                    setNewImageAlt("");
+                  }
+                }}>
+                Ajouter
+              </Button>
+            </div>
+          </div>
+          {supplementaryImages.length > 0 && (
+            <div className="grid grid-cols-2 gap-3 mt-4 sm:grid-cols-3 md:grid-cols-4">
+              {supplementaryImages.map((image, index) => (
+                <div
+                  key={image.id || index}
+                  className="overflow-hidden relative bg-gray-50 rounded-lg border border-gray-200 group">
+                  <div className="relative aspect-square">
+                    {image.src ? (
+                      <Image
+                        src={normalizeImagePath(image.src)}
+                        alt={image.alt}
+                        fill
+                        className="object-cover"
+                        sizes="(max-width: 768px) 50vw, (max-width: 1200px) 33vw, 25vw"
+                        unoptimized={image.src.startsWith("http://") || image.src.startsWith("https://")}
+                      />
+                    ) : (
+                      <div className="flex justify-center items-center w-full h-full text-xs text-gray-400">
+                        Aucune image
+                      </div>
+                    )}
+                  </div>
+                  <div className="p-2">
+                    <p className="text-xs text-gray-600 truncate">{image.alt}</p>
+                  </div>
+                  <button
+                    type="button"
+                    onClick={() => setSupplementaryImages(supplementaryImages.filter((_, i) => i !== index))}
+                    className="absolute top-2 right-2 p-1 text-white bg-red-600 rounded-full opacity-0 transition-opacity group-hover:opacity-100">
+                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                    </svg>
+                  </button>
+                </div>
+              ))}
+            </div>
+          )}
         </div>
 
         {/* Gestion des tailles */}

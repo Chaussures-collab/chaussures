@@ -12,6 +12,7 @@ import ProductModal from "./ProductModal";
 import Modal from "@/ui/designSystem/modal/Modal";
 import DataTable, { Column } from "../DataTable";
 import Image from "next/image";
+import { normalizeImagePath } from "@/utils/imageUtils";
 
 export default function ProductsManagement() {
   const [products, setProducts] = useState<ProductDocument[]>([]);
@@ -94,7 +95,7 @@ const isDate = (value: unknown): value is Date => {
         <div className="w-16 h-16 relative rounded-lg overflow-hidden bg-gray-100">
           {row.src ? (
             <Image
-              src={row.src}
+              src={normalizeImagePath(row.src)}
               alt={row.alt || row.nom || "Produit"}
               fill
               className="object-cover"

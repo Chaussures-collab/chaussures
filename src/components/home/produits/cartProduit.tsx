@@ -5,6 +5,7 @@ import Image from "next/image";
 import Typography from "@/ui/designSystem/typography/typography";
 import { RiStarFill } from "react-icons/ri";
 import Link from "next/link";
+import { normalizeImagePath } from "@/utils/imageUtils";
 
 interface Produit {
   id: number;
@@ -58,7 +59,7 @@ export default function CartProduit({
         {/* Image et badges */}
         <div className="overflow-hidden relative w-full bg-gray-50 aspect-square flex items-center">
           <Image
-            src={src}
+            src={normalizeImagePath(src)}
             alt={alt}
             layout="responsive"
             width={381}

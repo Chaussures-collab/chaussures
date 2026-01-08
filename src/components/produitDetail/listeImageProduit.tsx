@@ -2,16 +2,20 @@
 
 import Image from "next/image";
 import React from "react";
+import { normalizeImagePath } from "@/utils/imageUtils";
+
 interface Props {
   src: string;
   alt: string;
 }
 
 export default function ListeImageProduit({ src, alt }: Props) {
+  const normalizedSrc = normalizeImagePath(src);
+  
   return (
     <div className="relative w-full h-full flex items-center">
       <Image
-        src={src}
+        src={normalizedSrc}
         alt={alt}
         layout="responsive"
         width={381}
