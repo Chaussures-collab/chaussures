@@ -191,8 +191,9 @@ const isDate = (value: unknown): value is Date => {
         <Button
           action={handleCreate}
           variant="accent"
+          iconPosition="left"
+          icon={{ icon: FiPlus }}
           className="flex items-center gap-2">
-          <FiPlus size={20} />
           Ajouter un produit
         </Button>
       </div>

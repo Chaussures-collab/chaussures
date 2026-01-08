@@ -44,6 +44,7 @@ export default function Contain({ produits }: ContainProps) {
             prix={produit.prix}
             promotion={produit.promotion ?? ""}
             description={produit.description}
+            date={produit.dateAjout}
           />
         ))}
       </div>

@@ -105,11 +105,34 @@ export class ProductService {
   // Mettre à jour un produit
   async updateProduct(productId: string, productData: Partial<ProductDocument>): Promise<void> {
     try {
+      // Récupérer le produit actuel pour vérifier le stock précédent
+      /* const currentProduct = await this.getProductById(productId);
+      const previousStock = currentProduct?.quantiteStock || 0;
+      const newStock = productData.quantiteStock || 0; */
+
       const productRef = doc(db, PRODUCTS_COLLECTION, productId);
       await updateDoc(productRef, {
         ...productData,
         updatedAt: Timestamp.now()
       });
+
+      // Si le produit passe de 0 stock à un stock > 0, notifier les utilisateurs
+      /* if (previousStock === 0 && newStock > 0 && currentProduct) {
+        try {
+          const { StockNotificationService } = await import("@/services/stock/StockNotificationService");
+          const stockNotificationService = new StockNotificationService();
+          const productUrl = `${process.env.NEXT_PUBLIC_SITE_URL || "https://snipersmarket.com"}/detail-produit/${productId}`;
+          
+          await stockNotificationService.notifyUsersOnStockRestock(
+            productId,
+            currentProduct.nom || "Produit",
+            productUrl
+          );
+        } catch (notificationError) {
+          // Ne pas faire échouer la mise à jour si la notification échoue
+          console.error("Erreur lors de la notification de réapprovisionnement:", notificationError);
+        }
+      } */
     } catch (error) {
       if (error instanceof FirebaseError) {
         throw new Error(`Erreur lors de la mise à jour: ${error.message}`);

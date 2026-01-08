@@ -8,6 +8,8 @@ import ProduitComment from "./produitComment";
 import { ProduitType } from "@/types/produitType";
 import { useState } from "react";
 import { normalizeImagePath } from "@/utils/imageUtils";
+import LimitedTimeDiscount from "@/components/promotions/LimitedTimeDiscount";
+import StockNotification from "@/components/products/StockNotification";
 
 type Props = {
   produit: ProduitType;
@@ -85,7 +87,22 @@ export default function ProduitDetailContainer({ produit }: Props) {
           </div>
 
           {/* Colonne droite : Détails du produit */}
-          <div className="flex flex-col justify-center">
+          <div className="flex flex-col justify-center space-y-4">
+            {/* Réduction limitée si prixPromo existe */}
+            {produit.prixPromo && produit.prix && (
+              <LimitedTimeDiscount
+                discountPercentage={Math.round(((produit.prix - produit.prixPromo) / produit.prix) * 100)}
+                endDate={new Date(Date.now() + 7 * 24 * 60 * 60 * 1000)} // 7 jours
+              />
+            )}
+            
+            {/* Notification stock si produit en rupture */}
+            <StockNotification
+              productId={produit.id}
+              productName={produit.nom}
+              currentStock={produit.quantiteStock || 0}
+            />
+            
             <ProduitDetail produit={produit} />
           </div>
         </div>

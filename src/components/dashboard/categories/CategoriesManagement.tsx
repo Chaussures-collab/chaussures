@@ -146,8 +146,9 @@ export default function CategoriesManagement() {
         <Button
           action={handleCreate}
           variant="accent"
+          iconPosition="left"
+          icon={{ icon: FiPlus }}
           className="flex gap-2 items-center">
-          <FiPlus size={20} />
           Ajouter une catégorie
         </Button>
       </div>

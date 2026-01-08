@@ -13,8 +13,10 @@ export default function Shop() {
   return (
     <>
       <Seo
-        title="Boutique - SnipersMarket| Découvrez nos produits tendance"
-        description="Parcourez notre boutique en ligne SnipersMarketet trouvez des vêtements, accessoires et bien plus. Offres exclusives et livraison rapide !"
+        title="Boutique - SnipersMarket | Découvrez nos produits tendance"
+        description="Parcourez notre boutique en ligne SnipersMarket et trouvez des vêtements, accessoires et bien plus. Offres exclusives et livraison rapide !"
+        url={`${process.env.NEXT_PUBLIC_SITE_URL || "https://snipersmarket.com"}/shop`}
+        type="website"
       />
 
       <Layout isDisplayCreadCrumbs={false}>

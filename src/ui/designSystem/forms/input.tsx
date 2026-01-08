@@ -127,7 +127,7 @@ export const Input = <T extends FieldValues>({
         />
 
         {/* Icône de validation */}
-        {isTouched && (
+        {/* {isTouched && (
           <div className="absolute right-3 top-1/2 -translate-y-1/2">
             {shouldShowError ? (
               <FiAlertCircle className="text-danger" size={18} />
@@ -135,7 +135,7 @@ export const Input = <T extends FieldValues>({
               <FiCheckCircle className="text-secondary-600" size={18} />
             ) : null}
           </div>
-        )}
+        )} */}
       </div>
 
       {/* Message d'erreur qui disparaît après correction */}

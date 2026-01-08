@@ -255,6 +255,7 @@ export default function ProductModal({ isOpen, onClose, product }: ProductModalP
             register={register}
             errors={errors}
             watch={watch}
+            required={false}
             validationRules={{
               min: { value: 0, message: "Le prix doit être positif" }
             }}

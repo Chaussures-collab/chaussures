@@ -47,19 +47,25 @@ export default function Produits() {
       <Container>
         {/* En-tête de section */}
         <div className="text-center mb-12">
-          <Typography component="h4" variant="h4" className="font-bold text-gray-900 mb-4">
+          <Typography
+            component="h4"
+            variant="h4"
+            className="font-bold text-gray-900 mb-4">
             Nos Produits Populaires
           </Typography>
-          <Typography variant="body" className="text-gray-600 max-w-2xl mx-auto">
-            Découvrez notre sélection de produits les plus appréciés par nos clients
+          <Typography
+            variant="body"
+            className="text-gray-600 max-w-2xl mx-auto">
+            Découvrez notre sélection de produits les plus appréciés par nos
+            clients
           </Typography>
         </div>
 
         {/* Grille des produits */}
         <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4 md:gap-6 mb-12">
-          {getLimitedProducts(products, 10).map((produit) => (
+          {getLimitedProducts(products, 10).map((produit, index) => (
             <CartProduit
-              key={produit.id}
+              key={index}
               id={produit.id}
               src={produit.src}
               alt={produit.alt}

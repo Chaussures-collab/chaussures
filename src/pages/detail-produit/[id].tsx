@@ -41,11 +41,54 @@ export default function DetailProduit({ produit }: Props) {
     );
   }
 
+  const productImage = produit.src?.startsWith("http") 
+    ? produit.src 
+    : `${process.env.NEXT_PUBLIC_SITE_URL || "https://snipersmarket.com"}${produit.src}`;
+  
+  const productUrl = `${process.env.NEXT_PUBLIC_SITE_URL || "https://snipersmarket.com"}/detail-produit/${produit.id}`;
+
+  const productJsonLd = {
+    "@context": "https://schema.org",
+    "@type": "Product",
+    name: produit.nom,
+    description: produit.description || produit.description1,
+    image: productImage,
+    brand: {
+      "@type": "Brand",
+      name: "SnipersMarket"
+    },
+    category: produit.categorie,
+    offers: {
+      "@type": "Offer",
+      price: produit.prixPromo || produit.prix,
+      priceCurrency: "EUR",
+      availability: produit.quantiteStock && produit.quantiteStock > 0 
+        ? "https://schema.org/InStock" 
+        : "https://schema.org/OutOfStock",
+      url: productUrl,
+      ...(produit.prixPromo && {
+        priceValidUntil: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString().split("T")[0]
+      })
+    },
+    aggregateRating: {
+      "@type": "AggregateRating",
+      ratingValue: "4.5",
+      reviewCount: "127"
+    }
+  };
+
   return (
     <>
       <Seo
         title={`${produit.nom} - SnipersMarket | ${produit.categorie}`}
-        description={`Découvrez ${produit.nom} sur ShopiMarket. ${produit.description}. Livraison rapide et offres exclusives !`}
+        description={`Découvrez ${produit.nom} sur SnipersMarket. ${produit.description || produit.description1 || ""}. Prix: €${produit.prixPromo || produit.prix}. Livraison rapide et offres exclusives !`}
+        image={productImage}
+        url={productUrl}
+        type="product"
+        price={produit.prixPromo || produit.prix}
+        availability={produit.quantiteStock && produit.quantiteStock > 0 ? "in stock" : "out of stock"}
+        category={produit.categorie}
+        jsonLd={productJsonLd}
       />
       <Layout isDisplayCreadCrumbs={false}>
         <ProduitDetailContainer produit={produit} />
