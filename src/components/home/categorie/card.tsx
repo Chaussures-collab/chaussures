@@ -3,6 +3,7 @@
 import Typography from "@/ui/designSystem/typography/typography";
 import Image from "next/image";
 import React from "react";
+import { useRouter } from "next/router";
 interface Props {
   src: string;
   alt: string;
@@ -10,8 +11,18 @@ interface Props {
 }
 
 export default function Card({ src, alt, nom }: Props) {
+  const router = useRouter();
+
+  const handleClick = () => {
+    router.push(`/shop?category=${encodeURIComponent(nom)}`);
+  };
+
   return (
-    <div className="group relative flex flex-col items-center justify-center overflow-hidden bg-white rounded-2xl w-full aspect-square hover:scale-105 transition-all duration-300 shadow-lg hover:shadow-2xl border border-gray-100">
+    <button
+      type="button"
+      onClick={handleClick}
+      className="group relative flex flex-col items-center justify-center overflow-hidden bg-white rounded-2xl w-full aspect-square hover:scale-105 transition-all duration-300 shadow-lg hover:shadow-2xl border border-gray-100 cursor-pointer focus:outline-none focus:ring-2 focus:ring-primary"
+    >
       {/* Conteneur pour l'image */}
       <div className="relative w-full h-full">
         <Image
@@ -37,6 +48,6 @@ export default function Card({ src, alt, nom }: Props) {
       
       {/* Badge hover */}
       <div className="absolute inset-0 bg-primary/0 group-hover:bg-primary/10 transition-colors duration-300" />
-    </div>
+    </button>
   );
 }

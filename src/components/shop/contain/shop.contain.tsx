@@ -1,14 +1,24 @@
 /** @format */
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useProducts } from "@/hooks/useProducts";
 import { useCategories } from "@/hooks/useCategories";
 import ModernFilter from "../filters/ModernFilter";
 import Contain from "./contain";
+import { useRouter } from "next/router";
 
 export default function ShopContain() {
+  const router = useRouter();
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
   const { products, isLoading } = useProducts();
   const { categories, isLoading: categoriesLoading } = useCategories();
+
+  // Initialiser la catégorie depuis l'URL (ex: /shop?category=Chaussures)
+  useEffect(() => {
+    const categoryFromQuery = router.query.category;
+    if (typeof categoryFromQuery === "string" && categoryFromQuery.trim() !== "") {
+      setSelectedCategory(categoryFromQuery);
+    }
+  }, [router.query.category]);
 
   const filteredProducts =
     !selectedCategory || selectedCategory === "all"
