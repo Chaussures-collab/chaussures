@@ -98,7 +98,11 @@ export default function ProductModal({ isOpen, onClose, product }: ProductModalP
         });
         setSizes(product.sizes || []);
         setColors(product.colors || []);
-        setSupplementaryImages(product.images || []);
+        // Normaliser les chemins des images existantes
+        setSupplementaryImages((product.images || []).map(img => ({
+          ...img,
+          src: normalizeImagePath(img.src)
+        })));
       } else {
         reset({
           nom: "",
@@ -138,9 +142,12 @@ export default function ProductModal({ isOpen, onClose, product }: ProductModalP
         prix: Number(data.prix),
         quantiteStock: Number(data.quantiteStock),
         categorie: data.categorie,
-        src: data.src,
+        src: normalizeImagePath(data.src),
         alt: data.alt || data.nom,
-        images: supplementaryImages,
+        images: supplementaryImages.map(img => ({
+          ...img,
+          src: normalizeImagePath(img.src)
+        })),
         colors: colors,
         sizes: sizes,
         dateAjout: new Date().toISOString()
@@ -329,7 +336,7 @@ export default function ProductModal({ isOpen, onClose, product }: ProductModalP
                   if (newImageSrc.trim()) {
                     const newImage = {
                       id: supplementaryImages.length + 1,
-                      src: newImageSrc.trim(),
+                      src: normalizeImagePath(newImageSrc.trim()),
                       alt: newImageAlt.trim() || `Image ${supplementaryImages.length + 1}`
                     };
                     setSupplementaryImages([...supplementaryImages, newImage]);

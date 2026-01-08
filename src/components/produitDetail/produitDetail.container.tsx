@@ -19,11 +19,17 @@ export default function ProduitDetailContainer({ produit }: Props) {
   const [selectedImageIndex, setSelectedImageIndex] = useState(0);
   
   // Toutes les images : image principale + images secondaires
+  // S'assurer que produit.images est un tableau et que chaque image a les bonnes propriétés
+  const supplementaryImages = Array.isArray(produit.images) 
+    ? produit.images.filter(img => img && img.src) // Filtrer les images invalides
+    : [];
+  
   const allImages = [
     { id: 0, src: normalizeImagePath(produit.src), alt: produit.alt },
-    ...(produit.images || []).map(img => ({
-      ...img,
-      src: normalizeImagePath(img.src)
+    ...supplementaryImages.map((img, idx) => ({
+      id: img.id || idx + 1,
+      src: normalizeImagePath(img.src || ""),
+      alt: img.alt || produit.alt || `Image ${idx + 1}`
     }))
   ];
   
@@ -31,15 +37,15 @@ export default function ProduitDetailContainer({ produit }: Props) {
 
   return (
     <>
-      <Breadcrumbs nom={produit.nom} className="bg-primary-50 py-4" />
+      <Breadcrumbs nom={produit.nom} className="py-4 bg-primary-50" />
 
       <Container className="py-8">
         {/* Section principale : Image + Détails */}
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-12 mb-12">
+        <div className="grid grid-cols-1 gap-8 mb-12 lg:grid-cols-2 lg:gap-12">
           {/* Colonne gauche : Galerie d'images */}
-          <div className="flex flex-col lg:flex-row gap-4">
+          <div className="flex flex-col gap-4 lg:flex-row">
             {/* Liste des images secondaires (desktop) */}
-            <div className="hidden lg:flex flex-col gap-3 flex-shrink-0">
+            <div className="hidden flex-col flex-shrink-0 gap-3 lg:flex">
               {allImages.map((image, index) => (
                 <button
                   key={image.id}
@@ -55,22 +61,19 @@ export default function ProduitDetailContainer({ produit }: Props) {
             </div>
 
             {/* Image principale */}
-            <div className="relative w-full aspect-square flex-1 bg-gray-50 rounded-xl overflow-hidden shadow-lg flex items-center justify-center">
+            <div className="overflow-hidden relative flex-1 w-full bg-gray-50 rounded-xl shadow-lg aspect-square">
               <Image
                 src={currentImage.src}
                 alt={currentImage.alt}
-                layout="responsive"
-                width={381}
-                height={450}
-                objectFit="cover"
-                className="rounded-lg shadow-lg"
+                fill
+                className="object-cover rounded-lg"
                 sizes="(max-width: 1024px) 100vw, 50vw"
                 priority
               />
             </div>
 
             {/* Miniatures (mobile) */}
-            <div className="flex lg:hidden gap-2 overflow-x-auto pb-2 -mx-4 px-4">
+            <div className="flex overflow-x-auto gap-2 px-4 pb-2 -mx-4 lg:hidden">
               {allImages.map((image, index) => (
                 <button
                   key={image.id}

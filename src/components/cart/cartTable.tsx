@@ -10,6 +10,7 @@ import Typography from "@/ui/designSystem/typography/typography";
 import { useCart } from "@/context/cartContext";
 import Button from "@/ui/designSystem/button/button";
 import { useRouter } from "next/router";
+import { normalizeImagePath } from "@/utils/imageUtils";
 
 export default function CartTable() {
   const { cart, updateCartItem, removeCartItem } = useCart();
@@ -41,7 +42,7 @@ export default function CartTable() {
     return (
       <Container className="py-24">
         <div className="flex flex-col items-center justify-center text-center space-y-6 min-h-[400px]">
-          <div className="w-32 h-32 flex items-center justify-center rounded-full bg-primary-50">
+          <div className="flex justify-center items-center w-32 h-32 rounded-full bg-primary-50">
             <FiShoppingBag size={48} className="text-primary" />
           </div>
           <Typography variant="h3" className="font-bold text-gray-900">
@@ -49,7 +50,7 @@ export default function CartTable() {
           </Typography>
           <Typography
             variant="body"
-            className="text-gray-500 max-w-md mx-auto">
+            className="mx-auto max-w-md text-gray-500">
             Parcourez notre catalogue et ajoutez des articles à votre panier
             pour commencer vos achats.
           </Typography>
@@ -70,24 +71,24 @@ export default function CartTable() {
         <Typography variant="h2" className="font-bold text-gray-900">
           Mon Panier
         </Typography>
-        <Typography variant="body" className="text-gray-600 mt-2">
+        <Typography variant="body" className="mt-2 text-gray-600">
           {cart.length} {cart.length > 1 ? "articles" : "article"} dans votre
           panier
         </Typography>
       </div>
 
-      <div className="flex flex-col lg:flex-row gap-8">
+      <div className="flex flex-col gap-8 lg:flex-row">
         {/* Liste des produits */}
-        <div className="lg:w-2/3 space-y-4">
+        <div className="space-y-4 lg:w-2/3">
           {cart.map((item) => (
             <div
               key={item.id}
-              className="bg-white rounded-xl shadow-sm hover:shadow-md transition-all duration-200 p-6 border border-gray-100">
-              <div className="flex flex-col sm:flex-row gap-4">
+              className="p-6 bg-white rounded-xl border border-gray-100 shadow-sm transition-all duration-200 hover:shadow-md">
+              <div className="flex flex-col gap-4 sm:flex-row">
                 {/* Image du produit */}
-                <div className="relative w-full sm:w-32 h-32 overflow-hidden rounded-lg bg-gray-100 flex-shrink-0">
+                <div className="overflow-hidden relative flex-shrink-0 w-full h-32 bg-gray-100 rounded-lg sm:w-32">
                   <Image
-                    src={item.src}
+                    src={normalizeImagePath(item.src)}
                     alt={item.alt}
                     fill
                     className="object-cover rounded-lg"
@@ -95,18 +96,18 @@ export default function CartTable() {
                 </div>
 
                 {/* Informations du produit */}
-                <div className="flex-1 flex flex-col justify-between">
-                  <div className="flex justify-between items-start gap-4">
+                <div className="flex flex-col flex-1 justify-between">
+                  <div className="flex gap-4 justify-between items-start">
                     <div className="flex-1">
                       <Typography
                         variant="h4"
-                        className="font-semibold text-gray-900 mb-2">
+                        className="mb-2 font-semibold text-gray-900">
                         {item.alt}
                       </Typography>
 
-                      <div className="flex flex-wrap items-center gap-4 text-sm text-gray-600 mb-3">
+                      <div className="flex flex-wrap gap-4 items-center mb-3 text-sm text-gray-600">
                         {item.selectedSize && (
-                          <span className="flex items-center gap-1">
+                          <span className="flex gap-1 items-center">
                             <span className="font-medium">Taille:</span>
                             <span className="px-2 py-1 bg-gray-100 rounded">
                               {item.selectedSize}
@@ -114,7 +115,7 @@ export default function CartTable() {
                           </span>
                         )}
                         {item.selectedColor && (
-                          <span className="flex items-center gap-1">
+                          <span className="flex gap-1 items-center">
                             <span className="font-medium">Couleur:</span>
                             <span className="px-2 py-1 bg-gray-100 rounded">
                               {item.selectedColor}
@@ -130,15 +131,15 @@ export default function CartTable() {
 
                     <button
                       onClick={() => handleDelete(item.id)}
-                      className="text-gray-400 hover:text-red-500 transition-colors p-2 hover:bg-red-50 rounded-lg"
+                      className="p-2 text-gray-400 rounded-lg transition-colors hover:text-red-500 hover:bg-red-50"
                       aria-label="Supprimer l'article">
                       <RiDeleteBinLine size={22} />
                     </button>
                   </div>
 
                   {/* Contrôle de quantité */}
-                  <div className="flex items-center justify-between mt-4 pt-4 border-t border-gray-100">
-                    <div className="flex items-center border border-gray-300 rounded-lg overflow-hidden">
+                  <div className="flex justify-between items-center pt-4 mt-4 border-t border-gray-100">
+                    <div className="flex overflow-hidden items-center rounded-lg border border-gray-300">
                       <button
                         onClick={() =>
                           handleQuantityChange(
@@ -147,7 +148,7 @@ export default function CartTable() {
                           )
                         }
                         disabled={Number(item.quantity) <= 1}
-                        className="px-3 py-2 hover:bg-gray-100 disabled:opacity-40 disabled:cursor-not-allowed transition">
+                        className="px-3 py-2 transition hover:bg-gray-100 disabled:opacity-40 disabled:cursor-not-allowed">
                         <FiMinus size={18} />
                       </button>
                       <span className="px-4 py-2 font-medium min-w-[60px] text-center border-x border-gray-300">
@@ -160,7 +161,7 @@ export default function CartTable() {
                             Number(item.quantity) + 1
                           )
                         }
-                        className="px-3 py-2 hover:bg-gray-100 transition">
+                        className="px-3 py-2 transition hover:bg-gray-100">
                         <FiPlus size={18} />
                       </button>
                     </div>

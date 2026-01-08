@@ -10,6 +10,7 @@ import { FiMinus, FiPlus, FiTruck } from "react-icons/fi";
 import PaymentCheckout from "./PaymentCheckout";
 import DeliveryForm, { DeliveryAddress } from "./DeliveryForm";
 import { useState } from "react";
+import { normalizeImagePath } from "@/utils/imageUtils";
 
 const CheckoutContainer = () => {
   const {
@@ -153,13 +154,10 @@ if (cart.length === 0) {
                   {/* Image */}
                   <div className="overflow-hidden relative w-16 h-16 md:w-24 md:h-24 bg-gray-100 rounded-lg flex-shrink-0">
                     <Image
-                      src={item.src}
+                      src={normalizeImagePath(item.src)}
                       alt={item.alt}
-                      layout="responsive"
-                      width={381}
-                      height={450}
-                      objectFit="cover"
-                      className="object-cover"
+                      fill
+                      className="object-cover rounded-lg"
                     />
                   </div>
 
