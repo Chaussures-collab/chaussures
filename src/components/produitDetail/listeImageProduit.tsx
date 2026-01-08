@@ -11,9 +11,11 @@ interface Props {
 
 export default function ListeImageProduit({ src, alt }: Props) {
   const normalizedSrc = normalizeImagePath(src);
+  // Désactiver l'optimisation pour les fichiers WEBP (problème de casse)
+  const isWebP = normalizedSrc.toLowerCase().endsWith(".webp");
   
   return (
-    <div className="relative w-full h-full flex items-center">
+    <div className="flex relative items-center w-full h-full">
       <Image
         src={normalizedSrc}
         alt={alt}
@@ -21,9 +23,9 @@ export default function ListeImageProduit({ src, alt }: Props) {
         width={381}
         height={450}
         objectFit="cover"
-        // className="rounded-lg shadow-lg"
         className="object-cover rounded"
         sizes="80px"
+        unoptimized={isWebP}
       />
     </div>
   );

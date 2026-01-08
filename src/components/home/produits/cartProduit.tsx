@@ -6,6 +6,7 @@ import Typography from "@/ui/designSystem/typography/typography";
 import { RiStarFill } from "react-icons/ri";
 import Link from "next/link";
 import { normalizeImagePath } from "@/utils/imageUtils";
+import SafeImage from "@/components/common/SafeImage";
 
 interface Produit {
   id: number;
@@ -58,14 +59,13 @@ export default function CartProduit({
       <div className="flex overflow-hidden relative flex-col h-full bg-white rounded-xl border border-gray-100 shadow-md transition-all duration-300 hover:shadow-2xl hover:border-primary/20 item-center">
         {/* Image et badges */}
         <div className="overflow-hidden relative w-full bg-gray-50 aspect-square flex items-center">
-          <Image
-            src={normalizeImagePath(src)}
+          <SafeImage
+            src={src}
             alt={alt}
             layout="responsive"
             width={381}
             height={450}
             objectFit="cover"
-            // className="rounded-lg shadow-lg"
             className="object-cover transition-transform duration-500 group-hover:scale-110"
             sizes="(max-width: 768px) 50vw, (max-width: 1200px) 33vw, 20vw"
           />

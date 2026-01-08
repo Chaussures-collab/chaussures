@@ -16,11 +16,18 @@ export function normalizeImagePath(src: string | undefined | null): string {
     return src;
   }
 
+  // Normaliser le chemin
+  let normalized = src;
+  
   // Si le chemin ne commence pas par "/", l'ajouter
-  if (!src.startsWith("/")) {
-    return `/${src}`;
+  if (!normalized.startsWith("/")) {
+    normalized = `/${normalized}`;
   }
 
-  return src;
+  // Normaliser la casse de l'extension pour les fichiers WEBP
+  // Convertir .webp en .WEBP pour correspondre aux fichiers réels
+  normalized = normalized.replace(/\.webp$/i, ".WEBP");
+
+  return normalized;
 }
 
