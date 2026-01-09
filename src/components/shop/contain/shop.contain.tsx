@@ -15,7 +15,10 @@ export default function ShopContain() {
   // Initialiser la catégorie depuis l'URL (ex: /shop?category=Chaussures)
   useEffect(() => {
     const categoryFromQuery = router.query.category;
-    if (typeof categoryFromQuery === "string" && categoryFromQuery.trim() !== "") {
+    if (
+      typeof categoryFromQuery === "string" &&
+      categoryFromQuery.trim() !== ""
+    ) {
       setSelectedCategory(categoryFromQuery);
     }
   }, [router.query.category]);
@@ -24,6 +27,16 @@ export default function ShopContain() {
     !selectedCategory || selectedCategory === "all"
       ? products
       : products.filter((produit) => produit.categorie === selectedCategory);
+
+  // Mélange aléatoire plus évolué (Fisher-Yates) pour l'affichage
+  const shuffledProducts = React.useMemo(() => {
+    const arr = [...filteredProducts];
+    for (let i = arr.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [arr[i], arr[j]] = [arr[j], arr[i]];
+    }
+    return arr;
+  }, [filteredProducts]);
 
   const totalProduits = products.length;
 
@@ -45,7 +58,7 @@ export default function ShopContain() {
         totalProducts={totalProduits}
         categories={categories}
       />
-      <Contain produits={filteredProducts} />
+      <Contain produits={shuffledProducts} />
     </>
   );
 }

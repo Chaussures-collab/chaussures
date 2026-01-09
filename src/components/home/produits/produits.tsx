@@ -22,20 +22,42 @@ interface Produit {
 
 export default function Produits() {
   const router = useRouter(); // Remplacer useNavigate par useRouter
-  const pageShop =() => {router.push('/shop')};
-  const { products, isLoading } = useProducts();
-  
-  // Fonction pour afficher un nombre limité de produits
-  const getLimitedProducts = (products: Produit[], limit: number = 30): Produit[] => {
-    return products.slice(0, limit); // Retourne seulement les premiers "limit" produits
+  const pageShop = () => {
+    router.push("/shop");
   };
+  const { products, isLoading } = useProducts();
+
+  // Sélectionner des produits mis en avant de catégories différentes
+  const featuredProducts: Produit[] = React.useMemo(() => {
+    const byCategory = new Map<string, Produit[]>();
+
+    products.forEach((p) => {
+      const cat = p.categorie || "Autres";
+      if (!byCategory.has(cat)) byCategory.set(cat, []);
+      byCategory.get(cat)!.push(p);
+    });
+
+    const result: Produit[] = [];
+    byCategory.forEach((list) => {
+      // Mélanger un peu chaque liste
+      const copy = [...list];
+      for (let i = copy.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [copy[i], copy[j]] = [copy[j], copy[i]];
+      }
+      if (copy[0]) result.push(copy[0]);
+    });
+
+    // Limiter à 10 produits max
+    return result.slice(0, 40);
+  }, [products]);
 
   if (isLoading) {
     return (
-      <div className="bg-white py-16">
+      <div className="py-16 bg-white">
         <Container>
           <div className="flex justify-center items-center py-20">
-            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary"></div>
+            <div className="w-12 h-12 rounded-full border-b-2 animate-spin border-primary"></div>
           </div>
         </Container>
       </div>
@@ -43,29 +65,29 @@ export default function Produits() {
   }
 
   return (
-    <div className="bg-white py-16">
+    <div className="py-16 bg-white">
       <Container>
         {/* En-tête de section */}
-        <div className="text-center mb-12">
+        <div className="mb-12 text-center">
           <Typography
             component="h4"
             variant="h4"
-            className="font-bold text-gray-900 mb-4">
+            className="mb-4 font-bold text-gray-900">
             Nos Produits Populaires
           </Typography>
           <Typography
             variant="body"
-            className="text-gray-600 max-w-2xl mx-auto">
+            className="mx-auto max-w-2xl text-gray-600">
             Découvrez notre sélection de produits les plus appréciés par nos
             clients
           </Typography>
         </div>
 
-        {/* Grille des produits */}
-        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4 md:gap-6 mb-12">
-          {getLimitedProducts(products, 10).map((produit, index) => (
+        {/* Grille des produits (catégories variées) */}
+        <div className="grid grid-cols-2 gap-4 mb-12 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 md:gap-6">
+          {featuredProducts.map((produit) => (
             <CartProduit
-              key={index}
+              key={produit.id}
               id={produit.id}
               src={produit.src}
               alt={produit.alt}
@@ -83,7 +105,7 @@ export default function Produits() {
           <Button
             variant="outline"
             action={pageShop}
-            className="px-8 py-3 rounded-lg font-semibold">
+            className="px-8 py-3 font-semibold rounded-lg">
             Voir tous les produits
           </Button>
         </div>

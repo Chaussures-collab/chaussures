@@ -34,9 +34,9 @@ export default function Contain({ produits }: ContainProps) {
   return (
     <Container className="my-8">
       <div className="grid grid-cols-2 m:grid-cols-4 lg:grid-cols-5 gap-3 justify-center gap-6 my-10">
-        {currentProducts.map((produit, index) => (
+        {currentProducts.map((produit) => (
           <CartProduit
-            key={index}
+            key={produit.id}
             id={produit.id}
             src={produit.src}
             alt={produit.alt}

@@ -7,6 +7,7 @@ import Typography from "@/ui/designSystem/typography/typography";
 import Container from "@/ui/components/container/container";
 import Button from "@/ui/designSystem/button/button";
 import { Category } from "@/hooks/useCategories";
+import { useRouter } from "next/router";
 
 interface FilterOption {
   id: string;
@@ -27,6 +28,7 @@ export default function ModernFilter({
   setSelectedCategory,
   categories
 }: ModernFilterProps) {
+  const router = useRouter();
   const scrollContainerRef = useRef<HTMLDivElement>(null);
   const [showLeftArrow, setShowLeftArrow] = useState(false);
   const [showRightArrow, setShowRightArrow] = useState(true);
@@ -97,11 +99,27 @@ export default function ModernFilter({
   ];
 
   const handleCategorySelect = (categoryId: string) => {
+    let newCategory: string | null = null;
+
     if (categoryId === "all") {
+      newCategory = null;
       setSelectedCategory(null);
     } else {
-      setSelectedCategory(categoryId === selectedCategory ? null : categoryId);
+      // Même logique que la home : utiliser le nom de la catégorie comme identifiant
+      newCategory = categoryId === selectedCategory ? null : categoryId;
+      setSelectedCategory(newCategory);
     }
+
+    // Mettre à jour l'URL pour garder un comportement identique à la home
+    router.push(
+      {
+        pathname: "/shop",
+        query: newCategory ? { category: newCategory } : {}
+      },
+      undefined,
+      { shallow: true }
+    );
+
     setIsMobileFilterOpen(false);
   };
 
