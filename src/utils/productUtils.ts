@@ -2,7 +2,7 @@
 
 import { ProductDocument } from "@/services/dashboard/ProductService";
 import { ProduitType } from "@/types/produitType";
-import { dbProduits } from "@/components/home/produits/produitsDB";
+// import { dbProduits } from "@/components/home/produits/produitsDB";
 import { normalizeImagePath } from "./imageUtils";
 
 // Fonction pour générer un ID unique à partir d'un ID Firestore
@@ -79,13 +79,13 @@ export const findProductById = async (
     } catch (error) {
       console.error("Erreur lors de la récupération depuis Firestore:", error);
     }
-  }
+  }/* 
 
   // Chercher dans les produits mockés
   const mockProduct = dbProduits.find((p) => p.id === idNumber);
   if (mockProduct) {
     return mockProduct;
-  }
+  } */
 
   return null;
 };

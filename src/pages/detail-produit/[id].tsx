@@ -1,6 +1,5 @@
 /** @format */
 
-import { dbProduits } from "@/components/home/produits/produitsDB";
 import { ProductService } from "@/services/dashboard/ProductService";
 import ProduitDetailContainer from "@/components/produitDetail/produitDetail.container";
 import Paiement from "@/components/shop/paiement/paiement";
@@ -116,13 +115,13 @@ export const getStaticPaths: GetStaticPaths = async () => {
         };
       });
     
-    // Créer les paths pour les produits mockés
+    /* // Créer les paths pour les produits mockés
     const mockPaths = dbProduits.map((produit) => ({
       params: { id: produit.id.toString() }
-    }));
+    })); */
     
     // Combiner les deux
-    const paths = [...firestorePaths, ...mockPaths];
+    const paths = [...firestorePaths/* , ...mockPaths */];
 
     return {
       paths,
@@ -131,12 +130,12 @@ export const getStaticPaths: GetStaticPaths = async () => {
   } catch (error) {
     console.error("Erreur lors de la génération des paths:", error);
     // En cas d'erreur, utiliser uniquement les produits mockés
-    const paths = dbProduits.map((produit) => ({
+    /* const paths = dbProduits.map((produit) => ({
       params: { id: produit.id.toString() }
-    }));
-
+    })); */
+  
     return {
-      paths,
+      paths: [],
       fallback: "blocking"
     };
   }
@@ -171,7 +170,7 @@ export const getStaticProps: GetStaticProps = async ({ params }) => {
           }
         }
       }
-    } else {
+    } /* else {
       // Si l'ID est un nombre normal, chercher dans les produits mockés
       const mockProduct = dbProduits.find((p) => p.id === numericId);
       if (mockProduct) {
@@ -181,18 +180,18 @@ export const getStaticProps: GetStaticProps = async ({ params }) => {
           revalidate: 10
         };
       }
-    }
+    } */
   } catch (error) {
     console.error("Erreur lors de la récupération du produit:", error);
     // En cas d'erreur, essayer de trouver dans les produits mockés
-    const mockProduct = dbProduits.find((p) => p.id === numericId);
+    /* const mockProduct = dbProduits.find((p) => p.id === numericId);
     if (mockProduct) {
       const normalizedProduit = normalizeProductForSerialization(mockProduct);
       return {
         props: { produit: normalizedProduit },
         revalidate: 10
       };
-    }
+    } */
   }
 
   // Produit non trouvé

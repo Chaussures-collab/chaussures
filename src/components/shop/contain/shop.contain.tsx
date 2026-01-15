@@ -15,10 +15,7 @@ export default function ShopContain() {
   // Initialiser la catégorie depuis l'URL (ex: /shop?category=Chaussures)
   useEffect(() => {
     const categoryFromQuery = router.query.category;
-    if (
-      typeof categoryFromQuery === "string" &&
-      categoryFromQuery.trim() !== ""
-    ) {
+    if (typeof categoryFromQuery === "string" && categoryFromQuery.trim() !== "") {
       setSelectedCategory(categoryFromQuery);
     }
   }, [router.query.category]);
