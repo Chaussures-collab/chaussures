@@ -42,6 +42,8 @@ type ResponseData = {
   error?: string;
   code?: string;
   details?: Record<string, unknown>;
+  orderId?: string;
+  message?: string;
 };
 
 export default async function handler(
@@ -86,28 +88,98 @@ export default async function handler(
   // Support pour Payment Intents (nouveau système)
   if (event.type === "payment_intent.succeeded") {
     try {
-      const paymentIntent = event.data.object as Stripe.PaymentIntent;
+      console.log(`🔵 [Webhook] Event type: ${event.type}`);
+      const paymentIntent = event.data.object;
+      if (!paymentIntent.metadata?.itemsJson) {
+        console.error(
+          "❌ [Webhook] itemsJson manquant dans les métadonnées du Payment Intent"
+        );
+      }
 
       // Construction des données du webhook
       const webhookData: StripeWebhookData = {
         sessionId: paymentIntent.id, // Utilise l'ID du Payment Intent comme sessionId
-        customerEmail: paymentIntent.receipt_email || paymentIntent.metadata?.userEmail || null,
+        customerEmail:
+          paymentIntent.receipt_email ||
+          paymentIntent.metadata?.userEmail ||
+          null,
         amountTotal: paymentIntent.amount,
         currency: paymentIntent.currency,
         paymentStatus: "PAID",
         metadata: paymentIntent.metadata as Record<string, string> | undefined
       };
 
+      console.log(`🔵 [Webhook] WebhookData construite:`, {
+        sessionId: webhookData.sessionId,
+        customerEmail: webhookData.customerEmail,
+        amountTotal: webhookData.amountTotal,
+        paymentStatus: webhookData.paymentStatus,
+        hasMetadata: !!webhookData.metadata
+      });
+
+      // Vérifier l'initialisation de l'Admin SDK
+      try {
+        const { adminDb } = await import("@/config/firebase-admin");
+        if (adminDb) {
+          console.log("✅ [Webhook] adminDb est initialisé");
+        } else {
+          console.error("❌ [Webhook] adminDb n'est pas initialisé");
+        }
+      } catch (adminError) {
+        console.error(
+          "❌ [Webhook] Erreur lors de la vérification de adminDb:",
+          adminError
+        );
+      }
+
       // Traitement du paiement via le gestionnaire
+      console.log(
+        `🔵 [Webhook] Appel de PaymentManager.handlePaymentWebhook...`
+      );
       const paymentManager = PaymentFactory.createPaymentManager();
-      const result = await paymentManager.handlePaymentWebhook(webhookData);
+
+      let result;
+      try {
+        result = await paymentManager.handlePaymentWebhook(webhookData);
+        console.log(`🔵 [Webhook] Résultat de handlePaymentWebhook:`, result);
+      } catch (handlerError) {
+        console.error(
+          `❌ [Webhook] Exception lors du handlePaymentWebhook:`,
+          handlerError
+        );
+        const errorResponse = ErrorHandler.handleError(handlerError, {
+          endpoint: "/api/webhooks/stripe",
+          operation: "handlePaymentWebhook",
+          eventType: event.type,
+          sessionId: webhookData.sessionId
+        });
+
+        console.error(
+          "❌ [Webhook] Erreur lors du traitement (exception non capturée):",
+          errorResponse
+        );
+        return res.status(200).json({
+          received: true,
+          error: errorResponse.error,
+          code: errorResponse.code,
+          details: errorResponse.details
+        });
+      }
 
       if (!result.success) {
+        console.error(
+          `❌ Échec du traitement du paiement (Payment Intent): ${result.error}`
+        );
         const errorResponse = ErrorHandler.handleError(
-          new WebhookError(result.error || "Erreur lors du traitement du paiement", "WEBHOOK_PROCESS_ERROR", 500, {
-            sessionId: webhookData.sessionId,
-            orderId: result.orderId
-          }),
+          new WebhookError(
+            result.error || "Erreur lors du traitement du paiement",
+            "WEBHOOK_PROCESS_ERROR",
+            500,
+            {
+              sessionId: webhookData.sessionId,
+              orderId: result.orderId
+            }
+          ),
           {
             endpoint: "/api/webhooks/stripe",
             operation: "handlePaymentWebhook",
@@ -115,16 +187,31 @@ export default async function handler(
           }
         );
 
-        return res.status(errorResponse.statusCode).json({
+        // Retourner 200 pour éviter que Stripe réessaie indéfiniment
+        // mais logger l'erreur pour investigation
+        console.error(
+          "❌ Erreur webhook (mais retour 200 pour éviter les retries):",
+          errorResponse
+        );
+        return res.status(200).json({
+          received: true,
           error: errorResponse.error,
           code: errorResponse.code,
-          details: errorResponse.details
+          details: errorResponse.details,
+          orderId: result.orderId
         });
       }
 
-      console.log(`✅ Paiement traité avec succès pour la commande: ${result.orderId}`);
+      console.log(
+        `✅ Paiement traité avec succès pour la commande: ${result.orderId}`
+      );
+      return res.status(200).json({
+        received: true,
+        orderId: result.orderId,
+        message: "Paiement traité avec succès"
+      });
     } catch (error) {
-      const paymentIntent = event.data.object as Stripe.PaymentIntent;
+      const paymentIntent = event.data.object;
       const errorResponse = ErrorHandler.handleError(error, {
         endpoint: "/api/webhooks/stripe",
         operation: "process_webhook_event",
@@ -143,7 +230,7 @@ export default async function handler(
   // Support pour Checkout Sessions (ancien système - pour compatibilité)
   if (event.type === "checkout.session.completed") {
     try {
-      const session = event.data.object as Stripe.Checkout.Session;
+      const session = event.data.object;
 
       // Détermination du statut du paiement
       const paymentStatus: PaymentStatus =
@@ -164,11 +251,19 @@ export default async function handler(
       const result = await paymentManager.handlePaymentWebhook(webhookData);
 
       if (!result.success) {
+        console.error(
+          `❌ Échec du traitement du paiement (Checkout Session): ${result.error}`
+        );
         const errorResponse = ErrorHandler.handleError(
-          new WebhookError(result.error || "Erreur lors du traitement du paiement", "WEBHOOK_PROCESS_ERROR", 500, {
-            sessionId: webhookData.sessionId,
-            orderId: result.orderId
-          }),
+          new WebhookError(
+            result.error || "Erreur lors du traitement du paiement",
+            "WEBHOOK_PROCESS_ERROR",
+            500,
+            {
+              sessionId: webhookData.sessionId,
+              orderId: result.orderId
+            }
+          ),
           {
             endpoint: "/api/webhooks/stripe",
             operation: "handlePaymentWebhook",
@@ -176,16 +271,30 @@ export default async function handler(
           }
         );
 
-        return res.status(errorResponse.statusCode).json({
+        // Retourner 200 pour éviter que Stripe réessaie indéfiniment
+        // mais logger l'erreur pour investigation
+        console.error(
+          "❌ Erreur webhook (mais retour 200 pour éviter les retries):",
+          errorResponse
+        );
+        return res.status(200).json({
+          received: true,
           error: errorResponse.error,
           code: errorResponse.code,
           details: errorResponse.details
         });
       }
 
-      console.log(`✅ Paiement traité avec succès pour la commande: ${result.orderId}`);
+      console.log(
+        `✅ Paiement traité avec succès pour la commande: ${result.orderId}`
+      );
+      return res.status(200).json({
+        received: true,
+        orderId: result.orderId,
+        message: "Paiement traité avec succès"
+      });
     } catch (error) {
-      const session = event.data.object as Stripe.Checkout.Session;
+      const session = event.data.object;
       const errorResponse = ErrorHandler.handleError(error, {
         endpoint: "/api/webhooks/stripe",
         operation: "process_webhook_event",

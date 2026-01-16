@@ -132,21 +132,48 @@ export class StripePaymentService implements IPaymentService {
     sessionId: string
   ): Promise<PaymentProcessResult> {
     try {
-      const session = await stripe.checkout.sessions.retrieve(sessionId);
+      // Essayer d'abord comme Payment Intent (nouveau système)
+      try {
+        const paymentIntent = await stripe.paymentIntents.retrieve(sessionId);
+        
+        if (paymentIntent.status === "succeeded") {
+          return {
+            success: true,
+            message: "Paiement validé"
+          };
+        }
+        
+        return {
+          success: false,
+          message: `Paiement échoué: ${paymentIntent.status}`
+        };
+      } catch (paymentIntentError) {
+        // Si ce n'est pas un Payment Intent, essayer comme Checkout Session
+        try {
+          const session = await stripe.checkout.sessions.retrieve(sessionId);
 
-      if (!session) {
-        throw new NotFoundError("Session de paiement introuvable", {
-          sessionId
-        });
+          if (!session) {
+            throw new NotFoundError("Session de paiement introuvable", {
+              sessionId
+            });
+          }
+
+          const status: PaymentStatus =
+            session.payment_status === "paid" ? "PAID" : "FAILED";
+
+          return {
+            success: status === "PAID",
+            message: status === "PAID" ? "Paiement validé" : "Paiement échoué"
+          };
+        } catch (sessionError) {
+          // Si les deux échouent, lever une erreur
+          throw new NotFoundError("Session ou Payment Intent introuvable", {
+            sessionId,
+            paymentIntentError: paymentIntentError instanceof Error ? paymentIntentError.message : String(paymentIntentError),
+            sessionError: sessionError instanceof Error ? sessionError.message : String(sessionError)
+          });
+        }
       }
-
-      const status: PaymentStatus =
-        session.payment_status === "paid" ? "PAID" : "FAILED";
-
-      return {
-        success: status === "PAID",
-        message: status === "PAID" ? "Paiement validé" : "Paiement échoué"
-      };
     } catch (error) {
       ErrorHandler.logError(
         error instanceof Error ? error : new Error("Erreur inconnue"),

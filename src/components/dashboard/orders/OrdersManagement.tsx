@@ -3,8 +3,6 @@
 import React, { useState, useEffect } from "react";
 import { OrderDocument } from "@/services/dashboard/AdminOrderService";
 import Typography from "@/ui/designSystem/typography/typography";
-import Button from "@/ui/designSystem/button/button";
-import { FiEye } from "react-icons/fi";
 import DataTable, { Column } from "../DataTable";
 import Modal from "@/ui/designSystem/modal/Modal";
 import { PaymentStatus } from "@/types/payment.types";
@@ -13,7 +11,9 @@ export default function OrdersManagement() {
   const [orders, setOrders] = useState<OrderDocument[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [selectedOrder, setSelectedOrder] = useState<OrderDocument | null>(null);
+  const [selectedOrder, setSelectedOrder] = useState<OrderDocument | null>(
+    null
+  );
   const [isDetailModalOpen, setIsDetailModalOpen] = useState(false);
 
   useEffect(() => {
@@ -38,7 +38,6 @@ export default function OrdersManagement() {
       }
     };
     loadOrders();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const handleViewOrder = (order: OrderDocument) => {
@@ -57,7 +56,10 @@ export default function OrdersManagement() {
       DELIVERED: "bg-green-100 text-green-800"
     };
     return (
-      <span className={`px-3 py-1 rounded-full text-xs font-semibold ${statusColors[status] || "bg-gray-100 text-gray-800"}`}>
+      <span
+        className={`px-3 py-1 rounded-full text-xs font-semibold ${
+          statusColors[status] || "bg-gray-100 text-gray-800"
+        }`}>
         {status}
       </span>
     );
@@ -93,9 +95,14 @@ export default function OrdersManagement() {
     {
       id: "items",
       header: "Articles",
-      accessor: (row) => (
-        <span>{row.items?.length || 0} article{row.items?.length !== 1 ? "s" : ""}</span>
-      ),
+      accessor: (row) => {
+        const itemCount = row.items?.length || 0;
+        return (
+          <span>
+            {itemCount} article{itemCount === 1 ? "" : "s"}
+          </span>
+        );
+      },
       className: "w-24"
     },
     {
@@ -117,11 +124,14 @@ export default function OrdersManagement() {
       header: "Date",
       accessor: (row) => {
         if (!row.createdAt) return "N/A";
-        const date = row.createdAt instanceof Date 
-          ? row.createdAt 
-          : row.createdAt?.toDate 
-            ? row.createdAt.toDate() 
-            : new Date();
+        let date: Date;
+        if (row.createdAt instanceof Date) {
+          date = row.createdAt;
+        } else if (row.createdAt?.toDate) {
+          date = row.createdAt.toDate();
+        } else {
+          date = new Date();
+        }
         return date.toLocaleDateString("fr-FR", {
           day: "2-digit",
           month: "2-digit",
@@ -199,8 +209,11 @@ export default function OrdersManagement() {
                 <Typography variant="body-sm" className="text-gray-500 mb-1">
                   Montant total
                 </Typography>
-                <Typography variant="body" className="font-semibold text-primary">
-                  {selectedOrder.totalAmount?.toFixed(2)} {selectedOrder.currency}
+                <Typography
+                  variant="body"
+                  className="font-semibold text-primary">
+                  {selectedOrder.totalAmount?.toFixed(2)}{" "}
+                  {selectedOrder.currency}
                 </Typography>
               </div>
               <div>
@@ -216,11 +229,17 @@ export default function OrdersManagement() {
                   Date de création
                 </Typography>
                 <Typography variant="body" className="font-medium">
-                  {selectedOrder.createdAt instanceof Date 
-                    ? selectedOrder.createdAt.toLocaleString("fr-FR")
-                    : selectedOrder.createdAt?.toDate 
-                      ? selectedOrder.createdAt.toDate().toLocaleString("fr-FR")
-                      : "N/A"}
+                  {(() => {
+                    if (selectedOrder.createdAt instanceof Date) {
+                      return selectedOrder.createdAt.toLocaleString("fr-FR");
+                    }
+                    if (selectedOrder.createdAt?.toDate) {
+                      return selectedOrder.createdAt
+                        .toDate()
+                        .toLocaleString("fr-FR");
+                    }
+                    return "N/A";
+                  })()}
                 </Typography>
               </div>
             </div>
@@ -230,20 +249,22 @@ export default function OrdersManagement() {
                 Articles ({selectedOrder.items?.length || 0})
               </Typography>
               <div className="space-y-2 max-h-64 overflow-y-auto">
-                {selectedOrder.items?.map((item, index) => (
+                {selectedOrder.items?.map((item) => (
                   <div
-                    key={index}
+                    key={item.id}
                     className="flex justify-between items-center p-3 bg-gray-50 rounded-lg">
                     <div className="flex-1">
                       <Typography variant="body" className="font-medium">
                         {item.name}
                       </Typography>
                       <Typography variant="body-sm" className="text-gray-500">
-                        Quantité: {item.quantity} × {item.price?.toFixed(2)} {selectedOrder.currency}
+                        Quantité: {item.quantity} × {item.price?.toFixed(2)}{" "}
+                        {selectedOrder.currency}
                       </Typography>
                     </div>
                     <Typography variant="body" className="font-semibold">
-                      {(item.price * item.quantity).toFixed(2)} {selectedOrder.currency}
+                      {(item.price * item.quantity).toFixed(2)}{" "}
+                      {selectedOrder.currency}
                     </Typography>
                   </div>
                 ))}

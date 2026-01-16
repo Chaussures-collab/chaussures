@@ -32,7 +32,9 @@ interface CartContextType {
 }
 
 // Créez le contexte avec un type explicite ou undefined
-const CartContext = createContext<CartContextType | undefined>(undefined);
+export const CartContext = createContext<CartContextType | undefined>(
+  undefined
+);
 
 // Fournisseur du contexte
 export function CartProvider({ children }: Context) {
@@ -43,10 +45,7 @@ export function CartProvider({ children }: Context) {
   const addToCart = (product: Product) => {
     setCart((prevCart) => {
       // Vérifie si le produit est déjà dans le panier
-      /* const isProductInCart = prevCart.some((item) => item.nom === product.nom);
-      if (isProductInCart) {
-        return prevCart; // Ne rien faire si le produit est déjà dans le panier
-      } */
+
       return [...prevCart, product];
     });
   };

@@ -37,10 +37,11 @@ class EmailService {
   private graphClient: Client | null = null;
   private smtpTransporter: any = null; // nodemailer.Transporter
   private useGraphAPI: boolean = false;
-  private fromEmail: string;
+  private readonly fromEmail: string;
 
   constructor() {
-    this.fromEmail = process.env.MICROSOFT_FROM_EMAIL || process.env.ADMIN_EMAIL || "";
+    this.fromEmail =
+      process.env.MICROSOFT_FROM_EMAIL || process.env.ADMIN_EMAIL || "";
 
     // Vérifier si on utilise Microsoft Graph API
     if (
@@ -73,7 +74,10 @@ class EmailService {
       this.useGraphAPI = true;
       // Le client sera initialisé lors du premier envoi d'email
     } catch (error) {
-      console.error("Erreur lors de l'initialisation de Microsoft Graph:", error);
+      console.error(
+        "Erreur lors de l'initialisation de Microsoft Graph:",
+        error
+      );
     }
   }
 
@@ -95,7 +99,9 @@ class EmailService {
     // Créer un middleware d'authentification personnalisé
     const authProvider = {
       getAccessToken: async () => {
-        const tokenResponse = await credential.getToken("https://graph.microsoft.com/.default");
+        const tokenResponse = await credential.getToken(
+          "https://graph.microsoft.com/.default"
+        );
         return tokenResponse?.token || "";
       }
     };
@@ -115,7 +121,7 @@ class EmailService {
     try {
       this.smtpTransporter = nodemailer.createTransport({
         host: process.env.SMTP_HOST,
-        port: parseInt(process.env.SMTP_PORT || "587"),
+        port: Number.parseInt(process.env.SMTP_PORT || "587"),
         secure: process.env.SMTP_SECURE === "true", // true pour 465, false pour autres ports
         auth: {
           user: process.env.SMTP_USER,
@@ -150,9 +156,7 @@ class EmailService {
       saveToSentItems: true
     };
 
-    await graphClient
-      .api(`/users/${this.fromEmail}/sendMail`)
-      .post(message);
+    await graphClient.api(`/users/${this.fromEmail}/sendMail`).post(message);
   }
 
   /**
@@ -179,14 +183,18 @@ class EmailService {
    */
   async sendEmail(options: EmailOptions): Promise<void> {
     try {
-      if (this.useGraphAPI && this.graphClient) {
+      if (this.useGraphAPI) {
         await this.sendViaGraphAPI(options);
       } else if (this.smtpTransporter) {
         await this.sendViaSMTP(options);
       } else {
         throw new Error("Aucun service email configuré");
       }
-      console.log(`✅ Email envoyé à ${Array.isArray(options.to) ? options.to.join(", ") : options.to}`);
+      console.log(
+        `✅ Email envoyé à ${
+          Array.isArray(options.to) ? options.to.join(", ") : options.to
+        }`
+      );
     } catch (error) {
       console.error("Erreur lors de l'envoi de l'email:", error);
       throw error;
@@ -213,9 +221,11 @@ class EmailService {
    */
   async sendAdminOrderAlert(data: OrderEmailData): Promise<void> {
     const adminEmail = process.env.ADMIN_EMAIL || this.fromEmail;
-    
+
     if (!adminEmail) {
-      console.warn("⚠️ ADMIN_EMAIL non configuré, l'alerte admin ne sera pas envoyée");
+      console.warn(
+        "⚠️ ADMIN_EMAIL non configuré, l'alerte admin ne sera pas envoyée"
+      );
       return;
     }
 
@@ -224,7 +234,9 @@ class EmailService {
 
     await this.sendEmail({
       to: adminEmail,
-      subject: `🚨 Nouvelle commande #${data.orderId} - ${data.totalAmount} ${data.currency.toUpperCase()}`,
+      subject: `🚨 Nouvelle commande #${data.orderId} - ${
+        data.totalAmount
+      } ${data.currency.toUpperCase()}`,
       html,
       text
     });
@@ -257,9 +269,15 @@ class EmailService {
       .map(
         (item) => `
       <tr>
-        <td style="padding: 10px; border-bottom: 1px solid #eee;">${item.name}</td>
-        <td style="padding: 10px; border-bottom: 1px solid #eee; text-align: center;">${item.quantity}</td>
-        <td style="padding: 10px; border-bottom: 1px solid #eee; text-align: right;">${item.price.toFixed(2)} ${data.currency.toUpperCase()}</td>
+        <td style="padding: 10px; border-bottom: 1px solid #eee;">${
+          item.name
+        }</td>
+        <td style="padding: 10px; border-bottom: 1px solid #eee; text-align: center;">${
+          item.quantity
+        }</td>
+        <td style="padding: 10px; border-bottom: 1px solid #eee; text-align: right;">${item.price.toFixed(
+          2
+        )} ${data.currency.toUpperCase()}</td>
       </tr>
     `
       )
@@ -306,7 +324,9 @@ class EmailService {
         <tfoot>
           <tr>
             <td colspan="2" style="padding: 10px; text-align: right; font-weight: bold; border-top: 2px solid #ddd;">Total :</td>
-            <td style="padding: 10px; text-align: right; font-weight: bold; font-size: 18px; color: #667eea; border-top: 2px solid #ddd;">${data.totalAmount.toFixed(2)} ${data.currency.toUpperCase()}</td>
+            <td style="padding: 10px; text-align: right; font-weight: bold; font-size: 18px; color: #667eea; border-top: 2px solid #ddd;">${data.totalAmount.toFixed(
+              2
+            )} ${data.currency.toUpperCase()}</td>
           </tr>
         </tfoot>
       </table>
@@ -331,7 +351,12 @@ class EmailService {
    */
   private generateOrderConfirmationText(data: OrderEmailData): string {
     const itemsText = data.items
-      .map((item) => `- ${item.name} (x${item.quantity}) : ${item.price.toFixed(2)} ${data.currency.toUpperCase()}`)
+      .map(
+        (item) =>
+          `- ${item.name} (x${item.quantity}) : ${item.price.toFixed(
+            2
+          )} ${data.currency.toUpperCase()}`
+      )
       .join("\n");
 
     return `
@@ -368,9 +393,15 @@ L'équipe ShopiMarket
       .map(
         (item) => `
       <tr>
-        <td style="padding: 10px; border-bottom: 1px solid #eee;">${item.name}</td>
-        <td style="padding: 10px; border-bottom: 1px solid #eee; text-align: center;">${item.quantity}</td>
-        <td style="padding: 10px; border-bottom: 1px solid #eee; text-align: right;">${item.price.toFixed(2)} ${data.currency.toUpperCase()}</td>
+        <td style="padding: 10px; border-bottom: 1px solid #eee;">${
+          item.name
+        }</td>
+        <td style="padding: 10px; border-bottom: 1px solid #eee; text-align: center;">${
+          item.quantity
+        }</td>
+        <td style="padding: 10px; border-bottom: 1px solid #eee; text-align: right;">${item.price.toFixed(
+          2
+        )} ${data.currency.toUpperCase()}</td>
       </tr>
     `
       )
@@ -401,7 +432,9 @@ L'équipe ShopiMarket
       <p><strong>Email :</strong> ${data.customerEmail}</p>
       <p><strong>Date :</strong> ${data.orderDate}</p>
       <p><strong>Méthode de paiement :</strong> ${data.paymentMethod}</p>
-      <p><strong>Montant total :</strong> <span style="font-size: 20px; font-weight: bold; color: #f5576c;">${data.totalAmount.toFixed(2)} ${data.currency.toUpperCase()}</span></p>
+      <p><strong>Montant total :</strong> <span style="font-size: 20px; font-weight: bold; color: #f5576c;">${data.totalAmount.toFixed(
+        2
+      )} ${data.currency.toUpperCase()}</span></p>
     </div>
     
     <div style="background: white; padding: 20px; border-radius: 8px; margin: 20px 0;">
@@ -420,7 +453,9 @@ L'équipe ShopiMarket
         <tfoot>
           <tr>
             <td colspan="2" style="padding: 10px; text-align: right; font-weight: bold; border-top: 2px solid #ddd;">Total :</td>
-            <td style="padding: 10px; text-align: right; font-weight: bold; font-size: 18px; color: #f5576c; border-top: 2px solid #ddd;">${data.totalAmount.toFixed(2)} ${data.currency.toUpperCase()}</td>
+            <td style="padding: 10px; text-align: right; font-weight: bold; font-size: 18px; color: #f5576c; border-top: 2px solid #ddd;">${data.totalAmount.toFixed(
+              2
+            )} ${data.currency.toUpperCase()}</td>
           </tr>
         </tfoot>
       </table>
@@ -442,7 +477,12 @@ L'équipe ShopiMarket
    */
   private generateAdminAlertText(data: OrderEmailData): string {
     const itemsText = data.items
-      .map((item) => `- ${item.name} (x${item.quantity}) : ${item.price.toFixed(2)} ${data.currency.toUpperCase()}`)
+      .map(
+        (item) =>
+          `- ${item.name} (x${item.quantity}) : ${item.price.toFixed(
+            2
+          )} ${data.currency.toUpperCase()}`
+      )
       .join("\n");
 
     return `
@@ -468,7 +508,10 @@ ${itemsText}
   /**
    * Génère le HTML de notification de réapprovisionnement
    */
-  private generateStockRestockHTML(data: { productName: string; productUrl: string }): string {
+  private generateStockRestockHTML(data: {
+    productName: string;
+    productUrl: string;
+  }): string {
     return `
 <!DOCTYPE html>
 <html>
@@ -515,7 +558,10 @@ ${itemsText}
   /**
    * Génère le texte brut de notification de réapprovisionnement
    */
-  private generateStockRestockText(data: { productName: string; productUrl: string }): string {
+  private generateStockRestockText(data: {
+    productName: string;
+    productUrl: string;
+  }): string {
     return `
 Produit de nouveau en stock
 

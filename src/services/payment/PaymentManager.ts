@@ -26,7 +26,7 @@ let emailService: EmailServiceType["emailService"] | null = null;
 
 // Fonction pour charger EmailService uniquement côté serveur
 async function getEmailService() {
-  if (typeof window === "undefined" && !emailService) {
+  if (globalThis.window === undefined && !emailService) {
     const emailModule = await import("../email/EmailService");
     emailService = emailModule.emailService;
   }
@@ -35,9 +35,9 @@ async function getEmailService() {
 
 export class PaymentManager {
   constructor(
-    private paymentService: IPaymentService,
-    private orderService: IOrderService,
-    private validationService: IValidationService
+    private readonly paymentService: IPaymentService,
+    private readonly orderService: IOrderService,
+    private readonly validationService: IValidationService
   ) {}
 
   /**
@@ -106,19 +106,32 @@ export class PaymentManager {
   async handlePaymentWebhook(
     webhookData: StripeWebhookData
   ): Promise<PaymentProcessResult> {
-    try {
-      // Traitement du paiement via le service de paiement
-      const paymentResult = await this.paymentService.processPayment(
-        webhookData.sessionId
-      );
+    console.log(`🔵 [PaymentManager] handlePaymentWebhook appelé avec:`, {
+      sessionId: webhookData.sessionId,
+      paymentStatus: webhookData.paymentStatus,
+      hasMetadata: !!webhookData.metadata,
+      metadataKeys: webhookData.metadata
+        ? Object.keys(webhookData.metadata)
+        : []
+    });
 
+    try {
       // Si le paiement a réussi, on crée la commande
-      if (paymentResult.success && webhookData.metadata) {
+      // Note: On utilise directement le statut du webhook car le webhook est déjà déclenché uniquement si le paiement a réussi
+      // On n'appelle plus processPayment pour éviter les erreurs inutiles avec les Payment Intents
+      if (webhookData.paymentStatus === "PAID" && webhookData.metadata) {
         const userId = webhookData.metadata.userId;
-        const userEmail = webhookData.metadata.userEmail || webhookData.customerEmail || "";
-        const totalAmount = parseFloat(webhookData.metadata.totalAmount || "0");
+        const userEmail =
+          webhookData.metadata.userEmail || webhookData.customerEmail || "";
+        const totalAmount = Number.parseFloat(
+          webhookData.metadata.totalAmount || "0"
+        );
 
         if (!userId) {
+          console.error(
+            "❌ ID utilisateur manquant dans les métadonnées:",
+            webhookData.metadata
+          );
           throw ErrorHandler.createWebhookError(
             "ID utilisateur manquant dans les métadonnées",
             webhookData.paymentStatus,
@@ -133,65 +146,280 @@ export class PaymentManager {
             const parsedItems = JSON.parse(webhookData.metadata.itemsJson);
             // Validation et conversion en PaymentItem[]
             if (Array.isArray(parsedItems)) {
-              items = parsedItems.map((item: unknown) => {
-                if (
-                  typeof item === "object" &&
-                  item !== null &&
-                  "id" in item &&
-                  "name" in item &&
-                  "price" in item &&
-                  "quantity" in item
-                ) {
-                  return {
-                    id: String(item.id),
-                    name: String(item.name),
-                    price: Number(item.price),
-                    quantity: Number(item.quantity),
-                    description: "description" in item ? String(item.description) : undefined,
-                    imageUrl: "imageUrl" in item ? String(item.imageUrl) : undefined
-                  } as PaymentItem;
-                }
-                return null;
-              }).filter((item): item is PaymentItem => item !== null);
+              items = parsedItems
+                .map((item: unknown) => {
+                  if (
+                    typeof item === "object" &&
+                    item !== null &&
+                    "id" in item &&
+                    "name" in item &&
+                    "price" in item &&
+                    "quantity" in item
+                  ) {
+                    return {
+                      id: String(item.id),
+                      name: String(item.name),
+                      price: Number(item.price),
+                      quantity: Number(item.quantity),
+                      description:
+                        "description" in item
+                          ? String(item.description)
+                          : undefined,
+                      imageUrl:
+                        "imageUrl" in item ? String(item.imageUrl) : undefined
+                    } as PaymentItem;
+                  }
+                  return null;
+                })
+                .filter((item): item is PaymentItem => item !== null);
             }
           }
         } catch (error) {
+          console.error("❌ Erreur lors du parsing des items:", error);
           ErrorHandler.logError(
             error instanceof Error ? error : new Error("Erreur parsing items"),
-            { operation: "parseItemsFromMetadata", sessionId: webhookData.sessionId }
+            {
+              operation: "parseItemsFromMetadata",
+              sessionId: webhookData.sessionId,
+              metadata: webhookData.metadata
+            }
           );
-          // On continue même si on ne peut pas parser les items
+          // On continue même si on ne peut pas parser les items, mais on log l'erreur
         }
 
-        // Création de la commande avec le statut PAID
-        const orderId = await this.orderService.createOrder({
-          userId,
-          userEmail,
-          items,
-          totalAmount: webhookData.amountTotal ? webhookData.amountTotal / 100 : totalAmount, // Conversion des centimes
-          currency: webhookData.currency || "eur",
-          status: "PAID",
-          paymentMethod: "STRIPE",
-          stripeSessionId: webhookData.sessionId,
-          metadata: webhookData.metadata
-        });
+        if (items.length === 0) {
+          console.error(
+            "❌ Aucun item trouvé dans les métadonnées. Metadata:",
+            webhookData.metadata
+          );
+          throw ErrorHandler.createWebhookError(
+            "Aucun item trouvé dans les métadonnées du paiement",
+            webhookData.paymentStatus,
+            { sessionId: webhookData.sessionId, metadata: webhookData.metadata }
+          );
+        }
+
+        console.log(
+          `📦 Création de la commande avec ${items.length} item(s) pour l'utilisateur ${userId}`
+        );
+
+        // Création de la commande avec le statut PAID (utilise Admin SDK pour contourner les règles Firestore)
+        let orderId: string;
+        try {
+          console.log(
+            `📝 [PaymentManager] Tentative de création de commande...`
+          );
+          console.log(`📝 [PaymentManager] Données de commande:`, {
+            userId,
+            userEmail,
+            itemsCount: items.length,
+            totalAmount: webhookData.amountTotal
+              ? webhookData.amountTotal / 100
+              : totalAmount,
+            currency: webhookData.currency || "eur"
+          });
+
+          // Utiliser AdminOrderService au lieu de OrderService pour contourner les règles Firestore
+          const { AdminOrderService } = await import(
+            "../dashboard/AdminOrderService"
+          );
+          const adminOrderService = new AdminOrderService();
+
+          orderId = await adminOrderService.createOrder({
+            userId,
+            userEmail,
+            items,
+            totalAmount: webhookData.amountTotal
+              ? webhookData.amountTotal / 100
+              : totalAmount, // Conversion des centimes
+            currency: webhookData.currency || "eur",
+            status: "PAID",
+            paymentMethod: "STRIPE",
+            stripeSessionId: webhookData.sessionId,
+            metadata: webhookData.metadata
+          });
+          console.log(
+            `✅ [PaymentManager] Commande créée avec succès: ${orderId}`
+          );
+        } catch (orderError) {
+          console.error(
+            "❌ [PaymentManager] Erreur lors de la création de la commande:",
+            orderError
+          );
+          console.error(
+            "❌ [PaymentManager] Stack trace:",
+            orderError instanceof Error
+              ? orderError.stack
+              : "Pas de stack trace"
+          );
+          ErrorHandler.logError(
+            orderError instanceof Error
+              ? orderError
+              : new Error("Erreur création commande"),
+            { operation: "createOrder", userId, itemsCount: items.length }
+          );
+          throw orderError;
+        }
+
+        // Mise à jour du stock des produits (utilise Admin SDK)
+        try {
+          console.log(`🔵 [PaymentManager] DÉBUT - Mise à jour du stock...`);
+          if (items.length > 0) {
+            console.log(
+              `📝 [PaymentManager] Chargement AdminProductService...`
+            );
+            const { AdminProductService } = await import(
+              "../dashboard/AdminProductService"
+            );
+            console.log(`✅ [PaymentManager] AdminProductService chargé`);
+
+            const adminProductService = new AdminProductService();
+            console.log(`✅ [PaymentManager] AdminProductService instancié`);
+
+            const stockUpdates = items.map((item) => ({
+              productId: item.id,
+              quantity: item.quantity
+            }));
+            console.log(`📝 [PaymentManager] Stock updates:`, stockUpdates);
+
+            console.log(`🔵 [PaymentManager] Appel decrementStocks...`);
+            await adminProductService.decrementStocks(stockUpdates);
+            console.log(
+              `✅ [PaymentManager] Stock mis à jour pour ${items.length} produit(s) de la commande ${orderId}`
+            );
+          } else {
+            console.warn(
+              "⚠️ [PaymentManager] Aucun item à mettre à jour pour le stock"
+            );
+          }
+        } catch (stockError) {
+          console.error(
+            "❌ [PaymentManager] ERREUR STOCK - Type:",
+            stockError instanceof Error
+              ? stockError.constructor.name
+              : typeof stockError
+          );
+          console.error(
+            "❌ [PaymentManager] ERREUR STOCK - Message:",
+            stockError instanceof Error
+              ? stockError.message
+              : String(stockError)
+          );
+          console.error(
+            "❌ [PaymentManager] ERREUR STOCK - Stack:",
+            stockError instanceof Error ? stockError.stack : "N/A"
+          );
+          ErrorHandler.logError(
+            stockError instanceof Error
+              ? stockError
+              : new Error("Erreur mise à jour stock"),
+            { operation: "decrementStocks", orderId, items }
+          );
+        }
+
+        // Marquer les paniers abandonnés comme récupérés (utilise Admin SDK)
+        try {
+          console.log(
+            `🔵 [PaymentManager] DÉBUT - Marquage paniers abandonnés...`
+          );
+          console.log(
+            `📝 [PaymentManager] Chargement AdminAbandonedCartService...`
+          );
+          const { AdminAbandonedCartService } = await import(
+            "../cart/AdminAbandonedCartService"
+          );
+          console.log(`✅ [PaymentManager] AdminAbandonedCartService chargé`);
+
+          const adminAbandonedCartService = new AdminAbandonedCartService();
+          console.log(
+            `✅ [PaymentManager] AdminAbandonedCartService instancié`
+          );
+
+          console.log(
+            `🔵 [PaymentManager] Appel markUserCartsAsRecovered pour userId: ${userId}`
+          );
+          await adminAbandonedCartService.markUserCartsAsRecovered(userId);
+          console.log(
+            `✅ [PaymentManager] Panier(s) abandonné(s) marqué(s) comme récupéré(s) pour l'utilisateur ${userId}`
+          );
+
+          // Vider complètement le panier après paiement
+          console.log(
+            `🔵 [PaymentManager] DÉBUT - Suppression du panier utilisateur...`
+          );
+          await adminAbandonedCartService.clearUserCarts(userId);
+          console.log(
+            `✅ [PaymentManager] Panier utilisateur vidé pour l'utilisateur ${userId}`
+          );
+          console.log(
+            `✅ [PaymentManager] Panier(s) abandonné(s) marqué(s) comme récupéré(s) pour l'utilisateur ${userId}`
+          );
+        } catch (cartError) {
+          console.error(
+            "❌ [PaymentManager] ERREUR PANIER - Type:",
+            cartError instanceof Error
+              ? cartError.constructor.name
+              : typeof cartError
+          );
+          console.error(
+            "❌ [PaymentManager] ERREUR PANIER - Message:",
+            cartError instanceof Error ? cartError.message : String(cartError)
+          );
+          console.error(
+            "❌ [PaymentManager] ERREUR PANIER - Stack:",
+            cartError instanceof Error ? cartError.stack : "N/A"
+          );
+          ErrorHandler.logError(
+            cartError instanceof Error
+              ? cartError
+              : new Error("Erreur mise à jour panier abandonné"),
+            { operation: "markUserCartsAsRecovered", orderId, userId }
+          );
+        }
 
         // Envoi des emails de notification (client et admin)
         try {
+          console.log(`🔵 [PaymentManager] DÉBUT - Envoi des emails...`);
+          console.log(
+            `📝 [PaymentManager] Données email: orderId=${orderId}, userEmail=${userEmail}, items=${items.length}`
+          );
+
           await this.sendOrderEmails({
             orderId,
             userEmail,
             items,
-            totalAmount: webhookData.amountTotal ? webhookData.amountTotal / 100 : totalAmount,
+            totalAmount: webhookData.amountTotal
+              ? webhookData.amountTotal / 100
+              : totalAmount,
             currency: webhookData.currency || "eur",
             paymentMethod: "STRIPE",
             metadata: webhookData.metadata
           });
+          console.log(
+            `✅ [PaymentManager] Emails de confirmation envoyés pour la commande ${orderId}`
+          );
         } catch (emailError) {
-          // On log l'erreur mais on ne fait pas échouer le paiement si l'email échoue
+          console.error(
+            "❌ [PaymentManager] ERREUR EMAIL - Type:",
+            emailError instanceof Error
+              ? emailError.constructor.name
+              : typeof emailError
+          );
+          console.error(
+            "❌ [PaymentManager] ERREUR EMAIL - Message:",
+            emailError instanceof Error
+              ? emailError.message
+              : String(emailError)
+          );
+          console.error(
+            "❌ [PaymentManager] ERREUR EMAIL - Stack:",
+            emailError instanceof Error ? emailError.stack : "N/A"
+          );
           ErrorHandler.logError(
-            emailError instanceof Error ? emailError : new Error("Erreur envoi email"),
-            { operation: "sendOrderEmails", orderId }
+            emailError instanceof Error
+              ? emailError
+              : new Error("Erreur envoi email"),
+            { operation: "sendOrderEmails", orderId, userEmail }
           );
         }
 
@@ -203,11 +431,18 @@ export class PaymentManager {
         };
       }
 
-      // Si le paiement a échoué
+      // Si le paiement n'a pas réussi (statut différent de PAID ou métadonnées manquantes)
+      console.warn(`⚠️ [PaymentManager] Paiement non traité:`, {
+        paymentStatus: webhookData.paymentStatus,
+        hasMetadata: !!webhookData.metadata
+      });
       return {
         success: false,
-        message: paymentResult.message || "Paiement échoué",
-        error: paymentResult.error
+        message:
+          "Paiement non traité (statut non PAID ou métadonnées manquantes)",
+        error: `Statut: ${webhookData.paymentStatus}, Métadonnées: ${
+          webhookData.metadata ? "présentes" : "manquantes"
+        }`
       };
     } catch (error) {
       ErrorHandler.logError(
@@ -276,11 +511,18 @@ export class PaymentManager {
     paymentMethod: string;
     metadata?: Record<string, string>;
   }): Promise<void> {
+    console.log(`📝 [sendOrderEmails] Début du traitement des emails`);
+
     // Récupérer le nom du client depuis les métadonnées ou utiliser l'email
     const customerName =
       data.metadata?.nom && data.metadata?.prenom
         ? `${data.metadata.prenom} ${data.metadata.nom}`
-        : data.metadata?.prenom || data.metadata?.nom || data.userEmail.split("@")[0] || "Client";
+        : data.metadata?.prenom ||
+          data.metadata?.nom ||
+          data.userEmail.split("@")[0] ||
+          "Client";
+
+    console.log(`📝 [sendOrderEmails] Customer name: ${customerName}`);
 
     const orderEmailData = {
       orderId: data.orderId,
@@ -303,11 +545,45 @@ export class PaymentManager {
       })
     };
 
+    console.log(`📝 [sendOrderEmails] Obtention du service email...`);
     // Envoyer l'email de confirmation au client - uniquement côté serveur
     const emailServiceInstance = await getEmailService();
+    console.log(
+      `📝 [sendOrderEmails] emailServiceInstance:`,
+      emailServiceInstance ? "OK" : "NULL"
+    );
+
     if (emailServiceInstance) {
-      await emailServiceInstance.sendOrderConfirmationEmail(orderEmailData);
-      await emailServiceInstance.sendAdminOrderAlert(orderEmailData);
+      try {
+        console.log(
+          `🔵 [sendOrderEmails] Envoi email de confirmation client à ${orderEmailData.customerEmail}`
+        );
+        await emailServiceInstance.sendOrderConfirmationEmail(orderEmailData);
+        console.log(`✅ [sendOrderEmails] Email de confirmation client envoyé`);
+      } catch (confirmError) {
+        console.error(
+          `❌ [sendOrderEmails] Erreur lors de l'envoi de l'email de confirmation:`,
+          confirmError
+        );
+        throw confirmError;
+      }
+
+      try {
+        console.log(`🔵 [sendOrderEmails] Envoi alerte admin`);
+        await emailServiceInstance.sendAdminOrderAlert(orderEmailData);
+        console.log(`✅ [sendOrderEmails] Alerte admin envoyée`);
+      } catch (adminError) {
+        console.error(
+          `❌ [sendOrderEmails] Erreur lors de l'envoi de l'alerte admin:`,
+          adminError
+        );
+        throw adminError;
+      }
+    } else {
+      console.error(
+        `❌ [sendOrderEmails] emailServiceInstance est NULL - aucun service email disponible`
+      );
+      throw new Error("Service email non initialisé");
     }
   }
 }

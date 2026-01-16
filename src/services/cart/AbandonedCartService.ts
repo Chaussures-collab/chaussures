@@ -202,5 +202,23 @@ export class AbandonedCartService {
       throw error;
     }
   }
+
+  /**
+   * Marque tous les paniers abandonnés d'un utilisateur comme récupérés après un paiement réussi
+   */
+  async markUserCartsAsRecovered(userId: string): Promise<void> {
+    try {
+      const carts = await this.getUserAbandonedCarts(userId);
+      const updatePromises = carts
+        .filter((cart) => !cart.recovered)
+        .map((cart) => this.markAsRecovered(cart.id!));
+      
+      await Promise.all(updatePromises);
+      console.log(`Panier(s) abandonné(s) marqué(s) comme récupéré(s) pour l'utilisateur ${userId}`);
+    } catch (error) {
+      console.error("Erreur lors du marquage des paniers comme récupérés:", error);
+      throw error;
+    }
+  }
 }
 

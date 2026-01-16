@@ -118,11 +118,14 @@ export default function CategoriesManagement() {
       header: "Date de création",
       accessor: (row) => {
         if (!row.createdAt) return "N/A";
-        const date = row.createdAt instanceof Date 
-          ? row.createdAt 
-          : row.createdAt?.toDate 
-            ? row.createdAt.toDate() 
-            : new Date();
+        let date: Date;
+        if (row.createdAt instanceof Date) {
+          date = row.createdAt;
+        } else if (row.createdAt?.toDate) {
+          date = row.createdAt.toDate();
+        } else {
+          date = new Date();
+        }
         return date.toLocaleDateString("fr-FR");
       },
       sortable: true,

@@ -6,7 +6,10 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "next lint",
+    "test:webhook": "tsx scripts/test-webhook.js",
+    "test:stripe-webhook": "tsx scripts/test-stripe-webhook.js",
+    "test:full-webhook": "tsx scripts/test-full-webhook.js"
   },
   "dependencies": {
     "@azure/identity": "^4.13.0",
@@ -20,6 +23,7 @@
     "@stripe/react-stripe-js": "^5.4.1",
     "@stripe/stripe-js": "^8.6.0",
     "clsx": "^2.1.1",
+    "dotenv": "^17.2.3",
     "emailjs-com": "^3.2.0",
     "firebase": "^11.2.0",
     "firebase-admin": "^13.6.0",
@@ -48,6 +52,7 @@
     "eslint-config-next": "15.1.4",
     "postcss": "^8.5.6",
     "tailwindcss": "^3.4.19",
+    "tsx": "^4.21.0",
     "typescript": "^5"
   }
 }
