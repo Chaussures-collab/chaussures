@@ -13,16 +13,20 @@ import { PaymentFactory } from "@/services/payment/PaymentFactory";
 import { StripeWebhookData, PaymentStatus } from "@/types/payment.types";
 import { ErrorHandler } from "@/services/payment/errors/ErrorHandler";
 import { WebhookError } from "@/services/payment/errors/PaymentError";
+import { buffer } from "micro";
+
+export const runtime = "nodejs";
 
 // Désactive le parsing automatique du body pour Stripe
 export const config = {
+  matcher: ["/((?!api/webhooks/stripe).*)"],
   api: {
     bodyParser: false
   }
 };
 
 // Fonction pour lire le body brut
-async function getRawBody(req: NextApiRequest): Promise<string> {
+/* async function getRawBody(req: NextApiRequest): Promise<string> {
   return new Promise((resolve, reject) => {
     let data = "";
     req.on("data", (chunk) => {
@@ -35,7 +39,7 @@ async function getRawBody(req: NextApiRequest): Promise<string> {
       reject(err);
     });
   });
-}
+} */
 
 type ResponseData = {
   received?: boolean;
@@ -64,13 +68,14 @@ export default async function handler(
 
   try {
     // Récupération du body brut
-    const bodyString = await getRawBody(req);
+    const rawBody = await buffer(req);
 
     event = stripe.webhooks.constructEvent(
-      bodyString,
+      rawBody,
       signature,
       process.env.STRIPE_WEBHOOK_SECRET!
     );
+
   } catch (err) {
     const errorResponse = ErrorHandler.handleError(err, {
       endpoint: "/api/webhooks/stripe",
