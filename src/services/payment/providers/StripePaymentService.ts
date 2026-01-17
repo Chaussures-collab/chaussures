@@ -78,7 +78,7 @@ export class StripePaymentService implements IPaymentService {
         mode: "payment",
         success_url: request.successUrl,
         cancel_url: request.cancelUrl,
-        customer_email: request.userEmail,
+        // customer_email: request.userEmail,
         metadata: {
           userId: request.userId,
           ...request.metadata

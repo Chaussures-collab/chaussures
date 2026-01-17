@@ -65,23 +65,35 @@ if (cart.length === 0) {
       {/* Indicateur de progression */}
       <div className="mb-8">
         <div className="flex items-center justify-center gap-2 md:gap-4">
-          <div className={`flex items-center gap-2 ${currentStep === "delivery" ? "text-primary" : "text-gray-400"}`}>
-            <div className={`flex items-center justify-center w-8 h-8 rounded-full border-2 ${
-              currentStep === "delivery" 
-                ? "bg-primary border-primary text-white" 
-                : "border-gray-300 bg-white"
+          <div
+            className={`flex items-center gap-2 ${
+              currentStep === "delivery" ? "text-primary" : "text-gray-400"
             }`}>
+            <div
+              className={`flex items-center justify-center w-8 h-8 rounded-full border-2 ${
+                currentStep === "delivery"
+                  ? "bg-primary border-primary text-white"
+                  : "border-gray-300 bg-white"
+              }`}>
               {currentStep === "payment" ? "✓" : "1"}
             </div>
             <span className="hidden sm:inline font-medium">Livraison</span>
           </div>
-          <div className={`w-8 md:w-16 h-0.5 ${currentStep === "payment" ? "bg-primary" : "bg-gray-300"}`} />
-          <div className={`flex items-center gap-2 ${currentStep === "payment" ? "text-primary" : "text-gray-400"}`}>
-            <div className={`flex items-center justify-center w-8 h-8 rounded-full border-2 ${
-              currentStep === "payment" 
-                ? "bg-primary border-primary text-white" 
-                : "border-gray-300 bg-white"
+          <div
+            className={`w-8 md:w-16 h-0.5 ${
+              currentStep === "payment" ? "bg-primary" : "bg-gray-300"
+            }`}
+          />
+          <div
+            className={`flex items-center gap-2 ${
+              currentStep === "payment" ? "text-primary" : "text-gray-400"
             }`}>
+            <div
+              className={`flex items-center justify-center w-8 h-8 rounded-full border-2 ${
+                currentStep === "payment"
+                  ? "bg-primary border-primary text-white"
+                  : "border-gray-300 bg-white"
+              }`}>
               2
             </div>
             <span className="hidden sm:inline font-medium">Paiement</span>
@@ -117,10 +129,14 @@ if (cart.length === 0) {
               <div className="bg-gradient-to-r from-primary/5 to-primary/10 px-6 py-4 border-b border-gray-200">
                 <div className="flex items-center justify-between">
                   <div>
-                    <Typography variant="h4" className="font-bold text-gray-900">
+                    <Typography
+                      variant="h4"
+                      className="font-bold text-gray-900">
                       Informations de paiement
                     </Typography>
-                    <Typography variant="caption1" className="text-gray-600 mt-1">
+                    <Typography
+                      variant="caption1"
+                      className="text-gray-600 mt-1">
                       Paiement sécurisé par Stripe
                     </Typography>
                   </div>
@@ -142,9 +158,6 @@ if (cart.length === 0) {
             <Typography variant="h4" className="mb-4 font-bold text-gray-900">
               Votre panier
             </Typography>
-          <Typography variant="h3" className="font-bold">
-            Votre panier
-          </Typography>
 
             <div className="space-y-3 md:space-y-4">
               {cart.map((item) => (
@@ -170,10 +183,13 @@ if (cart.length === 0) {
                           className="font-semibold text-gray-900 truncate">
                           {item.alt}
                         </Typography>
-                        <Typography variant="caption1" className="mt-1 text-gray-500">
+                        <Typography
+                          variant="caption1"
+                          className="mt-1 text-gray-500">
                           {item.selectedSize && `Taille : ${item.selectedSize}`}
                           {item.selectedSize && item.selectedColor && " · "}
-                          {item.selectedColor && `Couleur : ${item.selectedColor}`}
+                          {item.selectedColor &&
+                            `Couleur : ${item.selectedColor}`}
                         </Typography>
                       </div>
                       <button
@@ -201,7 +217,9 @@ if (cart.length === 0) {
                           className="px-2 md:px-3 py-1 hover:bg-gray-100 disabled:opacity-40 transition">
                           <FiMinus size={14} />
                         </button>
-                        <span className="px-2 md:px-4 font-medium text-sm md:text-base">{item.quantity}</span>
+                        <span className="px-2 md:px-4 font-medium text-sm md:text-base">
+                          {item.quantity}
+                        </span>
                         <button
                           onClick={() =>
                             handleQuantityChange(
@@ -277,7 +295,9 @@ if (cart.length === 0) {
               <div className="flex items-start justify-between mb-3">
                 <div className="flex items-center gap-2">
                   <FiTruck className="text-primary" size={18} />
-                  <Typography variant="h5" className="font-semibold text-gray-900">
+                  <Typography
+                    variant="h5"
+                    className="font-semibold text-gray-900">
                     Adresse de livraison
                   </Typography>
                 </div>
@@ -291,16 +311,17 @@ if (cart.length === 0) {
                 <p className="font-medium">
                   {deliveryData.firstName} {deliveryData.lastName}
                 </p>
-                {deliveryData.deliveryType === "home" && deliveryData.address && (
-                  <>
-                    <p>{deliveryData.address}</p>
-                    {deliveryData.address2 && <p>{deliveryData.address2}</p>}
-                    <p>
-                      {deliveryData.postalCode} {deliveryData.city}
-                    </p>
-                    <p>{deliveryData.country}</p>
-                  </>
-                )}
+                {deliveryData.deliveryType === "home" &&
+                  deliveryData.address && (
+                    <>
+                      <p>{deliveryData.address}</p>
+                      {deliveryData.address2 && <p>{deliveryData.address2}</p>}
+                      <p>
+                        {deliveryData.postalCode} {deliveryData.city}
+                      </p>
+                      <p>{deliveryData.country}</p>
+                    </>
+                  )}
                 {deliveryData.deliveryType === "pickup" && (
                   <p className="text-gray-600">Retrait en point relais</p>
                 )}
