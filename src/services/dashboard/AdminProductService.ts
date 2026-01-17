@@ -70,25 +70,49 @@ export class AdminProductService {
     }
   }
 
-  // Récupérer un produit par ID
+  // Récupérer un produit par ID (cherche dans le champ 'id' ou par doc ID)
   async getProductById(productId: string): Promise<ProductDocument | null> {
     try {
       const db = getAdminDb();
+
+      // D'abord, essayer de récupérer par doc ID directement
       const doc = await db.collection(PRODUCTS_COLLECTION).doc(productId).get();
-      if (!doc.exists) {
-        return null;
+      if (doc.exists) {
+        const data = doc.data();
+        return {
+          id: doc.id,
+          ...data,
+          createdAt: data?.createdAt?.toDate
+            ? data.createdAt.toDate()
+            : data?.createdAt || new Date(),
+          updatedAt: data?.updatedAt?.toDate
+            ? data.updatedAt.toDate()
+            : data?.updatedAt || new Date()
+        } as ProductDocument;
       }
-      const data = doc.data();
-      return {
-        id: doc.id,
-        ...data,
-        createdAt: data?.createdAt?.toDate
-          ? data.createdAt.toDate()
-          : data?.createdAt || new Date(),
-        updatedAt: data?.updatedAt?.toDate
-          ? data.updatedAt.toDate()
-          : data?.updatedAt || new Date()
-      } as ProductDocument;
+
+      // Si non trouvé, chercher par le champ 'id' (pour les produits avec ID numérique)
+      const query = db
+        .collection(PRODUCTS_COLLECTION)
+        .where("id", "==", Number(productId));
+      const querySnapshot = await query.get();
+
+      if (!querySnapshot.empty) {
+        const doc = querySnapshot.docs[0];
+        const data = doc.data();
+        return {
+          id: doc.id,
+          ...data,
+          createdAt: data?.createdAt?.toDate
+            ? data.createdAt.toDate()
+            : data?.createdAt || new Date(),
+          updatedAt: data?.updatedAt?.toDate
+            ? data.updatedAt.toDate()
+            : data?.updatedAt || new Date()
+        } as ProductDocument;
+      }
+
+      return null;
     } catch (error) {
       const errorMessage =
         error && typeof error === "object" && "message" in error
@@ -110,7 +134,9 @@ export class AdminProductService {
       const newStock = Math.max(0, currentStock - quantity);
 
       const db = getAdminDb();
-      await db.collection(PRODUCTS_COLLECTION).doc(productId).update({
+      // IMPORTANT: Utiliser product.id (la vraie doc ID Firestore) pas productId
+      const firestoreDocId = product.id || productId;
+      await db.collection(PRODUCTS_COLLECTION).doc(firestoreDocId).update({
         quantiteStock: newStock,
         updatedAt: admin.firestore.Timestamp.now()
       });
@@ -137,23 +163,49 @@ export class AdminProductService {
     items: Array<{ productId: string; quantity: number }>
   ): Promise<void> {
     try {
-      const updatePromises = items.map((item) =>
-        this.decrementStock(item.productId, item.quantity)
+      const results = await Promise.allSettled(
+        items.map((item) => this.decrementStock(item.productId, item.quantity))
       );
-      await Promise.all(updatePromises);
+
+      // Compter les succès et les erreurs
+      const successes = results.filter((r) => r.status === "fulfilled").length;
+      const failures = results.filter((r) => r.status === "rejected");
+
+      if (failures.length > 0) {
+        console.warn(
+          `⚠️ [AdminProductService] ${failures.length} produit(s) introuvable(s) ou erreur lors de la mise à jour:`
+        );
+        failures.forEach((failure, index) => {
+          if (failure.status === "rejected") {
+            console.warn(
+              `   - Produit ${index}: ${
+                failure.reason instanceof Error
+                  ? failure.reason.message
+                  : String(failure.reason)
+              }`
+            );
+          }
+        });
+      }
+
       console.log(
-        `✅ [AdminProductService] Stock mis à jour pour ${items.length} produit(s)`
+        `✅ [AdminProductService] Stock mis à jour pour ${successes}/${items.length} produit(s)`
       );
+
+      // Note: Même si aucun produit n'a pu être mis à jour (ex: produits supprimés),
+      // on ne lance pas d'erreur car le paiement est déjà accepté et la commande est créée.
+      // Les données de stock seront conservées dans la commande à titre informatif.
     } catch (error) {
       const errorMessage =
         error && typeof error === "object" && "message" in error
           ? String(error.message)
           : "Erreur inconnue";
       console.error(
-        `❌ [AdminProductService] Erreur lors de la mise à jour du stock de plusieurs produits: ${errorMessage}`
+        `❌ [AdminProductService] Erreur critique lors de la mise à jour du stock: ${errorMessage}`
       );
-      throw new Error(
-        `Erreur lors de la mise à jour du stock: ${errorMessage}`
+      // Ne pas relancer l'erreur - le paiement est déjà fait
+      console.warn(
+        `⚠️ [AdminProductService] Continuation sans mise à jour de stock (paiement validé)`
       );
     }
   }

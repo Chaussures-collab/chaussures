@@ -1,7 +1,7 @@
 /** @format */
 
 export interface ProduitType {
-  id: number;
+  id: string;
   src: string;
   alt: string;
   prix: number;

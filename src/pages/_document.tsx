@@ -1,9 +1,16 @@
 import { Html, Head, Main, NextScript } from "next/document";
+import Script from "next/script";
 
 export default function Document() {
   return (
     <Html lang="en">
-      <Head />
+      <Head>
+        {/* EmailJS - CDN pour client-side email service */}
+        <Script
+          src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/index.min.js"
+          strategy="beforeInteractive"
+        />
+      </Head>
       <body className="antialiased">
         <Main />
         <NextScript />

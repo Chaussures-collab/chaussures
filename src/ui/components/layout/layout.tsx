@@ -3,7 +3,7 @@
 "use client";
 
 import React from "react";
-import { usePathname } from "next/navigation";
+import { useRouter } from "next/router";
 import Navigation from "../navigation/navigation";
 import Footer from "../navigation/footer";
 import Breadcrumbs from "../breadcrumbs/breadcrumbs";
@@ -22,8 +22,8 @@ export default function Layout({
   isDisplayCreadCrumbs,
   sessionStatus
 }: Props) {
-  const pathname = usePathname();
-
+  const router = useRouter();
+  const pathname = router.pathname; // string
   const isDashboard = pathname.includes("dashboard");
 
   return (

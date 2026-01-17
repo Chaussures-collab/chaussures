@@ -20,7 +20,7 @@ import { ProduitType } from "@/types/produitType";
 const PRODUCTS_COLLECTION = "products";
 
 export interface ProductDocument extends Omit<ProduitType, "id"> {
-  id?: string;
+  id: string;
   createdAt?: Date | Timestamp;
   updatedAt?: Date | Timestamp;
   // S'assurer que les champs optionnels sont bien gérés
@@ -69,13 +69,15 @@ export class ProductService {
       const productsRef = collection(db, PRODUCTS_COLLECTION);
       const q = query(productsRef, orderBy("createdAt", "desc"));
       const querySnapshot = await getDocs(q);
-
-      return querySnapshot.docs.map((doc) => ({
+      const products = querySnapshot.docs.map((doc) => ({
         id: doc.id,
         ...doc.data(),
         createdAt: doc.data().createdAt?.toDate() || new Date(),
         updatedAt: doc.data().updatedAt?.toDate() || new Date()
       })) as ProductDocument[];
+      console.log("+++++querySnapshot", products);
+
+      return products;
     } catch (error) {
       if (error instanceof FirebaseError) {
         throw new Error(`Erreur lors de la récupération: ${error.message}`);

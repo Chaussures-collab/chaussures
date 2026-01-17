@@ -89,6 +89,24 @@ export default function StripePaymentForm({
       } else if (paymentIntent) {
         if (paymentIntent.status === "succeeded") {
           setPaymentStatus("succeeded");
+          // Sauvegarder l'ID de la session pour la page de succès
+          if (paymentIntent.id) {
+            sessionStorage.setItem("stripeSessionId", paymentIntent.id);
+          }
+          // Récupérer l'orderId depuis les métadonnées (TypeScript complain, donc on force le type)
+          const piWithMetadata = paymentIntent as unknown as Record<
+            string,
+            unknown
+          >;
+          if (
+            piWithMetadata.metadata &&
+            typeof piWithMetadata.metadata === "object"
+          ) {
+            const metadata = piWithMetadata.metadata as Record<string, string>;
+            if (metadata.orderId) {
+              sessionStorage.setItem("lastOrderId", metadata.orderId);
+            }
+          }
           // Rediriger vers la page de succès
           router.push("/checkout/success");
         } else if (paymentIntent.status === "requires_action") {

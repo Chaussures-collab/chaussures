@@ -25,12 +25,12 @@ export function useProducts() {
         const convertedProducts = firestoreProducts.map((product) =>
           convertProductDocumentToProduitType(product, product.id)
         );
-        
+
         // Combiner les produits Firestore avec les produits mockés
         // Les produits Firestore ont la priorité (ils sont ajoutés en premier)
-        const allProducts = [...convertedProducts];
-        
-        setProducts(allProducts);
+        // const allProducts = [...convertedProducts];
+
+        setProducts(convertedProducts);
       } catch (err) {
         console.error("Erreur lors du chargement des produits:", err);
         setError(err instanceof Error ? err.message : "Erreur inconnue");

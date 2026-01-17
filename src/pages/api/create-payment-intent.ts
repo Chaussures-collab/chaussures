@@ -25,7 +25,7 @@ export default async function handler(
   }
 
   try {
-    const { items, userId, userEmail } = req.body;
+    const { items, userId, userEmail, orderId } = req.body;
 
     // Validation des paramètres requis
     if (!items || !Array.isArray(items) || items.length === 0) {
@@ -46,22 +46,35 @@ export default async function handler(
       });
     }
 
+    if (!orderId || typeof orderId !== "string") {
+      return res.status(400).json({
+        error: "L'ID de commande est requis"
+      });
+    }
+
     // Calcul du montant total en centimes
     const amount = items.reduce((total, item) => {
       return total + Math.round(item.price * 100) * item.quantity;
     }, 0);
 
     // Calcul du total pour les métadonnées
-    const totalAmount = items.reduce((sum, item) => sum + item.price * item.quantity, 0);
+    const totalAmount = items.reduce(
+      (sum, item) => sum + item.price * item.quantity,
+      0
+    );
 
     // Vérifier le statut du compte Stripe avant de créer le Payment Intent
     try {
       const account = await stripe.accounts.retrieve();
-      
+
       // Vérifier si le compte est activé pour les paiements
-      if (account.details_submitted === false || account.charges_enabled === false) {
+      if (
+        account.details_submitted === false ||
+        account.charges_enabled === false
+      ) {
         return res.status(402).json({
-          error: "Votre compte Stripe n'est pas encore complètement activé pour les transactions. Veuillez compléter l'onboarding sur https://dashboard.stripe.com/account/onboarding",
+          error:
+            "Votre compte Stripe n'est pas encore complètement activé pour les transactions. Veuillez compléter l'onboarding sur https://dashboard.stripe.com/account/onboarding",
           code: "account_not_activated",
           details: {
             details_submitted: account.details_submitted,
@@ -73,7 +86,10 @@ export default async function handler(
     } catch (accountError) {
       // Si on ne peut pas récupérer le compte (compte connecté), on continue quand même
       // car l'erreur sera gérée par Stripe lors de la création du Payment Intent
-      console.warn("Impossible de vérifier le statut du compte Stripe:", accountError);
+      console.warn(
+        "Impossible de vérifier le statut du compte Stripe:",
+        accountError
+      );
     }
 
     // Création du Payment Intent
@@ -82,6 +98,7 @@ export default async function handler(
       currency: "eur",
       payment_method_types: ["card"], // Spécifier explicitement les types de paiement
       metadata: {
+        orderId, // Inclure l'orderId dans les métadonnées
         userId,
         userEmail,
         itemsCount: items.length.toString(),

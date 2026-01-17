@@ -1,15 +1,13 @@
 /** @format */
 
 import React from "react";
-import Image from "next/image";
 import Typography from "@/ui/designSystem/typography/typography";
 import { RiStarFill } from "react-icons/ri";
 import Link from "next/link";
-import { normalizeImagePath } from "@/utils/imageUtils";
 import SafeImage from "@/components/common/SafeImage";
 
 interface Produit {
-  id: number;
+  id: string;
   src: string;
   alt: string;
   nom: string;

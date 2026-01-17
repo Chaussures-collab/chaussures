@@ -20,11 +20,12 @@ export const generateUniqueIdFromFirestoreId = (firestoreId: string | undefined)
 };
 
 // Fonction pour convertir ProductDocument en ProduitType
-export const convertProductDocumentToProduitType = (doc: ProductDocument, firestoreId?: string): ProduitType => {
-  const uniqueId = firestoreId ? generateUniqueIdFromFirestoreId(firestoreId) : generateUniqueIdFromFirestoreId(doc.id);
-  
+export const convertProductDocumentToProduitType = (
+  doc: ProductDocument,
+  firestoreId?: string
+): ProduitType => {
   return {
-    id: uniqueId,
+    id: firestoreId ?? doc.id, // 🔥 ID FIRESTORE DIRECT
     src: normalizeImagePath(doc.src),
     alt: doc.alt || "",
     prix: doc.prix || 0,
@@ -36,7 +37,7 @@ export const convertProductDocumentToProduitType = (doc: ProductDocument, firest
     quantiteStock: doc.quantiteStock,
     prixPromo: doc.prixPromo ?? null,
     promotion: doc.prixPromo ?? null,
-    images: (doc.images || []).map(img => ({
+    images: (doc.images || []).map((img) => ({
       ...img,
       src: normalizeImagePath(img.src)
     })),
@@ -45,48 +46,23 @@ export const convertProductDocumentToProduitType = (doc: ProductDocument, firest
   };
 };
 
+
 // Fonction pour trouver un produit par ID (cherche dans Firestore et mock)
 export const findProductById = async (
-  id: string | number,
-  productService?: { getAllProducts: () => Promise<ProductDocument[]>; getProductById: (id: string) => Promise<ProductDocument | null> }
-): Promise<ProduitType | null> => {
-  const idString = String(id);
-  const idNumber = Number(id);
-
-  // Si l'ID est un nombre >= 1000000, c'est probablement un produit Firestore converti
-  if (idNumber >= 1000000 && productService) {
-    try {
-      // Essayer de trouver dans tous les produits Firestore
-      const allFirestoreProducts = await productService.getAllProducts();
-      for (const product of allFirestoreProducts) {
-        const convertedId = generateUniqueIdFromFirestoreId(product.id);
-        if (convertedId === idNumber) {
-          return convertProductDocumentToProduitType(product, product.id);
-        }
-      }
-    } catch (error) {
-      console.error("Erreur lors de la recherche dans Firestore:", error);
-    }
+  productId: string,
+  productService: {
+    getProductById: (id: string) => Promise<ProductDocument | null>;
   }
-
-  // Si l'ID est un string et qu'on a un productService, essayer de chercher directement par ID Firestore
-  if (typeof id === "string" && productService) {
-    try {
-      const firestoreProduct = await productService.getProductById(idString);
-      if (firestoreProduct) {
-        return convertProductDocumentToProduitType(firestoreProduct, idString);
-      }
-    } catch (error) {
-      console.error("Erreur lors de la récupération depuis Firestore:", error);
-    }
-  }/* 
-
-  // Chercher dans les produits mockés
-  const mockProduct = dbProduits.find((p) => p.id === idNumber);
-  if (mockProduct) {
-    return mockProduct;
-  } */
-
-  return null;
+): Promise<ProduitType | null> => {
+  try {
+    const product = await productService.getProductById(productId);
+    return product
+      ? convertProductDocumentToProduitType(product, productId)
+      : null;
+  } catch (error) {
+    console.error("Erreur lors de la récupération du produit:", error);
+    return null;
+  }
 };
+
 

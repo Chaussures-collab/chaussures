@@ -21,17 +21,17 @@ import {
 import { PaymentError } from "./errors/PaymentError";
 import { ErrorHandler } from "./errors/ErrorHandler";
 // Import dynamique pour éviter l'import côté client (nodemailer nécessite child_process)
-type EmailServiceType = typeof import("../email/EmailService");
-let emailService: EmailServiceType["emailService"] | null = null;
+// type EmailServiceType = typeof import("../email/EmailService");
+// let emailService: EmailServiceType["emailService"] | null = null;
 
 // Fonction pour charger EmailService uniquement côté serveur
-async function getEmailService() {
+/* async function getEmailService() {
   if (globalThis.window === undefined && !emailService) {
     const emailModule = await import("../email/EmailService");
     emailService = emailModule.emailService;
   }
   return emailService;
-}
+} */
 
 export class PaymentManager {
   constructor(
@@ -63,13 +63,23 @@ export class PaymentManager {
       const sessionResult = await this.paymentService.createPaymentSession({
         ...request,
         metadata: {
-          ...request.metadata,
           userId: request.userId,
           userEmail: request.userEmail,
           totalAmount: totalAmount.toString(),
-          itemsCount: request.items.length.toString()
+          itemsCount: request.items.length.toString(),
+
+          // 🔥 LA CLÉ MANQUANTE
+          itemsJson: JSON.stringify(
+            request.items.map((item) => ({
+              id: item.id, // 👈 ID PRODUIT
+              name: item.name,
+              price: item.price,
+              quantity: item.quantity
+            }))
+          )
         }
       });
+
 
       if (!sessionResult.success) {
         return sessionResult;
@@ -144,6 +154,10 @@ export class PaymentManager {
         try {
           if (webhookData.metadata.itemsJson) {
             const parsedItems = JSON.parse(webhookData.metadata.itemsJson);
+            console.log(
+              "📦 Items extraits des métadonnées:",
+              webhookData.metadata
+            );
             // Validation et conversion en PaymentItem[]
             if (Array.isArray(parsedItems)) {
               items = parsedItems
@@ -238,6 +252,9 @@ export class PaymentManager {
             stripeSessionId: webhookData.sessionId,
             metadata: webhookData.metadata
           });
+          console.log(
+            `✅ [PaymentManager] Commande créée avec succès: ${orderId}`
+          );
           console.log(
             `✅ [PaymentManager] Commande créée avec succès: ${orderId}`
           );
@@ -500,6 +517,7 @@ export class PaymentManager {
 
   /**
    * Envoie les emails de notification après une commande
+   * Utilise Sendgrid comme service principal (Node.js compatible)
    * @private
    */
   private async sendOrderEmails(data: {
@@ -526,16 +544,14 @@ export class PaymentManager {
 
     const orderEmailData = {
       orderId: data.orderId,
+      userEmail: data.userEmail,
       customerName,
-      customerEmail: data.userEmail,
       items: data.items.map((item) => ({
         name: item.name,
         quantity: item.quantity,
         price: item.price
       })),
       totalAmount: data.totalAmount,
-      currency: data.currency,
-      paymentMethod: data.paymentMethod,
       orderDate: new Date().toLocaleDateString("fr-FR", {
         year: "numeric",
         month: "long",
@@ -545,45 +561,89 @@ export class PaymentManager {
       })
     };
 
-    console.log(`📝 [sendOrderEmails] Obtention du service email...`);
-    // Envoyer l'email de confirmation au client - uniquement côté serveur
-    const emailServiceInstance = await getEmailService();
-    console.log(
-      `📝 [sendOrderEmails] emailServiceInstance:`,
-      emailServiceInstance ? "OK" : "NULL"
-    );
+    console.log(`📝 [sendOrderEmails] Initialisation de Sendgrid...`);
 
-    if (emailServiceInstance) {
-      try {
-        console.log(
-          `🔵 [sendOrderEmails] Envoi email de confirmation client à ${orderEmailData.customerEmail}`
-        );
-        await emailServiceInstance.sendOrderConfirmationEmail(orderEmailData);
-        console.log(`✅ [sendOrderEmails] Email de confirmation client envoyé`);
-      } catch (confirmError) {
-        console.error(
-          `❌ [sendOrderEmails] Erreur lors de l'envoi de l'email de confirmation:`,
-          confirmError
-        );
-        throw confirmError;
-      }
+    let emailSentSuccessfully = false;
 
-      try {
-        console.log(`🔵 [sendOrderEmails] Envoi alerte admin`);
-        await emailServiceInstance.sendAdminOrderAlert(orderEmailData);
-        console.log(`✅ [sendOrderEmails] Alerte admin envoyée`);
-      } catch (adminError) {
-        console.error(
-          `❌ [sendOrderEmails] Erreur lors de l'envoi de l'alerte admin:`,
-          adminError
-        );
-        throw adminError;
-      }
-    } else {
-      console.error(
-        `❌ [sendOrderEmails] emailServiceInstance est NULL - aucun service email disponible`
+    // Utiliser Sendgrid (compatible Node.js)
+    try {
+      const { SendgridEmailService } = await import(
+        "../email/SendgridEmailService"
       );
-      throw new Error("Service email non initialisé");
+      const sendgridService = new SendgridEmailService();
+
+      if (sendgridService.isConfigured()) {
+        console.log(
+          `🔵 [sendOrderEmails] Sendgrid: Envoi email de confirmation à ${orderEmailData.userEmail}`
+        );
+
+        const sendgridResult = await sendgridService.sendOrderConfirmation(
+          orderEmailData
+        );
+
+        if (sendgridResult.success) {
+          console.log(
+            `✅ [sendOrderEmails] Sendgrid: Email de confirmation envoyé avec succès (ID: ${sendgridResult.messageId})`
+          );
+          emailSentSuccessfully = true;
+
+          // Envoyer alerte admin
+          try {
+            console.log(`🔵 [sendOrderEmails] Envoi alerte admin...`);
+            const adminResult = await sendgridService.sendAdminAlert({
+              orderId: orderEmailData.orderId,
+              userEmail: orderEmailData.userEmail,
+              userName: orderEmailData.customerName,
+              items: orderEmailData.items,
+              totalAmount: orderEmailData.totalAmount
+            });
+
+            if (adminResult.success) {
+              console.log(
+                `✅ [sendOrderEmails] Alerte admin envoyée avec succès (ID: ${adminResult.messageId})`
+              );
+            } else {
+              console.error(
+                `❌ [sendOrderEmails] Erreur lors de l'envoi de l'alerte admin:`,
+                adminResult.error
+              );
+            }
+          } catch (adminError) {
+            console.error(
+              `❌ [sendOrderEmails] Exception lors de l'envoi de l'alerte admin:`,
+              adminError
+            );
+          }
+        } else {
+          console.error(
+            `❌ [sendOrderEmails] Sendgrid: Erreur lors de l'envoi:`,
+            sendgridResult.error
+          );
+        }
+      } else {
+        console.warn(
+          `⚠️ [sendOrderEmails] Sendgrid n'est pas configuré (SENDGRID_API_KEY ou SENDGRID_FROM_EMAIL manquants)`
+        );
+      }
+    } catch (sendgridError) {
+      console.error(
+        `❌ [sendOrderEmails] Erreur lors de l'utilisation de Sendgrid:`,
+        sendgridError
+      );
+    }
+
+    // Fallback: Non implémenté côté serveur
+    // EmailJS est un service client-side (nécessite le navigateur)
+    // L'email est envoyé directement depuis la page de succès du paiement
+    // côté client via checkoutSuccess.tsx
+
+    if (!emailSentSuccessfully) {
+      console.warn(
+        `⚠️ [sendOrderEmails] Sendgrid non disponible - EmailJS sera tenté côté client`
+      );
+      // Note: On ne lance PAS d'erreur ici
+      // Le paiement continue et le client tentera d'envoyer l'email via EmailJS côté client
+      // Si Sendgrid échoue, le client recevra un message pour envoyer manuellement si nécessaire
     }
   }
 }

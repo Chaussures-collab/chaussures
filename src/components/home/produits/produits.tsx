@@ -10,7 +10,7 @@ import { useRouter } from "next/router";
 
 // Définition de l'interface Produit
 interface Produit {
-  id: number; // ou string
+  id: string; // ou string
   src: string;
   alt: string;
   prix: number;

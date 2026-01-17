@@ -156,3 +156,4 @@ FIREBASE_PRIVATE_KEY="-----BEGIN PRIVATE KEY-----\nMIIEvQIBADANBgkqhkiG9w0BAQEFA
 - En local, utilisez Stripe CLI pour obtenir un secret temporaire
 - En production, utilisez le secret du dashboard Stripe
 
+

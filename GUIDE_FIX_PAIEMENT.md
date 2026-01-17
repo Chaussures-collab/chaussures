@@ -164,3 +164,4 @@ stripe trigger payment_intent.succeeded
 3. **Testez manuellement** le webhook avec Stripe CLI
 4. **Vérifiez** que Firebase Admin SDK peut écrire dans Firestore (testez avec un script simple)
 
+
