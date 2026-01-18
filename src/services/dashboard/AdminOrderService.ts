@@ -304,4 +304,39 @@ export class AdminOrderService {
       throw new Error(`Erreur lors de la récupération: ${errorMessage}`);
     }
   }
+
+  // Récupérer une commande par numéro de suivi
+  async getOrderByTrackingNumber(trackingNumber: string): Promise<OrderDocument | null> {
+    try {
+      const db = getAdminDb();
+      const snapshot = await db
+        .collection(ORDERS_COLLECTION)
+        .where("trackingNumber", "==", trackingNumber)
+        .limit(1)
+        .get();
+
+      if (snapshot.empty) {
+        return null;
+      }
+
+      const doc = snapshot.docs[0];
+      const data = doc.data();
+      return {
+        id: doc.id,
+        ...data,
+        createdAt: data?.createdAt?.toDate
+          ? data.createdAt.toDate()
+          : data?.createdAt || new Date(),
+        updatedAt: data?.updatedAt?.toDate
+          ? data.updatedAt.toDate()
+          : data?.updatedAt || new Date()
+      } as OrderDocument;
+    } catch (error) {
+      const errorMessage =
+        error && typeof error === "object" && "message" in error
+          ? String(error.message)
+          : "Erreur inconnue";
+      throw new Error(`Erreur lors de la récupération: ${errorMessage}`);
+    }
+  }
 }

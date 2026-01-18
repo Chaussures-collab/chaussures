@@ -291,8 +291,17 @@ ${itemsList}
           </div>
           
           <div style="background: #e0f2fe; border-left: 4px solid #0284c7; padding: 15px; margin: 20px 0; border-radius: 4px;">
-            <p style="margin: 0; color: #0c4a6e;">
-              <strong>💡 Suivez votre colis :</strong> Vous pouvez utiliser le numéro de suivi ci-dessus pour suivre l'acheminement de votre commande sur le site du transporteur.
+            <p style="margin: 0; color: #0c4a6e; margin-bottom: 15px;">
+              <strong>💡 Suivez votre colis en temps réel :</strong>
+            </p>
+            <div style="text-align: center; margin-top: 15px;">
+              <a href="${process.env.NEXT_PUBLIC_APP_URL || "https://chaussures.vercel.app"}/suivi/${data.trackingNumber}" 
+                 style="display: inline-block; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 15px 30px; text-decoration: none; border-radius: 8px; font-weight: bold; font-size: 16px; box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);">
+                📦 Suivre mon colis
+              </a>
+            </div>
+            <p style="margin: 15px 0 0 0; color: #0c4a6e; font-size: 12px; text-align: center;">
+              Numéro de suivi : <span style="font-family: monospace; font-weight: bold;">${data.trackingNumber}</span>
             </p>
           </div>
           

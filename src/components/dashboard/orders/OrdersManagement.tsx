@@ -81,6 +81,13 @@ export default function OrdersManagement() {
         const refreshData = await refreshResponse.json();
         if (refreshData.success && refreshData.orders) {
           setOrders(refreshData.orders);
+          // Mettre à jour la commande sélectionnée si elle existe
+          const updatedOrder = refreshData.orders.find(
+            (o: OrderDocument) => o.id === shippingOrder.id
+          );
+          if (updatedOrder) {
+            setSelectedOrder(updatedOrder);
+          }
         }
         setIsShippingModalOpen(false);
         setShippingOrder(null);
@@ -94,6 +101,47 @@ export default function OrdersManagement() {
       );
     } finally {
       setIsShipping(false);
+    }
+  };
+
+  const handleUpdateStatus = async (orderId: string, newStatus: string) => {
+    try {
+      setError(null);
+
+      const response = await fetch("/api/dashboard/orders/update-status", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+          orderId,
+          status: newStatus
+        })
+      });
+
+      const data = await response.json();
+
+      if (data.success) {
+        // Recharger les commandes
+        const refreshResponse = await fetch("/api/dashboard/orders");
+        const refreshData = await refreshResponse.json();
+        if (refreshData.success && refreshData.orders) {
+          setOrders(refreshData.orders);
+          // Mettre à jour la commande sélectionnée si elle existe
+          const updatedOrder = refreshData.orders.find(
+            (o: OrderDocument) => o.id === orderId
+          );
+          if (updatedOrder) {
+            setSelectedOrder(updatedOrder);
+          }
+        }
+      } else {
+        setError(data.error || "Erreur lors de la mise à jour du statut");
+      }
+    } catch (err) {
+      setError(
+        err instanceof Error ? err.message : "Erreur lors de la mise à jour"
+      );
     }
   };
 
@@ -323,28 +371,49 @@ export default function OrdersManagement() {
               </div>
             </div>
 
-            {/* Bouton Expédier si PAID */}
-            {selectedOrder.status === "PAID" && (
-              <div className="pt-4 border-t">
+            {/* Actions de suivi */}
+            <div className="pt-4 space-y-2 border-t">
+              {/* Bouton Expédier si PAID */}
+              {selectedOrder.status === "PAID" && (
                 <button
                   onClick={() => handleShipOrder(selectedOrder)}
                   className="px-4 py-2 w-full font-medium text-white bg-purple-600 rounded-lg transition-colors hover:bg-purple-700">
                   📦 Expédier la commande
                 </button>
-              </div>
-            )}
+              )}
 
-            {/* Affichage numéro de suivi si déjà expédié */}
-            {selectedOrder.status === "SHIPPED" && selectedOrder.trackingNumber && (
-              <div className="pt-4 border-t">
-                <Typography variant="body-sm" className="mb-1 text-gray-500">
-                  Numéro de suivi
-                </Typography>
-                <Typography variant="body" className="font-mono font-semibold text-purple-600">
-                  {selectedOrder.trackingNumber}
-                </Typography>
-              </div>
-            )}
+              {/* Bouton Marquer comme livrée si SHIPPED */}
+              {selectedOrder.status === "SHIPPED" && (
+                <>
+                  {selectedOrder.trackingNumber && (
+                    <div className="mb-3">
+                      <Typography variant="body-sm" className="mb-1 text-gray-500">
+                        Numéro de suivi
+                      </Typography>
+                      <Typography
+                        variant="body"
+                        className="font-mono font-semibold text-purple-600">
+                        {selectedOrder.trackingNumber}
+                      </Typography>
+                    </div>
+                  )}
+                  <button
+                    onClick={() => handleUpdateStatus(selectedOrder.id, "DELIVERED")}
+                    className="px-4 py-2 w-full font-medium text-white bg-green-600 rounded-lg transition-colors hover:bg-green-700">
+                    ✅ Marquer comme livrée
+                  </button>
+                </>
+              )}
+
+              {/* Affichage si livrée */}
+              {selectedOrder.status === "DELIVERED" && (
+                <div className="p-3 bg-green-50 rounded-lg border border-green-200">
+                  <Typography variant="body-sm" className="font-semibold text-green-800">
+                    ✅ Commande livrée avec succès
+                  </Typography>
+                </div>
+              )}
+            </div>
           </div>
         )}
       </Modal>
