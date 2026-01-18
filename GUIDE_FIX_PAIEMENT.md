@@ -165,3 +165,4 @@ stripe trigger payment_intent.succeeded
 4. **Vérifiez** que Firebase Admin SDK peut écrire dans Firestore (testez avec un script simple)
 
 
+

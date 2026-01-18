@@ -14,15 +14,12 @@ import { ErrorHandler } from "@/services/payment/errors/ErrorHandler";
 import { WebhookError } from "@/services/payment/errors/PaymentError";
 import { buffer } from "micro";
 
-// 🔹 Forcer Node.js runtime (très important pour Stripe)
-export const runtime = "nodejs";
-
-// 🔹 Config API pour désactiver parsing automatique + exclure middleware global
+// 🔹 Config API pour désactiver parsing automatique (Pages Router)
+// ⚠️ IMPORTANT: Pas de 'export const runtime' ici, c'est pour App Router uniquement
 export const config = {
   api: {
-    bodyParser: false
-  },
-  matcher: ["/((?!api/webhooks/stripe).*)"] // exclut le webhook si middleware global
+    bodyParser: false // Désactive le parsing automatique pour avoir le body brut
+  }
 };
 
 type ResponseData = {
@@ -53,13 +50,44 @@ export default async function handler(
   let event: Stripe.Event;
 
   try {
-    // 🔹 Récupération du body brut (Buffer)
-    const rawBody = await buffer(req);
+    // 🔹 Récupération du body brut (Buffer) - Critique pour la vérification de signature Stripe
+    // Sur Vercel en production, il faut lire le body depuis le stream original
+    let rawBody: Buffer;
+    
+    // Méthode 1: Si req.body est déjà un Buffer (idéal)
+    if (Buffer.isBuffer(req.body)) {
+      rawBody = req.body;
+    } 
+    // Méthode 2: Si req.body est une string (non parsé mais stringifié)
+    // ATTENTION: Ceci peut échouer la vérification de signature si le format JSON a changé
+    else if (typeof req.body === "string") {
+      // Utiliser la string telle quelle (peut causer des problèmes avec la signature)
+      rawBody = Buffer.from(req.body, "utf8");
+    }
+    // Méthode 3: Si req.body est un objet (déjà parsé en JSON) - PROBLÉMATIQUE
+    else if (req.body && typeof req.body === "object") {
+      // Si le body a été parsé, on ne peut plus récupérer le body brut original
+      // C'est probablement la cause de l'erreur sur Vercel
+      throw new Error(
+        "Le body de la requête a été parsé en JSON avant d'atteindre le handler. " +
+        "Vérifiez que bodyParser: false est bien configuré et qu'aucun middleware ne parse le body."
+      );
+    }
+    // Méthode 4: Utiliser micro pour lire depuis le stream (méthode recommandée)
+    else {
+      rawBody = await buffer(req);
+    }
+
+    // Vérification que le secret webhook est défini
+    const webhookSecret = process.env.STRIPE_WEBHOOK_SECRET;
+    if (!webhookSecret) {
+      throw new Error("STRIPE_WEBHOOK_SECRET n'est pas défini dans les variables d'environnement");
+    }
 
     event = stripe.webhooks.constructEvent(
       rawBody,
       signature,
-      process.env.STRIPE_WEBHOOK_SECRET!
+      webhookSecret
     );
   } catch (err) {
     const errorResponse = ErrorHandler.handleError(err, {

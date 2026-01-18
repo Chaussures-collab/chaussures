@@ -157,3 +157,4 @@ FIREBASE_PRIVATE_KEY="-----BEGIN PRIVATE KEY-----\nMIIEvQIBADANBgkqhkiG9w0BAQEFA
 - En production, utilisez le secret du dashboard Stripe
 
 
+
