@@ -262,6 +262,34 @@ class EmailService {
   }
 
   /**
+   * Envoie un email de confirmation d'expédition avec numéro de suivi
+   */
+  async sendShippingConfirmationEmail(data: {
+    orderId: string;
+    customerName: string;
+    customerEmail: string;
+    trackingNumber: string;
+    estimatedDeliveryDate: string; // Format: "DD/MM/YYYY"
+    items: Array<{
+      name: string;
+      quantity: number;
+      price: number;
+    }>;
+    totalAmount: number;
+    currency: string;
+  }): Promise<void> {
+    const html = this.generateShippingConfirmationHTML(data);
+    const text = this.generateShippingConfirmationText(data);
+
+    await this.sendEmail({
+      to: data.customerEmail,
+      subject: `📦 Votre commande #${data.orderId} a été expédiée`,
+      html,
+      text
+    });
+  }
+
+  /**
    * Génère le HTML de confirmation de commande pour le client
    */
   private generateOrderConfirmationHTML(data: OrderEmailData): string {
@@ -576,6 +604,154 @@ Ce produit est maintenant disponible à la commande.
 Voir le produit : ${data.productUrl}
 
 Ne manquez pas cette occasion ! Les stocks sont limités.
+
+Cordialement,
+L'équipe SnipersMarket
+    `;
+  }
+
+  /**
+   * Génère le HTML de confirmation d'expédition
+   */
+  private generateShippingConfirmationHTML(data: {
+    orderId: string;
+    customerName: string;
+    trackingNumber: string;
+    estimatedDeliveryDate: string;
+    items: Array<{ name: string; quantity: number; price: number }>;
+    totalAmount: number;
+    currency: string;
+  }): string {
+    const itemsHTML = data.items
+      .map(
+        (item) => `
+      <tr>
+        <td style="padding: 10px; border-bottom: 1px solid #eee;">${
+          item.name
+        }</td>
+        <td style="padding: 10px; border-bottom: 1px solid #eee; text-align: center;">${
+          item.quantity
+        }</td>
+        <td style="padding: 10px; border-bottom: 1px solid #eee; text-align: right;">${item.price.toFixed(
+          2
+        )} ${data.currency.toUpperCase()}</td>
+      </tr>
+    `
+      )
+      .join("");
+
+    return `
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Commande expédiée</title>
+</head>
+<body style="font-family: Arial, sans-serif; line-height: 1.6; color: #333; max-width: 600px; margin: 0 auto; padding: 20px;">
+  <div style="background: linear-gradient(135deg, #10b981 0%, #059669 100%); padding: 30px; text-align: center; border-radius: 10px 10px 0 0;">
+    <h1 style="color: white; margin: 0;">📦 Commande expédiée !</h1>
+  </div>
+  
+  <div style="background: #f9f9f9; padding: 30px; border-radius: 0 0 10px 10px;">
+    <p style="font-size: 16px;">Bonjour ${data.customerName},</p>
+    
+    <p>Excellente nouvelle ! Votre commande a été expédiée et sera bientôt entre vos mains.</p>
+    
+    <div style="background: white; padding: 20px; border-radius: 8px; margin: 20px 0; border-left: 4px solid #10b981;">
+      <h2 style="margin-top: 0; color: #059669;">Informations de livraison</h2>
+      <p><strong>Numéro de commande :</strong> #${data.orderId}</p>
+      <p style="margin: 10px 0;"><strong>Numéro de suivi :</strong> <span style="background: #f0fdf4; padding: 5px 10px; border-radius: 4px; font-family: monospace; font-weight: bold; color: #059669;">${data.trackingNumber}</span></p>
+      <p><strong>Date de livraison estimée :</strong> ${data.estimatedDeliveryDate}</p>
+    </div>
+    
+    <div style="background: #e0f2fe; border-left: 4px solid #0284c7; padding: 15px; margin: 20px 0; border-radius: 4px;">
+      <p style="margin: 0; color: #0c4a6e;">
+        <strong>💡 Suivez votre colis :</strong> Vous pouvez utiliser le numéro de suivi ci-dessus pour suivre l'acheminement de votre commande sur le site du transporteur.
+      </p>
+    </div>
+    
+    <div style="background: white; padding: 20px; border-radius: 8px; margin: 20px 0;">
+      <h3 style="margin-top: 0; color: #059669;">Récapitulatif de la commande</h3>
+      <table style="width: 100%; border-collapse: collapse;">
+        <thead>
+          <tr style="background: #f5f5f5;">
+            <th style="padding: 10px; text-align: left; border-bottom: 2px solid #ddd;">Produit</th>
+            <th style="padding: 10px; text-align: center; border-bottom: 2px solid #ddd;">Quantité</th>
+            <th style="padding: 10px; text-align: right; border-bottom: 2px solid #ddd;">Prix</th>
+          </tr>
+        </thead>
+        <tbody>
+          ${itemsHTML}
+        </tbody>
+        <tfoot>
+          <tr>
+            <td colspan="2" style="padding: 10px; text-align: right; font-weight: bold; border-top: 2px solid #ddd;">Total :</td>
+            <td style="padding: 10px; text-align: right; font-weight: bold; font-size: 18px; color: #059669; border-top: 2px solid #ddd;">${data.totalAmount.toFixed(
+              2
+            )} ${data.currency.toUpperCase()}</td>
+          </tr>
+        </tfoot>
+      </table>
+    </div>
+    
+    <p style="margin-top: 20px;">Votre commande devrait être livrée le <strong>${data.estimatedDeliveryDate}</strong>.</p>
+    
+    <p style="margin-top: 20px;">Merci pour votre confiance !</p>
+    
+    <p style="color: #666; font-size: 14px; margin-top: 30px;">
+      Cordialement,<br>
+      L'équipe SnipersMarket
+    </p>
+  </div>
+</body>
+</html>
+    `;
+  }
+
+  /**
+   * Génère le texte brut de confirmation d'expédition
+   */
+  private generateShippingConfirmationText(data: {
+    orderId: string;
+    customerName: string;
+    trackingNumber: string;
+    estimatedDeliveryDate: string;
+    items: Array<{ name: string; quantity: number; price: number }>;
+    totalAmount: number;
+    currency: string;
+  }): string {
+    const itemsText = data.items
+      .map(
+        (item) =>
+          `- ${item.name} (x${item.quantity}) : ${item.price.toFixed(
+            2
+          )} ${data.currency.toUpperCase()}`
+      )
+      .join("\n");
+
+    return `
+📦 Confirmation d'expédition
+
+Bonjour ${data.customerName},
+
+Excellente nouvelle ! Votre commande a été expédiée et sera bientôt entre vos mains.
+
+Informations de livraison :
+- Numéro de commande : #${data.orderId}
+- Numéro de suivi : ${data.trackingNumber}
+- Date de livraison estimée : ${data.estimatedDeliveryDate}
+
+💡 Suivez votre colis : Vous pouvez utiliser le numéro de suivi ci-dessus pour suivre l'acheminement de votre commande sur le site du transporteur.
+
+Récapitulatif de la commande :
+${itemsText}
+
+Total : ${data.totalAmount.toFixed(2)} ${data.currency.toUpperCase()}
+
+Votre commande devrait être livrée le ${data.estimatedDeliveryDate}.
+
+Merci pour votre confiance !
 
 Cordialement,
 L'équipe SnipersMarket

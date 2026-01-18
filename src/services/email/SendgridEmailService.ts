@@ -243,6 +243,124 @@ ${itemsList}
   }
 
   /**
+   * Envoie un email de confirmation d'expédition avec numéro de suivi
+   */
+  async sendShippingConfirmationEmail(data: {
+    orderId: string;
+    customerName: string;
+    customerEmail: string;
+    trackingNumber: string;
+    estimatedDeliveryDate: string; // Format: "DD/MM/YYYY" ou "lundi 20 janvier 2026"
+    items: Array<{
+      name: string;
+      quantity: number;
+      price: number;
+    }>;
+    totalAmount: number;
+    currency: string;
+  }): Promise<{success: boolean; messageId?: string; error?: string}> {
+    const itemsList = data.items
+      .map(
+        (item) =>
+          `
+      <tr>
+        <td style="padding: 10px; border-bottom: 1px solid #eee;">${item.name}</td>
+        <td style="padding: 10px; border-bottom: 1px solid #eee; text-align: center;">${item.quantity}</td>
+        <td style="padding: 10px; border-bottom: 1px solid #eee; text-align: right;">${item.price.toFixed(2)}${data.currency === "eur" ? "€" : data.currency.toUpperCase()}</td>
+      </tr>
+    `
+      )
+      .join("");
+
+    const html = `
+      <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
+        <div style="background: linear-gradient(135deg, #10b981 0%, #059669 100%); padding: 30px; text-align: center; border-radius: 10px 10px 0 0;">
+          <h1 style="color: white; margin: 0;">📦 Commande expédiée !</h1>
+        </div>
+        
+        <div style="background: #f9f9f9; padding: 30px; border-radius: 0 0 10px 10px;">
+          <p style="font-size: 16px;">Bonjour ${data.customerName},</p>
+          
+          <p>Excellente nouvelle ! Votre commande a été expédiée et sera bientôt entre vos mains.</p>
+          
+          <div style="background: white; padding: 20px; border-radius: 8px; margin: 20px 0; border-left: 4px solid #10b981;">
+            <h2 style="margin-top: 0; color: #059669;">Informations de livraison</h2>
+            <p><strong>Numéro de commande :</strong> #${data.orderId}</p>
+            <p style="margin: 10px 0;"><strong>Numéro de suivi :</strong> <span style="background: #f0fdf4; padding: 5px 10px; border-radius: 4px; font-family: monospace; font-weight: bold; color: #059669;">${data.trackingNumber}</span></p>
+            <p><strong>Date de livraison estimée :</strong> ${data.estimatedDeliveryDate}</p>
+          </div>
+          
+          <div style="background: #e0f2fe; border-left: 4px solid #0284c7; padding: 15px; margin: 20px 0; border-radius: 4px;">
+            <p style="margin: 0; color: #0c4a6e;">
+              <strong>💡 Suivez votre colis :</strong> Vous pouvez utiliser le numéro de suivi ci-dessus pour suivre l'acheminement de votre commande sur le site du transporteur.
+            </p>
+          </div>
+          
+          <div style="background: white; padding: 20px; border-radius: 8px; margin: 20px 0;">
+            <h3 style="margin-top: 0; color: #059669;">Récapitulatif de la commande</h3>
+            <table style="width: 100%; border-collapse: collapse;">
+              <thead>
+                <tr style="background: #f5f5f5;">
+                  <th style="padding: 10px; text-align: left; border-bottom: 2px solid #ddd;">Produit</th>
+                  <th style="padding: 10px; text-align: center; border-bottom: 2px solid #ddd;">Quantité</th>
+                  <th style="padding: 10px; text-align: right; border-bottom: 2px solid #ddd;">Prix</th>
+                </tr>
+              </thead>
+              <tbody>
+                ${itemsList}
+              </tbody>
+              <tfoot>
+                <tr>
+                  <td colspan="2" style="padding: 10px; text-align: right; font-weight: bold; border-top: 2px solid #ddd;">Total :</td>
+                  <td style="padding: 10px; text-align: right; font-weight: bold; font-size: 18px; color: #059669; border-top: 2px solid #ddd;">${data.totalAmount.toFixed(2)}${data.currency === "eur" ? "€" : data.currency.toUpperCase()}</td>
+                </tr>
+              </tfoot>
+            </table>
+          </div>
+          
+          <p style="margin-top: 20px;">Votre commande devrait être livrée le <strong>${data.estimatedDeliveryDate}</strong>.</p>
+          
+          <p style="margin-top: 20px;">Merci pour votre confiance !</p>
+          
+          <div style="border-top: 1px solid #ddd; padding-top: 20px; color: #999; font-size: 12px; margin-top: 30px;">
+            <p>Snipersmarket - © 2026 Tous droits réservés</p>
+            <p>Cet email a été envoyé à ${data.customerEmail}</p>
+          </div>
+        </div>
+      </div>
+    `;
+
+    const text = `
+📦 Confirmation d'expédition
+
+Bonjour ${data.customerName},
+
+Excellente nouvelle ! Votre commande a été expédiée et sera bientôt entre vos mains.
+
+Informations de livraison :
+- Numéro de commande : #${data.orderId}
+- Numéro de suivi : ${data.trackingNumber}
+- Date de livraison estimée : ${data.estimatedDeliveryDate}
+
+💡 Suivez votre colis : Vous pouvez utiliser le numéro de suivi ci-dessus pour suivre l'acheminement de votre commande sur le site du transporteur.
+
+Votre commande devrait être livrée le ${data.estimatedDeliveryDate}.
+
+Merci pour votre confiance !
+
+Cordialement,
+L'équipe SnipersMarket
+    `;
+
+    return this.sendEmail({
+      to: data.customerEmail,
+      subject: `📦 Votre commande #${data.orderId} a été expédiée`,
+      html,
+      text
+    });
+  }
+
+  /**
    * Envoie un rappel de panier abandonné
    */
   async sendCartAbandonmentReminder(email: string, cartData: {

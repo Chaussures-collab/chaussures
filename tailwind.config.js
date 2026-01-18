@@ -76,6 +76,21 @@ module.exports = {
         DEFAULT: "#B88E2F"
       },
 
+      purple: {
+        50: "#FAF5FF",
+        80: "#F7EDFF",
+        100: "#F3E8FF",
+        200: "#E9D5FF",
+        300: "#D8B4FE",
+        400: "#C084FC",
+        500: "#A855F7",
+        600: "#9333EA",
+        700: "#7E22CE",
+        800: "#6B21A8",
+        900: "#581C87",
+        DEFAULT: "#A855F7"
+      },
+
       secondary: {
         50: "#EAF8F4",
         100: "#CFF0E6",

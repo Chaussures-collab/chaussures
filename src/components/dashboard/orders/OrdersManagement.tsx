@@ -15,6 +15,10 @@ export default function OrdersManagement() {
     null
   );
   const [isDetailModalOpen, setIsDetailModalOpen] = useState(false);
+  const [isShippingModalOpen, setIsShippingModalOpen] = useState(false);
+  const [shippingOrder, setShippingOrder] = useState<OrderDocument | null>(null);
+  const [trackingNumber, setTrackingNumber] = useState("");
+  const [isShipping, setIsShipping] = useState(false);
 
   useEffect(() => {
     const loadOrders = async () => {
@@ -43,6 +47,54 @@ export default function OrdersManagement() {
   const handleViewOrder = (order: OrderDocument) => {
     setSelectedOrder(order);
     setIsDetailModalOpen(true);
+  };
+
+  const handleShipOrder = (order: OrderDocument) => {
+    setShippingOrder(order);
+    setTrackingNumber("");
+    setIsShippingModalOpen(true);
+  };
+
+  const handleConfirmShip = async () => {
+    if (!shippingOrder) return;
+
+    try {
+      setIsShipping(true);
+      setError(null);
+
+      const response = await fetch("/api/shipping/manual-ship", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+          orderId: shippingOrder.id,
+          trackingNumber: trackingNumber || undefined
+        })
+      });
+
+      const data = await response.json();
+
+      if (data.success) {
+        // Recharger les commandes
+        const refreshResponse = await fetch("/api/dashboard/orders");
+        const refreshData = await refreshResponse.json();
+        if (refreshData.success && refreshData.orders) {
+          setOrders(refreshData.orders);
+        }
+        setIsShippingModalOpen(false);
+        setShippingOrder(null);
+        setTrackingNumber("");
+      } else {
+        setError(data.error || "Erreur lors de l'expédition");
+      }
+    } catch (err) {
+      setError(
+        err instanceof Error ? err.message : "Erreur lors de l'expédition"
+      );
+    } finally {
+      setIsShipping(false);
+    }
   };
 
   const getStatusBadge = (status: PaymentStatus) => {
@@ -148,9 +200,9 @@ export default function OrdersManagement() {
   return (
     <div className="space-y-6">
       {/* Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+      <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <div>
-          <Typography variant="h2" className="font-bold text-gray-900 mb-2">
+          <Typography variant="h2" className="mb-2 font-bold text-gray-900">
             Gestion des commandes
           </Typography>
           <Typography variant="body" className="text-gray-600">
@@ -192,7 +244,7 @@ export default function OrdersManagement() {
           <div className="space-y-4">
             <div className="grid grid-cols-2 gap-4">
               <div>
-                <Typography variant="body-sm" className="text-gray-500 mb-1">
+                <Typography variant="body-sm" className="mb-1 text-gray-500">
                   Email
                 </Typography>
                 <Typography variant="body" className="font-medium">
@@ -200,13 +252,13 @@ export default function OrdersManagement() {
                 </Typography>
               </div>
               <div>
-                <Typography variant="body-sm" className="text-gray-500 mb-1">
+                <Typography variant="body-sm" className="mb-1 text-gray-500">
                   Statut
                 </Typography>
                 {getStatusBadge(selectedOrder.status)}
               </div>
               <div>
-                <Typography variant="body-sm" className="text-gray-500 mb-1">
+                <Typography variant="body-sm" className="mb-1 text-gray-500">
                   Montant total
                 </Typography>
                 <Typography
@@ -217,7 +269,7 @@ export default function OrdersManagement() {
                 </Typography>
               </div>
               <div>
-                <Typography variant="body-sm" className="text-gray-500 mb-1">
+                <Typography variant="body-sm" className="mb-1 text-gray-500">
                   Méthode de paiement
                 </Typography>
                 <Typography variant="body" className="font-medium">
@@ -225,7 +277,7 @@ export default function OrdersManagement() {
                 </Typography>
               </div>
               <div>
-                <Typography variant="body-sm" className="text-gray-500 mb-1">
+                <Typography variant="body-sm" className="mb-1 text-gray-500">
                   Date de création
                 </Typography>
                 <Typography variant="body" className="font-medium">
@@ -245,10 +297,10 @@ export default function OrdersManagement() {
             </div>
 
             <div>
-              <Typography variant="body-sm" className="text-gray-500 mb-2">
+              <Typography variant="body-sm" className="mb-2 text-gray-500">
                 Articles ({selectedOrder.items?.length || 0})
               </Typography>
-              <div className="space-y-2 max-h-64 overflow-y-auto">
+              <div className="overflow-y-auto space-y-2 max-h-64">
                 {selectedOrder.items?.map((item) => (
                   <div
                     key={item.id}
@@ -269,6 +321,79 @@ export default function OrdersManagement() {
                   </div>
                 ))}
               </div>
+            </div>
+
+            {/* Bouton Expédier si PAID */}
+            {selectedOrder.status === "PAID" && (
+              <div className="pt-4 border-t">
+                <button
+                  onClick={() => handleShipOrder(selectedOrder)}
+                  className="px-4 py-2 w-full font-medium text-white bg-purple-600 rounded-lg transition-colors hover:bg-purple-700">
+                  📦 Expédier la commande
+                </button>
+              </div>
+            )}
+
+            {/* Affichage numéro de suivi si déjà expédié */}
+            {selectedOrder.status === "SHIPPED" && selectedOrder.trackingNumber && (
+              <div className="pt-4 border-t">
+                <Typography variant="body-sm" className="mb-1 text-gray-500">
+                  Numéro de suivi
+                </Typography>
+                <Typography variant="body" className="font-mono font-semibold text-purple-600">
+                  {selectedOrder.trackingNumber}
+                </Typography>
+              </div>
+            )}
+          </div>
+        )}
+      </Modal>
+
+      {/* Modal d'expédition */}
+      <Modal
+        isOpen={isShippingModalOpen}
+        onClose={() => {
+          setIsShippingModalOpen(false);
+          setShippingOrder(null);
+          setTrackingNumber("");
+        }}
+        title={`Expédier la commande #${shippingOrder?.id.substring(0, 8)}`}>
+        {shippingOrder && (
+          <div className="space-y-4">
+            <Typography variant="body" className="text-gray-600">
+              Voulez-vous expédier cette commande ? Un email de confirmation avec le numéro de suivi sera envoyé au client.
+            </Typography>
+
+            <div>
+              <label className="block mb-2 text-sm font-medium text-gray-700">
+                Numéro de suivi (optionnel, généré automatiquement si vide)
+              </label>
+              <input
+                type="text"
+                value={trackingNumber}
+                onChange={(e) => setTrackingNumber(e.target.value)}
+                placeholder="Ex: TRK240117123456"
+                className="px-4 py-2 w-full rounded-lg border border-gray-300 focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+              />
+            </div>
+
+            <div className="flex gap-3 pt-4">
+              <button
+                onClick={handleConfirmShip}
+                disabled={isShipping}
+                className="flex-1 px-4 py-2 font-medium text-white bg-purple-600 rounded-lg transition-colors hover:bg-purple-700 disabled:opacity-50 disabled:cursor-not-allowed">
+                {isShipping ? "Expédition en cours..." : "Confirmer l'expédition"}
+              </button>
+              <button
+                onClick={() => {
+                  setIsShippingModalOpen(false);
+                  setShippingOrder(null);
+                  setTrackingNumber("");
+                }}
+                disabled={isShipping}
+                className="px-4 py-2 font-medium text-gray-700 bg-gray-200 rounded-lg transition-colors hover:bg-gray-300 disabled:opacity-50 disabled:cursor-not-allowed">
+                Annuler
+              </button>
             </div>
           </div>
         )}

@@ -177,6 +177,106 @@ export class AdminOrderService {
     }
   }
 
+  // Marquer une commande comme expédiée avec numéro de suivi
+  async markOrderAsShipped(
+    orderId: string,
+    trackingNumber: string,
+    estimatedDeliveryDate?: Date
+  ): Promise<boolean> {
+    try {
+      const db = getAdminDb();
+      const now = admin.firestore.Timestamp.now();
+      const estimatedDate = estimatedDeliveryDate
+        ? admin.firestore.Timestamp.fromDate(estimatedDeliveryDate)
+        : null;
+
+      await db.collection(ORDERS_COLLECTION).doc(orderId).update({
+        status: "SHIPPED",
+        trackingNumber,
+        shippedAt: now,
+        estimatedDeliveryDate: estimatedDate,
+        updatedAt: now
+      });
+      return true;
+    } catch (error) {
+      const errorMessage =
+        error && typeof error === "object" && "message" in error
+          ? String(error.message)
+          : "Erreur inconnue";
+      throw new Error(`Erreur lors du marquage d'expédition: ${errorMessage}`);
+    }
+  }
+
+  // Récupérer les commandes prêtes à être expédiées (PAID, créées il y a 3 jours ou plus)
+  async getOrdersReadyToShip(): Promise<OrderDocument[]> {
+    try {
+      const db = getAdminDb();
+      const threeDaysAgo = admin.firestore.Timestamp.fromMillis(
+        Date.now() - 3 * 24 * 60 * 60 * 1000
+      );
+
+      // Récupérer toutes les commandes PAID créées il y a 3 jours ou plus
+      // Filtrer ensuite côté application pour éviter les problèmes d'index Firestore
+      const snapshot = await db
+        .collection(ORDERS_COLLECTION)
+        .where("status", "==", "PAID")
+        .where("createdAt", "<=", threeDaysAgo)
+        .get();
+
+      // Filtrer côté application pour ne garder que celles sans email envoyé
+      const orders = snapshot.docs
+        .map((doc) => {
+          const data = doc.data();
+          return {
+            id: doc.id,
+            ...data,
+            createdAt: data.createdAt?.toDate
+              ? data.createdAt.toDate()
+              : data.createdAt || new Date(),
+            updatedAt: data.updatedAt?.toDate
+              ? data.updatedAt.toDate()
+              : data?.updatedAt || new Date()
+          } as OrderDocument;
+        })
+        .filter(
+          (order) =>
+            !order.shippingEmailSent &&
+            order.status === "PAID" &&
+            (!order.createdAt || order.createdAt <= threeDaysAgo.toDate())
+        );
+
+      return orders;
+    } catch (error) {
+      const errorMessage =
+        error && typeof error === "object" && "message" in error
+          ? String(error.message)
+          : "Erreur inconnue";
+      throw new Error(`Erreur lors de la récupération: ${errorMessage}`);
+    }
+  }
+
+  // Marquer l'email d'expédition comme envoyé
+  async markShippingEmailSent(orderId: string): Promise<boolean> {
+    try {
+      const db = getAdminDb();
+      const now = admin.firestore.Timestamp.now();
+      await db.collection(ORDERS_COLLECTION).doc(orderId).update({
+        shippingEmailSent: true,
+        shippingEmailSentAt: now,
+        updatedAt: now
+      });
+      return true;
+    } catch (error) {
+      const errorMessage =
+        error && typeof error === "object" && "message" in error
+          ? String(error.message)
+          : "Erreur inconnue";
+      throw new Error(
+        `Erreur lors du marquage de l'email: ${errorMessage}`
+      );
+    }
+  }
+
   // Récupérer une commande par son ID
   async getOrderById(orderId: string): Promise<OrderDocument | null> {
     try {

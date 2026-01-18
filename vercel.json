@@ -2,7 +2,19 @@
   "functions": {
     "src/pages/api/webhooks/stripe.ts": {
       "maxDuration": 30
+    },
+    "src/pages/api/shipping/send-shipping-emails.ts": {
+      "maxDuration": 60
+    },
+    "src/pages/api/shipping/manual-ship.ts": {
+      "maxDuration": 30
     }
-  }
+  },
+  "crons": [
+    {
+      "path": "/api/shipping/send-shipping-emails",
+      "schedule": "0 9 * * *"
+    }
+  ]
 }
 

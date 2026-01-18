@@ -35,6 +35,12 @@ export interface OrderData {
   createdAt: Date;
   updatedAt: Date;
   metadata?: Record<string, string>;
+  // Champs d'expédition
+  trackingNumber?: string;
+  shippedAt?: Date;
+  estimatedDeliveryDate?: Date;
+  shippingEmailSent?: boolean;
+  shippingEmailSentAt?: Date;
 }
 
 // Résultat d'une création de session de paiement
