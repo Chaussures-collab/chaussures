@@ -32,6 +32,7 @@ interface TrackingData {
     estimatedDeliveryDate?: string;
   };
   tracking: {
+    trackingNumber: string | string[] | undefined;
     status: string;
     currentLocation: string;
     estimatedDelivery: string;
