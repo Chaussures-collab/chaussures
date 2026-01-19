@@ -5,7 +5,7 @@ import emailjs from "emailjs-com";
 import { Input } from "@/ui/designSystem/forms/input";
 import Typography from "@/ui/designSystem/typography/typography";
 import { useForm, SubmitHandler } from "react-hook-form";
-import { RiLock2Fill, RiPhoneFill } from "react-icons/ri";
+import { RiPhoneFill, RiMailFill, RiUserFill } from "react-icons/ri";
 import { useState } from "react";
 import Button from "@/ui/designSystem/button/button";
 import { toast } from "react-toastify";
@@ -18,7 +18,8 @@ interface FormData {
 }
 
 const ContactContainer = () => {
-  const [isLoading, setisLoading] = useState<boolean>(false);
+  const [isLoading, setIsLoading] = useState(false);
+
   const {
     register,
     handleSubmit,
@@ -26,163 +27,149 @@ const ContactContainer = () => {
     reset
   } = useForm<FormData>();
 
-  const handleMessageMail = (data: FormData) => {
-    console.log("Envoi du mail...");
-    const templateParams = {
-      from_name: data.nom,
-      reply_to: data.adresseMail,
-      message: data.message,
-      sujet: data.sujet,
-      to_email: "enlignechaussures@gmail.com" // Destination
-    };
+  const onSubmit: SubmitHandler<FormData> = async (data) => {
+    setIsLoading(true);
 
-    emailjs
-      .send(
-        "service_v9jsj28", // Remplace par ton service ID
-        "template_qrinzfc", // Remplace par ton template ID
-        templateParams,
-        "PVVkJyq_LdxNGmNBV" // Remplace par ton user ID
-      )
-      .then((response) => {
-        console.log(
-          "E-mail envoyé avec succès",
-          response.status,
-          response.text
-        );
-        toast.success("Votre message a été envoyé avec succès");
-        reset(); // Reset form after submission
-      })
-      .catch((error) => {
-        console.error("Erreur lors de l'envoi de l'e-mail", error);
-        toast.error("Une erreur est survenue lors de l'envoi de votre message");
-      })
-      .finally(() => {
-        setisLoading(false); // Désactive le loading une fois l'opération terminée
-      });
-  };
+    try {
+      await emailjs.send(
+        "service_v9jsj28",
+        "template_qrinzfc",
+        {
+          from_name: data.nom,
+          reply_to: data.adresseMail,
+          sujet: data.sujet,
+          message: data.message,
+          to_email: "enlignechaussures@gmail.com"
+        },
+        "PVVkJyq_LdxNGmNBV"
+      );
 
-  const onSubmit: SubmitHandler<FormData> = (data) => {
-    console.log("Données soumises :", data);
-    setisLoading(true);
-    handleMessageMail(data); // Envoi de l'email
-    setisLoading(false); // Reset loading state after successful submission
-  };
-
-  // Configuration des champs du formulaire
-  const fields = [
-    {
-      id: "nom",
-      label: "Nom",
-      placeholder: "Nom*",
-      type: "text",
-      required: true
-    },
-    {
-      id: "adresseMail",
-      label: "Email",
-      placeholder: "Adresse mail*",
-      type: "email",
-      required: true
-    },
-    {
-      id: "sujet",
-      label: "Sujet",
-      placeholder: "Sujet*",
-      type: "text",
-      required: false
-    },
-    {
-      id: "message",
-      label: "Message",
-      placeholder: "Votre message*",
-      type: "text",
-      required: true
+      toast.success("Message envoyé avec succès 🚀");
+      reset();
+    } catch (error) {
+      console.error(error);
+      toast.error("Erreur lors de l'envoi du message ❌");
+    } finally {
+      setIsLoading(false);
     }
-  ];
+  };
 
-  // Fonction pour rendre un champ d'entrée
-  const renderInputField = (field: (typeof fields)[number]) => (
-    <div key={field.id} className="space-y-1">
-      <Input
-        placeholder={field.placeholder}
-        label={field.label}
-        register={register}
-        errors={errors}
-        id={field.id as keyof FormData}
-        errorMsg={`Veuillez entrer ${field.label.toLowerCase()}`}
-        required={field.required}
-        className="h-10 p-2"
-        aria-label={field.label}
-      />
-    </div>
-  );
-
-  console.log(isLoading);
   return (
-    <Container className="py-12 ">
-      <div className="text-center space-y-6">
-        <Typography variant="h3" component="h3">
-          Contactez-nous
-        </Typography>
-        <Typography variant="body" component="p" className="mb-8 text-gray-500">
-          Pour plus d{"'"}informations sur nos produits et services, n{"'"}
-          hésitez pas à nous envoyer un e-mail. Notre équipe est toujours là
-          pour vous aider. Ne soyez pas hésitant !
-        </Typography>
-      </div>
-      <form onSubmit={handleSubmit(onSubmit)} className="space-y-6  w-full max-w-5xl mx-auto space-y-5">
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-8 justify-center max-w-92">
-          <div className="grid m:grid-cols-2 sm:grid-cols-1 space-y-2 justify-center ">
-            <div className="flex space-x-4">
-              <RiLock2Fill className="text-2xl mt-2" />
-              <div>
-                <Typography variant="h5" component="h5">
-                  Adresse
-                </Typography>
-                <Typography variant="body" className="text-gray-500">
-                  68 Rue Saint-Ferréot, <br /> 13000 Marseille, France
-                  <br /> Etage E
-                </Typography>
-              </div>
-            </div>
-            <div className="flex space-x-4">
-              <RiPhoneFill className="text-2xl mt-2" />
-              <div>
-                <Typography variant="h5" component="h5">
-                  Numéro de téléphone
-                </Typography>
-                <Typography variant="body" className="text-gray-500">
-                  Mobile: +(33) 760604485
-                  <br />
-                  Hotline: +(33) 760604485
-                </Typography>
-              </div>
-            </div>
-            <div className="flex space-x-4">
-              <RiLock2Fill className="text-2xl mt-2" />
-              <div>
-                <Typography variant="h5" component="h5">
-                  Heure de travail
-                </Typography>
-                <Typography variant="body" className="text-gray-500">
-                  Lundi-Samedi 09:00 - 22:00
-                </Typography>
-              </div>
-            </div>
+    <Container className="py-20">
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-14 max-w-6xl mx-auto">
+        {/* 🧾 INFOS */}
+        <div className="space-y-8">
+          <Typography
+            variant="h3"
+            component="h2"
+            className="text-4xl font-bold text-gray-900">
+            Parlons de votre projet 👋
+          </Typography>
+
+          <Typography className="text-gray-600 leading-relaxed">
+            Une question, une collaboration ou un besoin spécifique ? Remplissez
+            le formulaire et notre équipe vous répondra rapidement.
+          </Typography>
+
+          <div className="space-y-6">
+            <InfoCard
+              icon={<RiPhoneFill />}
+              title="Téléphone"
+              value="+33 7 60 60 44 85"
+            />
+            <InfoCard
+              icon={<RiMailFill />}
+              title="Email"
+              value="enlignechaussures@gmail.com"
+            />
+            <InfoCard
+              icon={<RiUserFill />}
+              title="Disponibilité"
+              value="Lundi – Samedi : 09h00 – 22h00"
+            />
           </div>
-          <div className="space-y-2 sm:space-y-4">
-            {fields.map(renderInputField)}
+        </div>
+
+        {/* ✉️ FORMULAIRE */}
+        <div className="bg-white/80 backdrop-blur-xl border border-gray-100 shadow-2xl rounded-3xl p-10">
+          <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
+            <Input
+              label="Nom"
+              placeholder="Votre nom"
+              register={register}
+              errors={errors}
+              id="nom"
+              required
+            />
+
+            <Input
+              label="Email"
+              placeholder="Votre adresse email"
+              register={register}
+              errors={errors}
+              id="adresseMail"
+              required
+              type="email"
+            />
+
+            <Input
+              label="Sujet"
+              placeholder="Sujet du message"
+              register={register}
+              errors={errors}
+              id="sujet"
+            />
+
+            {/* MESSAGE */}
+            <div className="space-y-1">
+              <label className="text-sm font-medium text-gray-700">
+                Message
+              </label>
+              <textarea
+                {...register("message", { required: true })}
+                rows={5}
+                placeholder="Écrivez votre message ici..."
+                className="w-full rounded-xl border border-gray-200 p-4 focus:outline-none focus:ring-2 focus:ring-primary transition"
+              />
+              {errors.message && (
+                <p className="text-sm text-red-500">
+                  Veuillez écrire un message
+                </p>
+              )}
+            </div>
+
             <Button
               type="submit"
               isLoading={isLoading}
-              className="w-full px-4 py-2 text-white bg-primary rounded hover:bg-primary-dark">
-              Envoyer
+              className="w-full py-4 text-lg font-semibold rounded-xl bg-gradient-to-r from-primary to-primary-dark hover:scale-[1.02] transition-all shadow-lg">
+              Envoyer le message
             </Button>
-          </div>
+          </form>
         </div>
-      </form>
+      </div>
     </Container>
   );
 };
 
 export default ContactContainer;
+
+/* 🧩 COMPOSANT INFO */
+const InfoCard = ({
+  icon,
+  title,
+  value
+}: {
+  icon: React.ReactNode;
+  title: string;
+  value: string;
+}) => (
+  <div className="flex items-center gap-4 p-6 rounded-2xl bg-gray-50 hover:bg-white border border-gray-100 shadow-md transition">
+    <div className="w-12 h-12 rounded-xl bg-primary/10 text-primary flex items-center justify-center text-xl">
+      {icon}
+    </div>
+    <div>
+      <p className="font-semibold text-gray-900">{title}</p>
+      <p className="text-gray-600">{value}</p>
+    </div>
+  </div>
+);

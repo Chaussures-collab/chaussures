@@ -2,7 +2,7 @@
 
 import React, { useState, useRef, useEffect, useMemo, useCallback } from "react";
 import { FiFilter, FiX, FiChevronLeft, FiChevronRight } from "react-icons/fi";
-import { IoClose } from "react-icons/io5";
+// import { IoClose } from "react-icons/io5";
 import Typography from "@/ui/designSystem/typography/typography";
 import Container from "@/ui/components/container/container";
 import Button from "@/ui/designSystem/button/button";
@@ -140,12 +140,12 @@ export default function ModernFilter({
         <Container>
           <div className="flex justify-between items-center py-4">
             {/* Filtres desktop avec scroll horizontal */}
-            <div className="hidden flex-1 gap-2 items-center min-w-0 lg:flex">
-              <div className="flex flex-shrink-0 gap-2 items-center text-sm font-medium text-gray-700">
+            <div className="flex-1 gap-2 items-center min-w-0">
+              {/* <div className="flex flex-shrink-0 gap-2 items-center text-sm font-medium text-gray-700">
                 <FiFilter size={18} />
                 <span>Filtres :</span>
-              </div>
-              
+              </div> */}
+
               {/* Flèche gauche */}
               {showLeftArrow && (
                 <button
@@ -187,18 +187,30 @@ export default function ModernFilter({
 
             {/* Boutons filtres */}
             <div className="flex gap-3 items-center">
-              {/* Bouton filtre mobile */}
+              {/* Bouton filtre mobile avec catégories directement visibles */}
+              {/* <div className="lg:hidden flex-1 min-w-0">
+                <div className="flex gap-2 items-center overflow-x-auto scrollbar-hide pb-2">
+                  {categoryOptions.map((category) => (
+                    <button
+                      key={category.id}
+                      onClick={() => handleCategorySelect(category.id)}
+                      className={`px-4 py-2 text-sm font-medium transition-all duration-200 whitespace-nowrap flex-shrink-0 rounded-lg ${
+                        activeCategory === category.id
+                          ? "bg-primary text-white shadow-md"
+                          : "bg-gray-100 text-gray-700 hover:bg-gray-200"
+                      }`}>
+                      {category.label}
+                    </button>
+                  ))}
+                </div>
+              </div>
+
               <button
                 onClick={() => setIsMobileFilterOpen(true)}
-                className="flex gap-2 items-center px-4 py-2 font-medium text-white lg:hidden bg-primary">
+                className="flex gap-2 items-center px-4 py-2 font-medium text-gray-700 lg:hidden bg-white border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors">
                 <FiFilter size={18} />
-                <span>Filtres</span>
-                {selectedCategory && (
-                  <span className="flex justify-center items-center w-5 h-5 text-xs font-bold bg-white text-primary">
-                    1
-                  </span>
-                )}
-              </button>
+                <span className="hidden sm:inline">Avancés</span>
+              </button> */}
 
               {/* Bouton filtres avancés desktop */}
               <button
@@ -207,19 +219,11 @@ export default function ModernFilter({
                 <FiFilter size={18} />
                 <span>Filtres avancés</span>
               </button>
-
-              {/* Compteur de résultats */}
-              {/* <div className="text-sm text-gray-600">
-                <span className="font-semibold text-primary">{productsPerPage}</span>
-                {" sur "}
-                <span className="font-semibold">{totalProducts}</span>
-                {" produits"}
-              </div> */}
             </div>
           </div>
 
           {/* Badge catégorie active (mobile) */}
-          {selectedCategory && (
+          {/* {selectedCategory && (
             <div className="pb-3 lg:hidden">
               <div className="inline-flex items-center gap-2 px-3 py-1.5 bg-primary/10 text-primary rounded-full text-sm">
                 <span>{selectedCategory}</span>
@@ -230,7 +234,7 @@ export default function ModernFilter({
                 </button>
               </div>
             </div>
-          )}
+          )} */}
         </Container>
       </div>
 
@@ -424,20 +428,91 @@ export default function ModernFilter({
 
             <div className="p-4 space-y-6">
               <div>
-                <Typography variant="body" className="mb-4 font-semibold">
-                  Catégories
+                <Typography
+                  variant="body"
+                  className="mb-4 font-semibold text-gray-900">
+                  Fourchette de prix
+                </Typography>
+                <div className="space-y-4">
+                  <div className="flex gap-4 items-center">
+                    <input
+                      type="range"
+                      min="0"
+                      max="1000"
+                      value={priceRange[0]}
+                      onChange={(e) =>
+                        setPriceRange([Number(e.target.value), priceRange[1]])
+                      }
+                      className="flex-1"
+                    />
+                    <span className="text-sm font-medium text-gray-700 min-w-[60px]">
+                      €{priceRange[0]}
+                    </span>
+                  </div>
+                  <div className="flex gap-4 items-center">
+                    <input
+                      type="range"
+                      min="0"
+                      max="1000"
+                      value={priceRange[1]}
+                      onChange={(e) =>
+                        setPriceRange([priceRange[0], Number(e.target.value)])
+                      }
+                      className="flex-1"
+                    />
+                    <span className="text-sm font-medium text-gray-700 min-w-[60px]">
+                      €{priceRange[1]}
+                    </span>
+                  </div>
+                  <div className="text-sm text-center text-gray-600 font-semibold">
+                    €{priceRange[0]} - €{priceRange[1]}
+                  </div>
+                </div>
+              </div>
+
+              <div>
+                <Typography
+                  variant="body"
+                  className="mb-4 font-semibold text-gray-900">
+                  Marques
                 </Typography>
                 <div className="space-y-2">
-                  {categoryOptions.map((category) => (
+                  {brands.map((brand) => (
+                    <label
+                      key={brand}
+                      className="flex gap-3 items-center p-3 rounded-lg cursor-pointer hover:bg-gray-50">
+                      <input
+                        type="checkbox"
+                        checked={selectedBrands.includes(brand)}
+                        onChange={() => handleBrandToggle(brand)}
+                        className="w-5 h-5 rounded border-gray-300 text-primary focus:ring-primary"
+                      />
+                      <Typography variant="body" className="text-gray-700">
+                        {brand}
+                      </Typography>
+                    </label>
+                  ))}
+                </div>
+              </div>
+
+              {/* Tri */}
+              <div>
+                <Typography
+                  variant="body"
+                  className="mb-4 font-semibold text-gray-900">
+                  Trier par
+                </Typography>
+                <div className="space-y-2">
+                  {sortOptions.map((option) => (
                     <button
-                      key={category.id}
-                      onClick={() => handleCategorySelect(category.id)}
+                      key={option.id}
+                      onClick={() => setSortBy(option.id)}
                       className={`w-full text-left px-4 py-3 rounded-xl text-sm font-medium transition ${
-                        activeCategory === category.id
+                        sortBy === option.id
                           ? "bg-primary text-white shadow-md"
                           : "bg-gray-50 text-gray-700 hover:bg-gray-100"
                       }`}>
-                      {category.label}
+                      {option.label}
                     </button>
                   ))}
                 </div>
