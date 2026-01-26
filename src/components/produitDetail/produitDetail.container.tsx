@@ -34,6 +34,9 @@ export default function ProduitDetailContainer({ produit }: Props) {
   ];
   
   const currentImage = allImages[selectedImageIndex] || allImages[0];
+  
+  // Vérifier si l'image est un fichier WEBP (insensible à la casse)
+  const isWebP = /\.webp$/i.test(currentImage.src);
 
   return (
     <>
@@ -51,9 +54,9 @@ export default function ProduitDetailContainer({ produit }: Props) {
                   key={image.id}
                   onClick={() => setSelectedImageIndex(index)}
                   className={`relative w-20 h-20 rounded-lg overflow-hidden border-2 transition-all ${
-                    selectedImageIndex === index
-                      ? "border-primary shadow-md scale-105"
-                      : "border-gray-200 hover:border-gray-300"
+                    selectedImageIndex === index ?
+                      "border-primary shadow-md scale-105"
+                    : "border-gray-200 hover:border-gray-300"
                   }`}>
                   <ListeImageProduit src={image.src} alt={image.alt} />
                 </button>
@@ -62,14 +65,24 @@ export default function ProduitDetailContainer({ produit }: Props) {
 
             {/* Image principale */}
             <div className="overflow-hidden relative flex-1 w-full bg-gray-50 rounded-xl shadow-lg aspect-square">
-              <Image
+              {/* <Image
                 src={currentImage.src}
                 alt={currentImage.alt}
                 fill
                 className="object-cover rounded-lg"
                 sizes="(max-width: 1024px) 100vw, 50vw"
                 priority
-                unoptimized={currentImage.src.toLowerCase().endsWith(".webp")}
+                unoptimized={isWebP}
+              /> */}
+              <Image
+                src={currentImage.src}
+                alt={currentImage.alt}
+                layout="responsive"
+                width={381}
+                height={400}
+                objectFit="cover"
+                className=""
+                unoptimized={isWebP}
               />
             </div>
 
@@ -80,9 +93,9 @@ export default function ProduitDetailContainer({ produit }: Props) {
                   key={image.id}
                   onClick={() => setSelectedImageIndex(index)}
                   className={`relative w-20 h-20 rounded-lg overflow-hidden border-2 flex-shrink-0 transition-all ${
-                    selectedImageIndex === index
-                      ? "border-primary shadow-md"
-                      : "border-gray-200"
+                    selectedImageIndex === index ?
+                      "border-primary shadow-md"
+                    : "border-gray-200"
                   }`}>
                   <ListeImageProduit src={image.src} alt={image.alt} />
                 </button>
@@ -95,25 +108,31 @@ export default function ProduitDetailContainer({ produit }: Props) {
             {/* Réduction limitée si prixPromo existe */}
             {produit.prixPromo && produit.prix && (
               <LimitedTimeDiscount
-                discountPercentage={Math.round(((produit.prix - produit.prixPromo) / produit.prix) * 100)}
+                discountPercentage={Math.round(
+                  ((produit.prix - produit.prixPromo) / produit.prix) * 100
+                )}
                 endDate={new Date(Date.now() + 7 * 24 * 60 * 60 * 1000)} // 7 jours
               />
             )}
-            
+
             {/* Notification stock si produit en rupture */}
             <StockNotification
               productId={produit.id}
               productName={produit.nom}
               currentStock={produit.quantiteStock || 0}
             />
-            
+
             <ProduitDetail produit={produit} />
           </div>
         </div>
 
         {/* Section commentaires et produits similaires */}
         <div className="space-y-8">
-          <ProduitComment src={produit.src} alt={produit.alt} />
+          <ProduitComment
+            src={produit.src}
+            alt={produit.alt}
+            productId={produit.id}
+          />
           <hr className="border-gray-200" />
           <ProduitCategorie categorie={produit.categorie} />
         </div>

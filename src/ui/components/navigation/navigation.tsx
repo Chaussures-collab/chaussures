@@ -27,6 +27,18 @@ export default function Navigation() {
   const [checkingAdmin, setCheckingAdmin] = useState(true);
   const [userIsAdmin, setUserIsAdmin] = useState(false);
   const { authUser } = useAuth(); // Utilisation du hook useAuth
+  
+  // Synchroniser la recherche avec l'URL si on est sur la page shop
+  useEffect(() => {
+    if (router.pathname === "/shop" && router.query.search) {
+      const searchFromUrl = typeof router.query.search === "string" ? router.query.search : "";
+      setSearchQuery(searchFromUrl);
+    } else if (router.pathname !== "/shop") {
+      // Réinitialiser la recherche si on n'est pas sur la page shop
+      setSearchQuery("");
+    }
+  }, [router.pathname, router.query.search]);
+  
   useEffect(() => {
     // Vérifier si l'URL actuelle est "/cart"
     if (router.pathname === "/cart") {
@@ -47,7 +59,16 @@ export default function Navigation() {
 
   const handleSearch = (e: { preventDefault: () => void }) => {
     e.preventDefault();
-    console.log("Recherche de produit :", searchQuery);
+    if (searchQuery.trim()) {
+      // Rediriger vers la page shop avec le paramètre de recherche
+      router.push({
+        pathname: "/shop",
+        query: { search: searchQuery.trim() }
+      });
+    } else {
+      // Si la recherche est vide, aller simplement à la page shop
+      router.push("/shop");
+    }
   };
   console.log(cart);
 

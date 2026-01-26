@@ -28,7 +28,10 @@ export default function Produits() {
   const { products, isLoading } = useProducts();
 
   // Sélectionner des produits mis en avant de catégories différentes
+  // Garantir au moins 10 produits affichés
   const featuredProducts: Produit[] = React.useMemo(() => {
+    if (products.length === 0) return [];
+
     const byCategory = new Map<string, Produit[]>();
 
     products.forEach((p) => {
@@ -38,17 +41,46 @@ export default function Produits() {
     });
 
     const result: Produit[] = [];
+    const usedProductIds = new Set<string>();
+    const minProducts = 10;
+
+    // Étape 1 : Prendre un produit de chaque catégorie (pour la variété)
     byCategory.forEach((list) => {
-      // Mélanger un peu chaque liste
+      // Mélanger chaque liste pour avoir de la variété
       const copy = [...list];
       for (let i = copy.length - 1; i > 0; i--) {
         const j = Math.floor(Math.random() * (i + 1));
         [copy[i], copy[j]] = [copy[j], copy[i]];
       }
-      if (copy[0]) result.push(copy[0]);
+      // Prendre le premier produit non utilisé de cette catégorie
+      const product = copy.find(p => !usedProductIds.has(p.id));
+      if (product) {
+        result.push(product);
+        usedProductIds.add(product.id);
+      }
     });
 
-    // Limiter à 10 produits max
+    // Étape 2 : Si on n'a pas encore 10 produits, compléter avec d'autres produits
+    if (result.length < minProducts) {
+      // Récupérer tous les produits non encore utilisés
+      const remainingProducts = products.filter(p => !usedProductIds.has(p.id));
+      
+      // Mélanger les produits restants
+      const shuffled = [...remainingProducts];
+      for (let i = shuffled.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+      }
+
+      // Ajouter des produits jusqu'à atteindre au moins 10
+      const needed = minProducts - result.length;
+      for (let i = 0; i < needed && i < shuffled.length; i++) {
+        result.push(shuffled[i]);
+        usedProductIds.add(shuffled[i].id);
+      }
+    }
+
+    // Limiter à 40 produits max pour l'affichage
     return result.slice(0, 40);
   }, [products]);
 

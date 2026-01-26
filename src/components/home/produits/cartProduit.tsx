@@ -1,10 +1,11 @@
 /** @format */
 
-import React from "react";
+import React, { useMemo } from "react";
 import Typography from "@/ui/designSystem/typography/typography";
-import { RiStarFill } from "react-icons/ri";
+import { RiStarFill, RiStarHalfFill } from "react-icons/ri";
 import Link from "next/link";
 import SafeImage from "@/components/common/SafeImage";
+import { calculateAverageRating, getTotalReviewsCount } from "@/utils/reviewUtils";
 
 interface Produit {
   id: string;
@@ -26,6 +27,32 @@ export default function CartProduit({
   promotion,
   date
 }: Produit) {
+  // Calculer la note moyenne et le nombre d'avis pour ce produit
+  const averageRating = useMemo(() => calculateAverageRating(id), [id]);
+  const totalReviews = useMemo(() => getTotalReviewsCount(id), [id]);
+
+  // Fonction pour afficher les étoiles
+  const renderStars = (rating: number) => {
+    const stars = [];
+    const fullStars = Math.floor(rating);
+    const hasHalfStar = rating % 1 >= 0.5;
+    
+    for (let i = 0; i < fullStars; i++) {
+      stars.push(<RiStarFill key={i} className="text-yellow-400" size={14} />);
+    }
+    
+    if (hasHalfStar) {
+      stars.push(<RiStarHalfFill key="half" className="text-yellow-400" size={14} />);
+    }
+    
+    const emptyStars = 5 - Math.ceil(rating);
+    for (let i = 0; i < emptyStars; i++) {
+      stars.push(<RiStarFill key={`empty-${i}`} className="text-gray-300" size={14} />);
+    }
+    
+    return stars;
+  };
+
   // Vérifie si le produit a une promotion active
   const hasPromotion = promotion && Number(promotion) > 0;
 
@@ -105,12 +132,10 @@ export default function CartProduit({
           {/* Note et avis */}
           <div className="flex gap-2 items-center mb-3">
             <div className="flex items-center gap-0.5">
-              {[...Array(5)].map((_, i) => (
-                <RiStarFill key={i} className="text-yellow-400" size={14} />
-              ))}
+              {renderStars(averageRating)}
             </div>
             <Typography variant="caption4" className="text-gray-500">
-              4.5 (128 avis)
+              {averageRating.toFixed(1)} ({totalReviews} avis)
             </Typography>
           </div>
 

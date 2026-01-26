@@ -1,12 +1,13 @@
 /** @format */
 
-import React, { useState } from "react";
+import React, { useState, useMemo } from "react";
 import Button from "@/ui/designSystem/button/button";
 import Typography from "@/ui/designSystem/typography/typography";
 import {
   RiFacebookBoxFill,
   RiLinkedinBoxFill,
   RiStarFill,
+  RiStarHalfFill,
   RiTwitterFill
 } from "react-icons/ri";
 import { ProduitType } from "@/types/produitType";
@@ -14,6 +15,7 @@ import { useCart } from "@/context/cartContext";
 import { toast } from "react-toastify";
 import { useRouter } from "next/router";
 import ColorGallery from "./ColorGallery";
+import { calculateAverageRating, getTotalReviewsCount } from "@/utils/reviewUtils";
 
 interface ProduitDetailProps {
   produit: ProduitType;
@@ -22,6 +24,32 @@ interface ProduitDetailProps {
 export default function ProduitDetail({ produit }: ProduitDetailProps) {
   const route = useRouter();
   const { addToCart } = useCart();
+
+  // Calculer la note moyenne et le nombre d'avis pour ce produit
+  const averageRating = useMemo(() => calculateAverageRating(produit.id), [produit.id]);
+  const totalReviews = useMemo(() => getTotalReviewsCount(produit.id), [produit.id]);
+
+  // Fonction pour afficher les étoiles
+  const renderStars = (rating: number) => {
+    const stars = [];
+    const fullStars = Math.floor(rating);
+    const hasHalfStar = rating % 1 >= 0.5;
+    
+    for (let i = 0; i < fullStars; i++) {
+      stars.push(<RiStarFill key={i} className="text-yellow-400" size={18} />);
+    }
+    
+    if (hasHalfStar) {
+      stars.push(<RiStarHalfFill key="half" className="text-yellow-400" size={18} />);
+    }
+    
+    const emptyStars = 5 - Math.ceil(rating);
+    for (let i = 0; i < emptyStars; i++) {
+      stars.push(<RiStarFill key={`empty-${i}`} className="text-gray-300" size={18} />);
+    }
+    
+    return stars;
+  };
 
   // Seules certaines catégories ont des variantes taille/couleur
   const hasVariants = ["Chaussures", "Vêtements", "Vetements", "Survetements"].includes(
@@ -154,13 +182,9 @@ export default function ProduitDetail({ produit }: ProduitDetailProps) {
       </div>
       <div className="flex flex-wrap gap-3 items-center text-yellow-500">
         <div className="flex gap-1 items-center">
-          <RiStarFill className="text-yellow" />
-          <RiStarFill className="text-yellow" />
-          <RiStarFill className="text-yellow" />
-          <RiStarFill className="text-yellow" />
-          <RiStarFill className="text-yellow" />
+          {renderStars(averageRating)}
         </div>
-        <div className="text-gray-4">| 4.5 avis des clients</div>
+        <div className="text-gray-4">| {averageRating.toFixed(1)} ({totalReviews} avis)</div>
         {/* Stock */}
         <div className="ml-auto text-sm">
           {produit.quantiteStock && produit.quantiteStock > 0 ? (
